@@ -28,6 +28,14 @@ Scripts provided in `package.json`. It's safe to modify or add additional script
 npm start
 ```
 
+### Add the route
+
+so the route register will be in the file `/config/config.js` add the json in the route attribute
+
+### Add new page
+
+all the page will be in the `/src/page` folder, you can copy the existing folder to make as a template
+
 ### Build project
 
 ```bash
@@ -53,5 +61,7 @@ npm test
 ```
 
 ## More
+
+To install the nodejs follow the [link](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04#Installing%20Using%20a%20PPA)
 
 You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
