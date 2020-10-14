@@ -26,20 +26,14 @@ export default defineConfig({
   routes: [
     {
       path: '/',
-      component: '../layouts/BlankLayout',
+      component: '../layouts/BasicLayout',
       routes: [
         {
           path: '/',
-          component: '../layouts/BasicLayout',
-          routes: [
-            {
-              path: '/',
-              //redirect: '/dashboard/analysis',
-              name: 'default',
-              component: './Welcome.jsx'
-            }
-          ],
-        },
+          //redirect: '/dashboard/analysis',
+          name: 'default',
+          component: './Welcome.jsx'
+        }
       ],
     },
   ],
