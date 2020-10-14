@@ -12,7 +12,7 @@ const CodePreview = ({ children }) => (
 );
 
 export default () => (
-  <PageContainer>
+  // <PageContainer>
     <Card>
       <Alert
         message="ECE444 Group3 Quaranteam"
@@ -28,5 +28,5 @@ export default () => (
         Main Page
       </Typography.Text>
     </Card>
-  </PageContainer>
+  // </PageContainer>
 );
