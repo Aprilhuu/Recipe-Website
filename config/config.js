@@ -33,6 +33,12 @@ export default defineConfig({
           //redirect: '/dashboard/analysis',
           name: 'default',
           component: './Welcome.jsx'
+        },
+        {
+          path: '/meal-planner',
+          //redirect: '/dashboard/analysis',
+          name: 'default',
+          component: './meal_planner/index.js'
         }
       ],
     },
