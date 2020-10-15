@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PureComponent } from 'react';
 
 import { Table, Tag, Space, Card } from 'antd';
 
@@ -74,9 +74,27 @@ for(var i = 0; i < data.length; i++){
 
 console.log(data)
 
+// https://quaranteam-group3.atlassian.net/browse/CCP-3
+class TunelGame extends PureComponent {
+  constructor(props) {
+    super(props);
 
-export default () => (
-  <Card>
-      <Table columns={columns} dataSource={data} bordered />
-  </Card>
-);
+    this.state = {
+      'meal_plan': data,
+      'columns': columns,
+    };
+  }
+
+  render() {
+    const { meal_plan, columns } = this.state;
+    return(
+      <Card>
+
+        <Table columns={columns} dataSource={meal_plan} bordered />
+      </Card>
+    )
+  }
+}
+
+
+export default TunelGame;
