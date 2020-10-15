@@ -44,11 +44,27 @@ const rangeConfig = {
 };
 
 class MealConfig extends PureComponent {
-  state = {
-    recipe: 'sample recipe',
-    //dateAndTime: fieldsValue['date-time-picker'].format('YYYY-MM-DD HH:mm:ss'),
-    // need to update all state values
-  };
+  constructor(props) {
+    super(props);
+
+    const { newItemFunc } = this.props;
+
+    this.onFinish = this.onFinish.bind(this);
+
+    console.log(newItemFunc)
+
+    this.state = {
+      recipe: 'sample recipe',
+      //dateAndTime: fieldsValue['date-time-picker'].format('YYYY-MM-DD HH:mm:ss'),
+      // need to update all state values
+    };
+  }
+
+  onFinish(values){
+    console.log('Success:', values);
+    const { newItemFunc } = this.props;
+    newItemFunc()
+  }
 
   render() {
     return (
@@ -58,7 +74,7 @@ class MealConfig extends PureComponent {
         initialValues={{
           remember: true,
         }}
-        //onFinish={onFinish}
+        onFinish={this.onFinish}
       >
         <Form.Item
           label="Select Recipe"
