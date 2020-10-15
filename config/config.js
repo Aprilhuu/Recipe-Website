@@ -33,7 +33,17 @@ export default defineConfig({
           //redirect: '/dashboard/analysis',
           name: 'default',
           component: './Welcome.jsx'
-        }
+        },
+        {
+          path: '/recipe-list',
+          name: 'default',
+          component: './RecipeList.jsx'
+        },
+        {
+          path: '/recipe-0',
+          name: 'default',
+          component: './Recipe0.jsx'
+        },
       ],
     },
   ],
