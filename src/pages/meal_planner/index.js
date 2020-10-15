@@ -64,7 +64,7 @@ for(var i = 0; i < data.length; i++){
     var day_name = columns[j]['title']
     // add the placeholder
     if(j == 7){
-      data[i][day_name] = {'recipe_title':'Spicy Beef', 'description':'More Potien on Sunday'}
+      data[i][day_name] = {'recipe_title':'Spicy Beef', 'description':'More Protein on Sunday'}
     }
     else{
       data[i][day_name] = ''
@@ -75,7 +75,7 @@ for(var i = 0; i < data.length; i++){
 console.log(data)
 
 // https://quaranteam-group3.atlassian.net/browse/CCP-3
-class TunelGame extends PureComponent {
+class MealPlanner extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -97,4 +97,4 @@ class TunelGame extends PureComponent {
 }
 
 
-export default TunelGame;
+export default MealPlanner;
