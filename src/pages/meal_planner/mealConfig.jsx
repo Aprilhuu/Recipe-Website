@@ -51,7 +51,7 @@ class MealConfig extends PureComponent {
 
     this.onFinish = this.onFinish.bind(this);
 
-    console.log(newItemFunc)
+    // console.log(newItemFunc)
 
     this.state = {
       recipe: 'sample recipe',
@@ -62,8 +62,15 @@ class MealConfig extends PureComponent {
 
   onFinish(values){
     console.log('Success:', values);
+    // update the name of attribute later
+    var recipe = values['recipe']
+    var meal = values['meal-time-picker']
+    // const days_to_int = {"monday":1,"tuesday":2,"wednesday":3,"thursday":4,"friday":5,"saturday":6,"sunday":7}
+    var days = values['checkbox-group']
+
+
     const { newItemFunc } = this.props;
-    newItemFunc()
+    newItemFunc(recipe, meal, days)
   }
 
   render() {
@@ -116,7 +123,7 @@ class MealConfig extends PureComponent {
               </Col>
               <Col span={8}>
                 <Checkbox
-                  value="Monday"
+                  value="monday"
                   style={{
                     lineHeight: '32px',
                   }}

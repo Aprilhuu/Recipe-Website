@@ -17,64 +17,64 @@ const render_column_func = function(text, record){
 const columns = [
   {
     title: 'Meals',
-    dataIndex: 'Meals',
-    key: 'Meals',
+    dataIndex: 'meals',
+    key: 'meals',
   },
   {
     title: 'Monday',
-    dataIndex: 'Monday',
-    key: 'Monday',
+    dataIndex: 'monday',
+    key: 'monday',
     render: render_column_func
   },
   {
     title: 'Tuesday',
-    dataIndex: 'Tuesday',
-    key: 'Tuesday',
+    dataIndex: 'tuesday',
+    key: 'tuesday',
     render: render_column_func
   },
   {
     title: 'Wednesday',
-    dataIndex: 'Wednesday',
-    key: 'Wednesday',
+    dataIndex: 'wednesday',
+    key: 'wednesday',
     render: render_column_func
   },
   {
     title: 'Thursday',
-    dataIndex: 'Thursday',
-    key: 'Thursday',
+    dataIndex: 'thursday',
+    key: 'thursday',
     render: render_column_func
   },
   {
     title: 'Friday',
-    dataIndex: 'Friday',
-    key: 'Friday',
+    dataIndex: 'friday',
+    key: 'friday',
     render: render_column_func
   },
   {
     title: 'Saturday',
-    dataIndex: 'Saturday',
-    key: 'Saturday',
+    dataIndex: 'saturday',
+    key: 'saturday',
     render: render_column_func
   },
   {
     title: 'Sunday',
-    dataIndex: 'Sunday',
-    key: 'Sunday',
+    dataIndex: 'sunday',
+    key: 'sunday',
     render: render_column_func
   }
 ];
 
 
 const data = [
-    {'key':1, 'Meals':'Breakfast'},
-    {'key':2, 'Meals':'Lunch'},
-    {'key':3, 'Meals':'Dinner'}
+    {'key':1, 'meals':'Breakfast'},
+    {'key':2, 'meals':'Lunch'},
+    {'key':3, 'meals':'Dinner'}
   ];
 // for now, use the fake data
 for(var i = 0; i < data.length; i++){
   for(var j = 1; j < columns.length; j++){
     // get the day names
-    var day_name = columns[j]['title']
+    var day_name = columns[j]['dataIndex']
     // add the placeholder
     if(j == 7){
       data[i][day_name] = {'recipe_title':'Spicy Beef', 'description':'More Protein on Sunday'}
@@ -100,29 +100,23 @@ class MealPlanner extends PureComponent {
     };
   }
 
-  add_new_plan(t){
+  add_new_plan(recipe, meal, days){
     var {meal_plan} = this.state
     var new_plan = []
+
+    console.log(recipe, meal, days)
 
     // make a deep copy here
     for (var i = 0; i < meal_plan.length; i++){
       new_plan.push(meal_plan[i])
     }
 
-    // for now, use the fake data
-    for(var i = 0; i < new_plan.length; i++){
-      for(var j = 1; j < columns.length; j++){
-        // get the day names
-        var day_name = columns[j]['title']
-        // add the placeholder
-        if(j == 6){
-          new_plan[i][day_name] = {'recipe_title':'Spicy Beef', 'description':'More Protein on Sunday'}
-        }
-      }
+    const meal_2_int = {'Breakfast':0, 'Lunch':1, 'Dinner':2}
+    for(var i = 0; i<days.length; i++){
+      console.log(days[i])
+      new_plan[meal_2_int[meal]][days[i]] = {'recipe_title':recipe, 'description':'Update meals'}
     }
-
-    console.log(new_plan)
-
+    // console.log(new_plan)
 
     // set back
     this.setState({
@@ -133,7 +127,7 @@ class MealPlanner extends PureComponent {
   render() {
     const { meal_plan, columns } = this.state;
 
-    console.log(meal_plan)
+    // console.log(meal_plan)
 
     return(
       <Card>
