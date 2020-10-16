@@ -39,6 +39,12 @@ export default defineConfig({
           //redirect: '/dashboard/analysis',
           name: 'default',
           component: './meal_planner/index.js'
+        },
+        {
+          path: '/dynamic/:recipe_id',
+          //redirect: '/dashboard/analysis',
+          name: 'default',
+          component: './Welcome.jsx'
         }
       ],
     },
