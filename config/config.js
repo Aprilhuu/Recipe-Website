@@ -40,9 +40,9 @@ export default defineConfig({
           component: './RecipeList.jsx'
         },
         {
-          path: '/recipe-0',
+          path: '/recipe/:recipe_id',
           name: 'default',
-          component: './Recipe0.jsx'
+          component: './Recipe.jsx'
         },
       ],
     },

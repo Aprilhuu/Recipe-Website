@@ -1,11 +1,21 @@
-import React from 'react';
+import React, {PureComponent } from 'react';
 import { Card, Button } from 'antd';
+import { recipes } from '../../recipes/recipes.js';
 
-export default () => (
-    <Card size = 'small'>
-        <Button 
+var buttonList = []
+
+for(let i = 0; i < Object.keys(recipes).length; i++) {
+    console.log(recipes[i].title)
+    buttonList.push(<Button
+        key = {i}
         size = "large"
         block
-        href="/recipe0">recipe</Button>
+        href={"/recipe/" + i}>{recipes[i].title}
+        </Button>)
+}
+
+export default () => (
+    <Card>
+        {buttonList}
     </Card>
 );
