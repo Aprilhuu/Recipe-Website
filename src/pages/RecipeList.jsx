@@ -1,4 +1,4 @@
-import React, {PureComponent } from 'react';
+import React from 'react';
 import { Card, Button } from 'antd';
 import { recipes } from '../../recipes/recipes.js';
 
@@ -12,6 +12,8 @@ for(let i = 0; i < Object.keys(recipes).length; i++) {
         block
         href={"/recipe/" + i}>{recipes[i].title}
         </Button>)
+    buttonList.push(<br></br>)
+    buttonList.push(<br></br>)
 }
 
 export default () => (
