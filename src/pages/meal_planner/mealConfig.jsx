@@ -1,8 +1,21 @@
 import React, { PureComponent } from 'react';
 import { Form, Button, Select, DatePicker, Switch, Checkbox, Row, Col, Modal } from 'antd';
+import { recipes } from '../../../recipes/recipes.js';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+
+{
+  /* Setup for recipe select list */
+}
+const recipeList = [];
+for (let i = 0; i < Object.keys(recipes).length; i++) {
+  recipeList.push(
+    <Option key={i} value={recipes[i].title}>
+      {recipes[i].title}
+    </Option>,
+  );
+}
 
 {
   /* Formatting */
@@ -27,7 +40,7 @@ const rangeConfig = {
     {
       type: 'array',
       required: true,
-      message: 'Please select time!',
+      message: 'Please select time',
     },
   ],
 };
@@ -113,9 +126,8 @@ class MealConfig extends PureComponent {
                 },
               ]}
             >
-              <Select>
-                <Select.Option value="recipe1">Recipe1</Select.Option>
-                handler
+              <Select style={{ width: '100%' }} placeholder="e.g. Tomato Soup">
+                {recipeList}
               </Select>
             </Form.Item>
 
@@ -217,7 +229,7 @@ class MealConfig extends PureComponent {
                 },
               ]}
             >
-              <Select>
+              <Select placeholder="e.g. Breakfast">
                 <Select.Option value="Breakfast">Breakfast</Select.Option>
                 <Select.Option value="Lunch">Lunch</Select.Option>
                 <Select.Option value="Dinner">Dinner</Select.Option>
