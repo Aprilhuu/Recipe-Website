@@ -1,8 +1,26 @@
-# Ant Design Pro
+# Chef Co-Pilot
+
+Group 3 - Quaranteam
 
 This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
 
-## Environment Prepare
+## Backend
+First make sure you have docker running on your computer. Then run the following commands:
+
+```bash
+cd flask-api
+docker build -t team3backend:latest .
+docker run --rm -p 5000:5000 team3backend
+```
+
+If successful, a Flask backend is now running on your localhost:5000. Please make sure you have your 
+Flask backend running before starting your frontend code.
+
+After quitting the container, make sure you stop it by running `docker stop` followed by its container ID.
+
+
+## Frontend
+### Environment Prepare
 
 Install `node_modules`:
 
@@ -16,9 +34,7 @@ or
 yarn
 ```
 
-## Provided Scripts
-
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
+### Provided Scripts
 
 Scripts provided in `package.json`. It's safe to modify or add additional script:
 
