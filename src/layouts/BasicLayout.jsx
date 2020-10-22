@@ -1,4 +1,5 @@
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu, Breadcrumb, Anchor } from 'antd';
+import { Link } from 'umi';
 
 const { Header, Content, Footer } = Layout;
 
@@ -9,10 +10,14 @@ const BasicLayout = ({ children }) => (
   <Layout className="layout">
     <Header>
       <div className="logo" />
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-        <Menu.Item key="1">nav 1</Menu.Item>
-        <Menu.Item key="2">nav 2</Menu.Item>
-        <Menu.Item key="3">nav 3</Menu.Item>
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+        <Menu.Item key="1">
+          <Link to='/recipe-list'>Recipe List</Link>
+        </Menu.Item>
+        <Menu.Item key="2">
+          <Link to='/meal-planner'>Meal Planner</Link>
+        </Menu.Item>
+        <Menu.Item key="3">Search Recipe</Menu.Item>
       </Menu>
     </Header>
     <Content style={{ padding: '0 50px' }}>
