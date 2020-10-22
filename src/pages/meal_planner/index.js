@@ -2,11 +2,13 @@ import React, {PureComponent } from 'react';
 
 import { Table, Tag, Space, Card } from 'antd';
 import MealConfig from './mealConfig.jsx'
+import { Link } from 'umi';
 
 const render_column_func = function(text, record){
   if(text != undefined && text.recipe_title != undefined){
+    var url = "/recipe/"+text.recipe_id
     return (
-      <Card title={text.recipe_title} extra={<a href="#">See Recipe</a>}>
+      <Card title={text.recipe_title} extra={<Link to={url}>See Recipe</Link>}>
         <h3>Description</h3>
         <p>{text.description}</p>
       </Card>
@@ -76,12 +78,7 @@ for(var i = 0; i < data.length; i++){
     // get the day names
     var day_name = columns[j]['dataIndex']
     // add the placeholder
-    if(j == 7){
-      data[i][day_name] = {'recipe_title':'Spicy Beef', 'description':'More Protein on Sunday'}
-    }
-    else{
-      data[i][day_name] = ''
-    }
+    data[i][day_name] = ''
   }
 }
 
@@ -113,8 +110,12 @@ class MealPlanner extends PureComponent {
 
     const meal_2_int = {'Breakfast':0, 'Lunch':1, 'Dinner':2}
     for(var i = 0; i<days.length; i++){
-      console.log(days[i])
-      new_plan[meal_2_int[meal]][days[i]] = {'recipe_title':recipe, 'description':'Update meals'}
+      // console.log(days[i])
+      new_plan[meal_2_int[meal]][days[i]] = {
+          'recipe_title':recipe.title, 
+          'description':'Update meals',
+          'recipe_id': recipe.id
+        }
     }
     // console.log(new_plan)
 

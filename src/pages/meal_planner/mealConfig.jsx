@@ -11,7 +11,7 @@ const { RangePicker } = DatePicker;
 const recipeList = [];
 for (let i = 0; i < Object.keys(recipes).length; i++) {
   recipeList.push(
-    <Option key={i} value={recipes[i].title}>
+    <Option key={i} value={i}>
       {recipes[i].title}
     </Option>,
   );
@@ -65,33 +65,48 @@ class MealConfig extends PureComponent {
     });
   };
 
-  handleCancel = (e) => {
-    console.log(e);
-    this.setState({
-      visible: false,
-    });
-  };
-
   constructor(props) {
     super(props);
 
     const { newItemFunc } = this.props;
 
     this.onFinish = this.onFinish.bind(this);
+    this.closeForm = this.closeForm.bind(this);
 
     // console.log(newItemFunc)
   }
 
+  onChange(value) {
+    console.log(`selected ${value}`);
+  }
+
+
+  closeForm(e){
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  };
+
+
   onFinish(values) {
     console.log('Success:', values);
     // update the name of attribute later
-    var recipe = values['recipe'];
+    var recipe_id = values['recipe'];
+    var select_recipe_title = recipes[recipe_id].title
+    console.log(recipes[recipe_id])
+
     var meal = values['meal-time-picker'];
     // const days_to_int = {"monday":1,"tuesday":2,"wednesday":3,"thursday":4,"friday":5,"saturday":6,"sunday":7}
     var days = values['checkbox-group'];
 
+    //close the modal
+    this.setState({
+      visible: false,
+    });
+
     const { newItemFunc } = this.props;
-    newItemFunc(recipe, meal, days);
+    newItemFunc({'title':select_recipe_title, 'id':recipe_id}, meal, days);
   }
 
   render() {
@@ -104,8 +119,8 @@ class MealConfig extends PureComponent {
         <Modal
           title="Meal Configuration"
           visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          // onOk={this.handleOk}
+          onCancel={this.closeForm}
         >
           {/* Select Recipe */}
           <Form
@@ -115,6 +130,7 @@ class MealConfig extends PureComponent {
               remember: true,
             }}
             onFinish={this.onFinish}
+            preserve={false}
           >
             <Form.Item
               label="Select Recipe"
@@ -126,7 +142,7 @@ class MealConfig extends PureComponent {
                 },
               ]}
             >
-              <Select style={{ width: '100%' }} placeholder="e.g. Tomato Soup">
+              <Select onChange={this.onChange} style={{ width: '100%' }} placeholder="e.g. Tomato Soup">
                 {recipeList}
               </Select>
             </Form.Item>
