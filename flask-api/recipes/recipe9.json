@@ -1,0 +1,83 @@
+{
+   "title":"EASY SPAGHETTI",
+   "tags":[
+      "spaghetti",
+      "easy",
+      "simple",
+      "dinner"
+   ],
+   "total time":"15 minutes",
+   "servings":2,
+   "difficulty":1,
+   "ingredients":[
+      {
+         "quantity":"8 oz",
+         "name":"spaghetti",
+         "type":"pasta"
+      },
+      {
+         "quantity":"2 tablespoons",
+         "name":"olive oil",
+         "type":"oil"
+      },
+      {
+         "quantity":"3 cloves",
+         "name":"minced garlic",
+         "type":"vegetable"
+      },
+      {
+         "quantity":"1 tablespoons",
+         "name":"butter",
+         "type":"dairy"
+      },
+      {
+         "quantity":"3 dashes",
+         "name":"black pepper",
+         "type":"seasoning"
+      },
+      {
+         "quantity":"to taste",
+         "name":"red chili flakes",
+         "type":"seasoning"
+      },
+      {
+         "quantity":"enough for garnishing",
+         "name":"parsley",
+         "type":"herb"
+      }
+   ],
+   "instructions":[
+      {
+         "description":"Cook the spaghetti according to the package instructions until al dente. Drain and set aside.",
+         "mediaURL":[]
+      },
+      {
+         "description":"Heat up a skillet and add the olive oil and butter. Saute the garlic until aromatic, then add the spaghetti. Season with salt, pepper, and chili flakes. Stir to combine well.",
+         "mediaURL":[]
+      },
+      {
+         "description":"Dish out, garnish with some parsley and serve immediately.",
+         "mediaURL":[]
+      }
+   ],
+   "nutritional info":{
+      "serving size":"per 1/2 recipe",
+      "nutrition facts":{
+         "calories":"481.0kcal",
+         "fat":"7.0g",
+         "saturated fat":"3.0g",
+         "trans fat":"0.0g",
+         "cholesterol":"15.0mg",
+         "sodium":"8.0mg",
+         "total carbohydrate ":"87.0g",
+         "fiber":"4.0g",
+         "sugars":"3.0g",
+         "protein":"15.0g"
+      }
+   },
+   "mediaURL":{
+      "type":"image",
+      "url":"https://rasamalaysia.com/wp-content/uploads/2015/04/easy-spaghetti.jpg"
+   },
+   "originalURL":"https://rasamalaysia.com/easy-spaghetti/"
+}
