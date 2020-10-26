@@ -5,7 +5,7 @@ import constructTag from '../src/helper_functions/constructTag'
 describe('Tests for constructTag function', () => {
     const testStrings = ['hello', 'hi']
     
-
+    // Test written by Yi Si (Isabella) Chen
     test('check that the function returns an element of type Tag', () => {
         let result = constructTag(testStrings);
 
@@ -14,6 +14,7 @@ describe('Tests for constructTag function', () => {
         }
     })
 
+    // Test written by Yi Si (Isabella) Chen
     test('check that the contents of the tag is correct', () => {
         let result = constructTag(testStrings);
 
