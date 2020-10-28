@@ -9,8 +9,7 @@ from config import ConfigClass
 
 # create mongodb connection here
 client = pymongo.MongoClient("mongodb+srv://group3:group3@cluster0.hgfwg.mongodb.net/Cluster0?retryWrites=true&w=majority")
-mydb = client["group3"]
-db_connection = mydb["group3_collection"]
+db_connection = client["group3"]
 
 # API object
 module_api = Api()
