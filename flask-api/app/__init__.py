@@ -1,11 +1,21 @@
-from flask import Flask, request
+from flask import Flask
+from flask_restx import Api
 from flask_cors import CORS
-from config import ConfigClass
 import json
-
 from flask_jwt import JWT,  JWTError
+import pymongo
 
+from config import ConfigClass
 
+# create mongodb connection here
+client = pymongo.MongoClient("mongodb+srv://group3:group3@cluster0.hgfwg.mongodb.net/Cluster0?retryWrites=true&w=majority")
+mydb = client["group3"]
+db_connection = mydb["group3_collection"]
+
+# API object
+module_api = Api()
+# then we can import since order mattered
+from recipes import recipe_ns
 
 def create_app(extra_config_settings={}):
     # initialize app and config app
@@ -21,5 +31,8 @@ def create_app(extra_config_settings={}):
 
     # enable JWT
     jwt = JWT(app)
+
+    # hook the flask_restx api
+    module_api.init_app(app)
 
     return app
