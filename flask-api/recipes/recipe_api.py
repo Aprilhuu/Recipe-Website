@@ -13,12 +13,14 @@ class Recipes(Resource):
         '''
 
         # example curl localhost:5000/v1/recipes/
-
-        collection = db_connection["group3_collection"]
-        # for now just return the 8 recipe in total
-        # to keep minimun only return the id and title of list
-        cursor = collection.find()
-        recipes = [{'id': str(x['_id']), 'title': x['title']} for x in cursor]
+        try:
+            collection = db_connection["group3_collection"]
+            # for now just return the 8 recipe in total
+            # to keep minimun only return the id and title of list
+            cursor = collection.find()
+            recipes = [{'id': str(x['_id']), 'title': x['title']} for x in cursor]
+        except Exception as e:
+            return {'result': str(e)}, 400
 
         return {'result':recipes}, 200
 
@@ -34,13 +36,16 @@ class Recipe(Resource):
 
         # example curl localhost:5000/v1/recipes/5f8c67b8708d83b9867302b6
 
-        collection = db_connection["group3_collection"]
-        # for now just return the 8 recipe in total
-        # to keep minimun only return the id and title of list
-        recipe = collection.find_one(ObjectId(rid))
+        try:
+            collection = db_connection["group3_collection"]
+            # for now just return the 8 recipe in total
+            # to keep minimun only return the id and title of list
+            recipe = collection.find_one(ObjectId(rid))
 
-        # change the id to string
-        recipe['_id'] = str(recipe['_id'])
+            # change the id to string
+            recipe['_id'] = str(recipe['_id'])
+        except Exception as e:
+            return {'result': str(e)}, 400
 
         return {'result':recipe}, 200
 
@@ -56,19 +61,22 @@ class RecipeQuery(Resource):
 
         # example curl -v -XPOST -H "Content-type: application/json" -d '{"title":"Fruit and Nut Oat Bowl"}' 'localhost:5000/v1/recipes/query'
 
-        # first get the title from the payload
-        post_data = request.get_json()
-        title = post_data.get('title', None)
-        if not title:
-            return {'result':'Please input the title'}, 403
+        try:
+            # first get the title from the payload
+            post_data = request.get_json()
+            title = post_data.get('title', None)
+            if not title:
+                return {'result':'Please input the title'}, 403
 
-        collection = db_connection["group3_collection"]
-        # for now just return the 8 recipe in total
-        # to keep minimun only return the id and title of list
-        recipe = collection.find_one({'title': title})
+            collection = db_connection["group3_collection"]
+            # for now just return the 8 recipe in total
+            # to keep minimun only return the id and title of list
+            recipe = collection.find_one({'title': title})
 
-        # change the id to string if we find it
-        if recipe:
-            recipe['_id'] = str(recipe['_id'])
+            # change the id to string if we find it
+            if recipe:
+                recipe['_id'] = str(recipe['_id'])
+        except Exception as e:
+            return {'result': str(e)}, 400
 
         return {'result':recipe}, 200
