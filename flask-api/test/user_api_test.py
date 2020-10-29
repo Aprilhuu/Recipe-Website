@@ -25,7 +25,7 @@ def login_function(client, username, password):
     )
 
 ################################################ TEST FUnction ######################################
-
+# made by zhiren
 def test_login(client):
     # login ok
     res = login_function(client, 'group3', 'group3')
