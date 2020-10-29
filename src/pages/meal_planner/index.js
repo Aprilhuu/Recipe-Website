@@ -8,10 +8,9 @@ const render_column_func = function(text, record){
   if(text != undefined && text.recipe_title != undefined){
     var url = "/recipe/"+text.recipe_id
     return (
-      <Card title={text.recipe_title} extra={<Link to={url}>See Recipe</Link>}>
-        <h3>Description</h3>
-        <p>{text.description}</p>
-      </Card>
+      <Tag>
+        <Link to={url}>{text.recipe_title}</Link>
+      </Tag>
     )
   }
 }
