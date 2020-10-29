@@ -76,6 +76,17 @@ npm run lint:fix
 npm run test:jest
 ```
 
+### Test python backend API
+
+since the backend and frontend are in the same folder the pytest will scan entire folder
+
+so I move the test in the flask-api folder to reduce the overhead. Use following command to run the test:
+
+```
+cd flask-api
+python -m pytest -s
+```
+
 ## More
 
 To install the nodejs follow the [link](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04#Installing%20Using%20a%20PPA)
