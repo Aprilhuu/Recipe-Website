@@ -116,7 +116,7 @@ class MealPlanner extends PureComponent {
           'recipe_id': recipe.id
         }
     }
-    // console.log(new_plan)
+    console.log(new_plan)
 
     // set back
     this.setState({
