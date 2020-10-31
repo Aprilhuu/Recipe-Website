@@ -4,6 +4,9 @@ import { Table, Tag, Space, Card } from 'antd';
 import MealConfig from './mealConfig.jsx'
 import { Link } from 'umi';
 
+import defaultSettings from '../../../config/defaultSettings';
+const {api_endpoint} = defaultSettings
+
 const render_column_func = function(text, record){
   if(text != undefined && text.recipe_title != undefined){
     var url = "/recipe/"+text.recipe_id
