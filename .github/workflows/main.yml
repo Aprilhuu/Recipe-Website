@@ -1,0 +1,19 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - feature/backend_api
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.6.8 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_STAGING_API_KEY}}
+          heroku_app_name: "ece444apiservice" #Must be unique in Heroku
+          heroku_email: "colorzzr@gmail.com"
+          appdir: "flask-api"

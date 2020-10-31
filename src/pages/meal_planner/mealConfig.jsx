@@ -5,6 +5,9 @@ import { recipes } from '../../../recipes/recipes.js';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
+import defaultSettings from '../../../config/defaultSettings';
+const {api_endpoint} = defaultSettings
+
 {
   /* Setup for recipe select list */
 }

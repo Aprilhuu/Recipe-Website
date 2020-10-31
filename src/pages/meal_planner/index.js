@@ -1,8 +1,11 @@
 import React, {PureComponent } from 'react';
-
-import { Table, Tag, Space, Card } from 'antd';
+import axios from 'axios';
+import { Table, Tag, Space, Card, Button } from 'antd';
 import MealConfig from './mealConfig.jsx'
 import { Link } from 'umi';
+
+import defaultSettings from '../../../config/defaultSettings';
+const {api_endpoint} = defaultSettings
 
 const render_column_func = function(text, record){
   if(text != undefined && text.recipe_title != undefined){
@@ -66,22 +69,22 @@ const columns = [
 ];
 
 
-const data = [
-    {'key':1, 'meals':'Breakfast'},
-    {'key':2, 'meals':'Lunch'},
-    {'key':3, 'meals':'Dinner'}
-  ];
-// for now, use the fake data
-for(var i = 0; i < data.length; i++){
-  for(var j = 1; j < columns.length; j++){
-    // get the day names
-    var day_name = columns[j]['dataIndex']
-    // add the placeholder
-    data[i][day_name] = ''
-  }
-}
+// const data = [
+//     {'key':1, 'meals':'Breakfast'},
+//     {'key':2, 'meals':'Lunch'},
+//     {'key':3, 'meals':'Dinner'}
+//   ];
+// // for now, use the fake data
+// for(var i = 0; i < data.length; i++){
+//   for(var j = 1; j < columns.length; j++){
+//     // get the day names
+//     var day_name = columns[j]['dataIndex']
+//     // add the placeholder
+//     data[i][day_name] = ''
+//   }
+// }
 
-console.log(data)
+// console.log(data)
 
 // https://quaranteam-group3.atlassian.net/browse/CCP-3
 class MealPlanner extends PureComponent {
@@ -89,18 +92,63 @@ class MealPlanner extends PureComponent {
     super(props);
 
     this.add_new_plan = this.add_new_plan.bind(this);
+    this.save_my_plan = this.save_my_plan.bind(this);
+    this.get_old_plan = this.get_old_plan.bind(this);
 
     this.state = {
-      'meal_plan': data,
+      // 'meal_plan': data,
       'columns': columns,
     };
+  }
+
+  // after the component is rendered
+  componentDidMount(){
+    axios.get(api_endpoint+'/v1/users/meal_plan', {})
+    .then(response =>{
+      console.log(response['data']['result'])
+      this.setState({
+        meal_plan:response['data']['result'],
+      });
+    })
+  }
+
+  // fetch the old plan from database
+  get_old_plan(response){
+    // fetch exist plan from database
+    // var response = axios.get(api_endpoint+'/v1/users/meal_plan', {})
+    console.log(response)
+    // .then(function (response) {
+    // this.setState({
+    //   meal_plan:response['result'],
+    // });
+    // })
+    // .catch(function (error) {
+    //   console.log(error);
+    // });
+  }
+
+  // save the schedule to the database
+  save_my_plan(){
+    var {meal_plan} = this.state
+    // console.log(meal_plan)
+
+    // send to backend
+    axios.post(api_endpoint+'/v1/users/meal_plan', {
+      'new_plan': meal_plan,
+    })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
 
   add_new_plan(recipe, meal, days){
     var {meal_plan} = this.state
     var new_plan = []
 
-    console.log(recipe, meal, days)
+    // console.log(recipe, meal, days)
 
     // make a deep copy here
     for (var i = 0; i < meal_plan.length; i++){
@@ -118,6 +166,17 @@ class MealPlanner extends PureComponent {
     }
     // console.log(new_plan)
 
+    // // send to backend
+    // axios.post(api_endpoint+'/v1/users/meal_plan', {
+    //   'new_plan': new_plan,
+    // })
+    // .then(function (response) {
+    //   console.log(response);
+    // })
+    // .catch(function (error) {
+    //   console.log(error);
+    // });
+
     // set back
     this.setState({
       meal_plan:new_plan,
@@ -127,11 +186,18 @@ class MealPlanner extends PureComponent {
   render() {
     const { meal_plan, columns } = this.state;
 
-    // console.log(meal_plan)
+    console.log(meal_plan)
+    // axios.get(api_endpoint+'/v1/users/meal_plan', {})
+    // .then(response =>{
+    //   this.setState({
+    //     meal_plan:response['result'],
+    //   });
+    // })
 
     return(
       <Card>
         <MealConfig newItemFunc={this.add_new_plan}/>
+        <Button onClick={this.save_my_plan}>Save My Plan</Button>
         <Table columns={columns} dataSource={meal_plan} bordered />
       </Card>
     )

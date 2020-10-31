@@ -38,3 +38,13 @@ screenshot
 .eslintcache
 
 build
+
+##########################
+# python
+
+env
+*.pyc
+*.DS_Store
+__pycache__
+
+
