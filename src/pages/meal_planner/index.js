@@ -93,7 +93,6 @@ class MealPlanner extends PureComponent {
 
     this.add_new_plan = this.add_new_plan.bind(this);
     this.save_my_plan = this.save_my_plan.bind(this);
-    this.get_old_plan = this.get_old_plan.bind(this);
 
     this.state = {
       // 'meal_plan': data,
@@ -112,20 +111,6 @@ class MealPlanner extends PureComponent {
     })
   }
 
-  // fetch the old plan from database
-  get_old_plan(response){
-    // fetch exist plan from database
-    // var response = axios.get(api_endpoint+'/v1/users/meal_plan', {})
-    console.log(response)
-    // .then(function (response) {
-    // this.setState({
-    //   meal_plan:response['result'],
-    // });
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    // });
-  }
 
   // save the schedule to the database
   save_my_plan(){
@@ -166,17 +151,6 @@ class MealPlanner extends PureComponent {
     }
     // console.log(new_plan)
 
-    // // send to backend
-    // axios.post(api_endpoint+'/v1/users/meal_plan', {
-    //   'new_plan': new_plan,
-    // })
-    // .then(function (response) {
-    //   console.log(response);
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    // });
-
     // set back
     this.setState({
       meal_plan:new_plan,
@@ -185,14 +159,6 @@ class MealPlanner extends PureComponent {
 
   render() {
     const { meal_plan, columns } = this.state;
-
-    console.log(meal_plan)
-    // axios.get(api_endpoint+'/v1/users/meal_plan', {})
-    // .then(response =>{
-    //   this.setState({
-    //     meal_plan:response['result'],
-    //   });
-    // })
 
     return(
       <Card>
