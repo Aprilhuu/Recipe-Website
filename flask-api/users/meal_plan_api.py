@@ -25,8 +25,11 @@ class Meal_Plan(Resource):
 		'''
 		update the meal plan by user name
 		'''
-		
+
 		post_data = request.get_json()
+		new_plan = post_data.get('new_plan', None)
+		if not new_plan:
+			return {'result': 'Error please enter new plan'}, 403
 
 		user_col = db_connection['users']
 
@@ -34,7 +37,7 @@ class Meal_Plan(Resource):
 		username = 'test_user'
 		u = user_col.update(
 			{'username': username},
-			{ '$set':{'meal_plan': post_data}}
+			{ '$set':{'meal_plan': new_plan}}
 		)
 		# get meal plan
 		# mp = u.get('meal_plan', {})
