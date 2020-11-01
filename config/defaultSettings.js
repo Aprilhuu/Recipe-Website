@@ -1,6 +1,5 @@
 const proSettings = {
   navTheme: 'dark',
-  // 拂晓蓝
   primaryColor: '#1890ff',
   layout: 'side',
   contentWidth: 'Fluid',
@@ -13,5 +12,6 @@ const proSettings = {
   title: 'Ant Design Pro',
   pwa: false,
   iconfontUrl: '',
+  api_endpoint: 'https://ece444apiservice.herokuapp.com/'
 };
 export default proSettings;

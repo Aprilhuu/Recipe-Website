@@ -3,6 +3,7 @@ import React from "react";
 import {CloseOutlined, CheckOutlined, RocketOutlined, FieldTimeOutlined, FireOutlined} from '@ant-design/icons';
 import styles from './RecipeLayout.less'
 import NutritionLabel from "../components/NutritionLabel/NutritionLabel";
+import constructTag from '../helper_functions/constructTag.jsx';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -10,23 +11,6 @@ const tagColor = {'vegetable': 'green', 'spice': 'red', 'seafood': 'blue', 'oil'
 'meat': 'darksalmon', 'condiment': 'orange', 'flour': 'sandybrown',
   'nut': 'brown', 'baking': 'pink','dairy': 'darkorange','pasta': 'gold',
   'protein': 'gold', 'misc.':'lightblue', 'grain': 'peru', 'seasoning': 'firebrick'}
-
-/**
- * This function is used to construct a list of tag components based on tags available
- * in recipe data JSON.
- *
- * @param tagData A list of strings for tags fetched from raw recipe data
- *
- * @return {[]} Return a list of Tag components.
- */
-function constructTag(tagData){
-  const tagList = []
-
-  for(let i = 0; i < tagData.length; i++) {
-    tagList.push(<Tag color="volcano" key = { "recipeTag" + i }>{ tagData[i] }</Tag>);
-  }
-  return tagList;
-}
 
 /**
  * This function is used to construct a summary view of a recipe including its rating, difficulty,
