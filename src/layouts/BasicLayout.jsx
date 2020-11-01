@@ -10,7 +10,7 @@ const BasicLayout = ({ children }) => (
   <Layout className="layout">
     <Header>
       <div className="logo" />
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+      <Menu theme="dark" mode="horizontal">
         <Menu.Item key="1">
           <Link to='/recipe-list'>Recipe List</Link>
         </Menu.Item>
@@ -18,6 +18,9 @@ const BasicLayout = ({ children }) => (
           <Link to='/meal-planner'>Meal Planner</Link>
         </Menu.Item>
         <Menu.Item key="3">Search Recipe</Menu.Item>
+        <Menu.Item key="4">
+          <Link to='/shopping-list'>Shopping List</Link>
+        </Menu.Item>
       </Menu>
     </Header>
     <Content style={{ padding: '0 50px' }}>
