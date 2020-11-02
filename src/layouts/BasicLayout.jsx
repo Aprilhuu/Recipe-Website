@@ -1,5 +1,7 @@
 import { Layout, Menu, Breadcrumb, Anchor, Button, Row, Col } from 'antd';
 import { Link } from 'umi';
+import UserLogin from '../pages/user_login/index.js'
+
 
 const { Header, Content, Footer } = Layout;
 
@@ -25,7 +27,7 @@ const BasicLayout = ({ children }) => (
           </Menu>
         </Col>
         <Col span={2}>
-          <Button> Login </Button>
+          <UserLogin/>
         </Col>
       </Row>
     </Header>
