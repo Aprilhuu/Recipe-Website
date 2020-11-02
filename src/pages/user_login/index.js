@@ -45,6 +45,10 @@ class UserLogin extends PureComponent {
     axios.post(api_endpoint+'/v1/users/login', {
       'username': username,
       'password': password,
+    },
+    {
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
     })
     // to use the arrow function let the this within the function scope
     .then(response => {

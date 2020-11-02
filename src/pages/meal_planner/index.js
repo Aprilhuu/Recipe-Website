@@ -102,7 +102,11 @@ class MealPlanner extends PureComponent {
 
   // after the component is rendered
   componentDidMount(){
-    axios.get(api_endpoint+'/v1/users/meal_plan', {})
+
+    axios.get(api_endpoint+'/v1/users/meal_plan', {}, {
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
+    })
     .then(response =>{
       console.log(response['data']['result'])
       this.setState({
@@ -120,6 +124,10 @@ class MealPlanner extends PureComponent {
     // send to backend
     axios.post(api_endpoint+'/v1/users/meal_plan', {
       'new_plan': meal_plan,
+    },
+    {
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
     })
     .then(function (response) {
       console.log(response);
