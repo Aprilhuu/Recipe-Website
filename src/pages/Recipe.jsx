@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
 import { Spin } from 'antd';
 
-// import { recipes } from '../../recipes/recipes.js';
 import RecipeLayout from "../layouts/RecipeLayout";
+import axios from "axios";
+import defaultSettings from '../../config/defaultSettings';
+const {api_endpoint} = defaultSettings
 
 class Recipes extends PureComponent {
     state = {
@@ -24,10 +26,10 @@ class Recipes extends PureComponent {
 
     componentDidMount() {
       this.setState({isFetching: true});
-      fetch("http://localhost:5000/get_recipe/" + this.recipe_id)
-        .then(response => response.json())
-        .then(response => this.setState({ recipe_detail: response, isFetching: false }))
-        .catch(() => this.setState({ hasErrors: true, isFetching: false }));
+      axios.get(api_endpoint+'/v1/recipes/'+ this.recipe_id, {})
+        .then(response =>{
+          this.setState({ recipe_detail: response['data']['result'], isFetching: false });
+        })
     }
 
     handleSwitchChanged = () => {
