@@ -29,6 +29,11 @@ export default defineConfig({
       component: '../layouts/BasicLayout',
       routes: [
         {
+          path: '/shopping-list',
+          name: 'default',
+          component: './ShoppingList.jsx'
+        },
+        {
           path: '/',
           //redirect: '/dashboard/analysis',
           name: 'default',
@@ -56,7 +61,7 @@ export default defineConfig({
           path: '/recipe/:recipe_id',
           name: 'default',
           component: './Recipe.jsx'
-        },
+        }
       ],
     },
   ],
