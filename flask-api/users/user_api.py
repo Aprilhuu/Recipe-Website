@@ -34,9 +34,15 @@ class User(Resource):
             # return unauthorizaed if password not matched
             if pd_stored != pd_md5:
                 return {'result':'Invalide Credentials'}, 401
+
+            # and set the httponly cookie so that frontend
+            # dont need to fetch it everytime
+            res = make_response(jsonify({'result':{'username': username}}))
+            res.set_cookie('Authorization', username, httponly=True)
+
         except Exception as e:
             return {'result': str(e)}, 400
 
-        return {'result':{'username': username}}, 200
+        return res, 200
 
 
