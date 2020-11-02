@@ -1,5 +1,5 @@
 from flask_restx import Resource
-from flask import request, make_response, jsonify
+from flask import request, make_response, jsonify, after_this_request
 from bson.objectid import ObjectId
 import hashlib
 
@@ -35,14 +35,14 @@ class User(Resource):
             if pd_stored != pd_md5:
                 return {'result':'Invalide Credentials'}, 401
 
-            # and set the httponly cookie so that frontend
-            # dont need to fetch it everytime
-            res = make_response(jsonify({'result':{'username': username}}))
-            res.set_cookie('Authorization', username, httponly=True)
-
         except Exception as e:
             return {'result': str(e)}, 400
 
-        return res, 200
+        @after_this_request
+        def after_request(response):
+            # and set the httponly cookie so that frontend
+            # dont need to fetch it everytime
+            response.set_cookie('Authorization', username, httponly=True)
+            return response
 
-
+        return {'result':{'username': username}}, 200
