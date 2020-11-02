@@ -2,10 +2,12 @@ from flask_restx import Resource
 from flask import request
 from bson.objectid import ObjectId
 from fractions import Fraction
+from flask_jwt import jwt_required, current_identity
 
 from app import db_connection
 
 class Meal_Plan(Resource):
+	@jwt_required()
 	def get(self):
 		'''
 		get saved meal plan schedule by user name
@@ -20,7 +22,7 @@ class Meal_Plan(Resource):
 
 		return {'result': mp}, 200
 
-
+	@jwt_required()
 	def post(self):
 		'''
 		update the meal plan by user name
