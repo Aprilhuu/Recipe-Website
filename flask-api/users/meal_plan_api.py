@@ -13,9 +13,9 @@ class Meal_Plan(Resource):
 		get saved meal plan schedule by user name
 		'''
 		user_col = db_connection['users']
-
-		# find user
-		username = 'group3'
+		
+		# get the logined username
+		username = current_identity.get('username')
 		u = user_col.find_one({'username': username})
 		# get meal plan
 		mp = u.get('meal_plan', {})
@@ -35,8 +35,8 @@ class Meal_Plan(Resource):
 
 		user_col = db_connection['users']
 
-		# find user
-		username = 'test_user'
+		# get the logined username
+		username = current_identity.get('username')
 		u = user_col.update(
 			{'username': username},
 			{ '$set':{'meal_plan': new_plan}}
