@@ -17,3 +17,15 @@ jobs:
           heroku_app_name: "ece444apiservice" #Must be unique in Heroku
           heroku_email: "colorzzr@gmail.com"
           appdir: "flask-api"
+      
+      # install for frontend
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - run: npm install --force
+        
+      - uses: akhileshns/heroku-deploy@v3.6.8 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_STAGING_API_KEY}}
+          heroku_app_name: "ece444chiefcopilot"
+          heroku_email: "colorzzr@gmail.com"
