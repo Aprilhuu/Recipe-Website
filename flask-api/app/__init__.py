@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_restx import Api
 from flask_cors import CORS
 import json
@@ -18,8 +18,9 @@ from recipes import recipe_ns
 from users import user_ns
 
 def create_app(extra_config_settings={}):
-    # initialize app and config app
-    app = Flask(__name__)
+    # initialize app and config app template_folder="dist", static_folder="dist", static_url_path=""
+    app = Flask(__name__, static_folder="../dist", template_folder="../dist", static_url_path="")
+
     app.config.from_object(__name__+'.ConfigClass')
     CORS(
         app,
@@ -43,12 +44,13 @@ def create_app(extra_config_settings={}):
     def load_token():
         print("###### Load Token")
         # currently is just username
-        token = request.cookies.get('Authorization')
+        print(request.cookies)
 
-        if not token:
+        try:
+            token = request.cookies.get('Authorization')
             return token
-
-        return token
+        except Exception as e:
+            raise JWTError(description='Error', error=e)
 
     # function is to parse out the infomation in the JWT
     @jwt.jwt_decode_handler
@@ -72,5 +74,10 @@ def create_app(extra_config_settings={}):
 
     # hook the flask_restx api
     module_api.init_app(app)
+
+    @app.route('/copilot', methods=['GET'])
+    def everyone_welcome():
+        return render_template('./index.html'), 200
+
 
     return app

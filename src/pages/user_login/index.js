@@ -42,7 +42,7 @@ class UserLogin extends PureComponent {
     const {username, password} = this.state
 
     // send to backend
-    axios.post(api_endpoint+'/v1/users/login', {
+    axios.post(api_endpoint+'v1/users/login', {
       'username': username,
       'password': password,
     },
