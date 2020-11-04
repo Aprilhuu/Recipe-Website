@@ -25,8 +25,6 @@ jobs:
       - name: Copy the static file
         run: cp -r dist ./flask-api
       
-      - uses: actions/checkout@v2
-      
       - uses: akhileshns/heroku-deploy@v3.6.8 # This is the action
         with:
           heroku_api_key: ${{secrets.HEROKU_STAGING_API_KEY}}
