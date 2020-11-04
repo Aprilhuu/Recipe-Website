@@ -116,7 +116,7 @@ class MealConfig extends PureComponent {
     return (
       /* Modal view */
       <>
-        <Button type="primary" onClick={this.showModal}>
+        <Button style={{float: 'right', marginTop: '20px'}} type="primary" onClick={this.showModal}>
           Add Meal
         </Button>
         <Modal

@@ -1,26 +1,39 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
-import { Table, Tag, Space, Card, Button } from 'antd';
+import { Table, PageHeader, Card, Button, Typography, Image } from 'antd';
 import MealConfig from './mealConfig.jsx'
 import { Link } from 'umi';
+const { Title } = Typography;
+const { Meta } = Card;
 
 import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
 const render_column_func = function(text, record){
   if(text != undefined && text.recipe_title != undefined){
+    // recipe id here is not right
+    // need to return more than just the name
     var url = "/recipe/"+text.recipe_id
     return (
-      <Tag>
-        <Link to={url}>{text.recipe_title}</Link>
-      </Tag>
+      <Card
+        hoverable
+        cover={
+          <Image
+          width={200}
+          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+        />
+        }
+        style={{overflow:'hidden'}}
+      >
+        <Meta title={<Link to={url}>{text.recipe_title}</Link>} description="Placeholder" />
+      </Card>
     )
   }
 }
 
 const columns = [
   {
-    title: 'Meals',
+    title: 'Meal Time',
     dataIndex: 'meals',
     key: 'meals',
   },
@@ -104,7 +117,6 @@ class MealPlanner extends PureComponent {
   componentDidMount(){
     axios.get(api_endpoint+'/v1/users/meal_plan', {})
     .then(response =>{
-      console.log(response['data']['result'])
       this.setState({
         meal_plan:response['data']['result'],
       });
@@ -162,11 +174,32 @@ class MealPlanner extends PureComponent {
 
     return(
       <Card>
-        <MealConfig newItemFunc={this.add_new_plan}/>
-        <Button onClick={this.save_my_plan}>Save My Plan</Button>
-        <Table columns={columns} dataSource={meal_plan} bordered />
+        <PageHeader
+            title="Meal Planner"
+            onBack={() => window.history.back()}
+            subTitle={<span>Plan your next meal. The ingredients you have to shop for will be in your <a href='shopping-list'>shopping list</a>!</span>}
+        ></PageHeader>
+
+        {/* button here for testing purpose */}
+        {/* <Button style={{float: 'right'}} onClick={this.save_my_plan}>Save My Plan</Button> */}
+        <Card style={{ marginTop: '50px'}}>
+
+          {/* choose week, or just the upcoming week? */}
+          <Title level={2} style={{float: 'left', paddingTop: '10px', paddingLeft: '10px'}}>
+            The Week Of:
+          </Title>
+          <MealConfig newItemFunc={this.add_new_plan}/>
+          <Button></Button>
+        </Card>
+
+        <Table pagination={false} tableLayout='fixed' columns={columns} dataSource={meal_plan} bordered />
+
       </Card>
     )
+  }
+
+  componentWillUnmount() {
+    this.save_my_plan()
   }
 }
 
