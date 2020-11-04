@@ -1,2 +1,1 @@
-web: cd .. & npm run-script build & cp -r dist ./flask-api/
-api: cd flask-api & gunicorn "app:create_app()" -b "0.0.0.0:$PORT" -w 3
+web: gunicorn "app:create_app()" -b "0.0.0.0:$PORT" -w 3
