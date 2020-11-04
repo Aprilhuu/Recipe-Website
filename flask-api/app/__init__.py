@@ -12,7 +12,7 @@ client = pymongo.MongoClient("mongodb+srv://group3:group3@cluster0.hgfwg.mongodb
 db_connection = client["group3"]
 
 # API object
-module_api = Api()
+module_api = Api(doc='/v1/doc')
 # then we can import since order mattered
 from recipes import recipe_ns
 from users import user_ns
@@ -75,7 +75,11 @@ def create_app(extra_config_settings={}):
     # hook the flask_restx api
     module_api.init_app(app)
 
-    @app.route('/copilot', methods=['GET'])
+    @app.route('/copilot')
+    @app.route('/meal-planner')
+    @app.route('/shopping-list')
+    @app.route('/recipe-list')
+    @app.route('/recipe/<recipe_id>')
     def everyone_welcome():
         return render_template('./index.html'), 200
 
