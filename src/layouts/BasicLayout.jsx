@@ -1,5 +1,6 @@
 import { Layout, Menu, Breadcrumb, Anchor } from 'antd';
 import { Link } from 'umi';
+import home from '../assets/images/home.png'
 
 const { Header, Content, Footer } = Layout;
 
@@ -10,7 +11,10 @@ const BasicLayout = ({ children }) => (
   <Layout className="layout">
     <Header>
       <div className="logo" />
-      <Menu theme="dark" mode="horizontal">
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys="0">
+        <Menu.Item key="0">
+        <Link to='/'><img width="30" src={home}></img></Link>
+        </Menu.Item>
         <Menu.Item key="1">
           <Link to='/recipe-list'>Recipe List</Link>
         </Menu.Item>
@@ -24,11 +28,8 @@ const BasicLayout = ({ children }) => (
       </Menu>
     </Header>
     <Content style={{ padding: '0 50px' }}>
-      <Breadcrumb style={{ margin: '16px 0' }}>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>List</Breadcrumb.Item>
-        <Breadcrumb.Item>App</Breadcrumb.Item>
-      </Breadcrumb>
+      <br></br>
+      <br></br>
       <div className="site-layout-content">{children}</div>
     </Content>
     <Footer style={{ textAlign: 'center' }}>Chef Co-Pilot ©2020 by Quaranteam</Footer>
