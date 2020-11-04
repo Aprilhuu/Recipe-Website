@@ -9,8 +9,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
     steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Packages
+        run: npm install
+      - name: Build page
+        run: npm run build
+      - name: Copy the static file
+        run: cp -r dist ./flask-api
+      
       - uses: actions/checkout@v2
+      
       - uses: akhileshns/heroku-deploy@v3.6.8 # This is the action
         with:
           heroku_api_key: ${{secrets.HEROKU_STAGING_API_KEY}}
