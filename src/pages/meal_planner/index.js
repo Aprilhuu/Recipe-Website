@@ -174,6 +174,7 @@ class MealPlanner extends PureComponent {
       <Card>
         <MealConfig newItemFunc={this.add_new_plan}/>
         <Button onClick={this.save_my_plan}>Save My Plan</Button>
+        <Button onClick={this.save_my_plan}>Save My Plan</Button>
         <Table columns={columns} dataSource={meal_plan} bordered />
       </Card>
     )
