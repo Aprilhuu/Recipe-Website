@@ -202,9 +202,11 @@ const ingredientAndImage = (recipeIngredients, recipeMediaURL, servings, fastRea
  * @param {[object]} recipeInstructionList A list of objects containing information about each recipe step
  * @param {boolean} fastReading A boolean indicating if fast-reading mode has been activated or not
  *
+ * @param {[object]} nutritionDetails A json object containing nutrition info of the recipe
+ * @param {int} servingSize Integer value specifying serving size of one recipe
  * @return React component for a List
  */
-const instructionList = (recipeInstructionList, fastReading) => {
+const instructionList = (recipeInstructionList, fastReading, nutritionDetails, servingSize) => {
   const processedList = [];
   for (let i = 0; i < recipeInstructionList.length; i++){
     processedList.push({
@@ -224,7 +226,6 @@ const instructionList = (recipeInstructionList, fastReading) => {
     avatarLink = <Avatar src="https://www.flaticon.com/svg/static/icons/svg/843/843260.svg" />;
     colWidth = 16;
   }
-
   return(
     <Row className={ styles.rowContentBody } align="top" >
       <Col span={colWidth}>
@@ -257,7 +258,7 @@ const instructionList = (recipeInstructionList, fastReading) => {
         />
       </Col>
       <Col span={2} style={{marginTop: '50px'}}>
-        <NutritionLabel />
+        <NutritionLabel nutritionFact={nutritionDetails} servingSize={servingSize}/>
       </Col>
     </Row>
   );
@@ -298,7 +299,8 @@ const RecipeLayout = ({ recipeDetail, fastReading, onSwitchChanged }) => {
         { ingredientAndImage(recipeDetail.ingredients, recipeDetail.mediaURL, recipeDetail.servings, fastReading) }
 
         {/* Row 5: Instructions and nutrition facts */}
-        { instructionList(recipeDetail.instructions, fastReading) }
+        { instructionList(recipeDetail.instructions, fastReading,
+          recipeDetail["nutritional info"], recipeDetail.servings) }
       </Content>
     </Layout>
   );
