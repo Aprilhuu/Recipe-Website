@@ -1,7 +1,8 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
-import { Modal, Button, Input, Space } from 'antd';
+import { Modal, Button, Input, Space, Row, Col, Divider } from 'antd';
 import { Link } from 'umi';
+import styles from './login.less'
 
 import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
@@ -112,19 +113,41 @@ class UserLogin extends PureComponent {
       <div>
         <Button onClick={this.show_login_modal}> Login </Button>
         <Modal
-          title="User Login"
           visible={show}
-          onOk={this.user_login}
           onCancel={this.close_login_modal}
+          width={1000}
+          footer={null}
         >
-          <Input
-            placeholder="username"
-            onChange={this.username_update}
-          />
-          <Input.Password
-            placeholder="password"
-            onChange={this.password_update}
-          />
+          <div className={styles.modal}>
+            <Row>
+              <Col span={12}>
+                <div className={styles.left_text_display}>
+                  <h2> Join the Chef Copilot </h2>
+                  <h3> Plan Your Healthy Day! </h3>
+                  <Divider />
+                  <Button 
+                    className={styles.register_button}
+                  >Register Now!</Button>
+                </div>
+              </Col>
+              <Col span={12}>
+                <Input
+                  placeholder="username"
+                  onChange={this.username_update}
+                  className={styles.input_box}
+                />
+                <Input.Password
+                  placeholder="password"
+                  onChange={this.password_update}
+                  className={styles.input_box}
+                />
+                <Button 
+                  onClick={this.user_login}
+                  className={styles.login_button}
+                >Sign In</Button>
+              </Col>
+            </Row>
+          </div>
         </Modal>
       </div>
     ]
