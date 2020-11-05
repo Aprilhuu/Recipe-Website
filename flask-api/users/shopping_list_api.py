@@ -60,7 +60,7 @@ class Meal_Plan_2_Shopping_List(Resource):
             recipe = r_collection.find()
             for x in recipe[:3]:
                 for ingredient in x['ingredients']:
-                    print(ingredient)
+                    # print(ingredient)
 
                     # Note -1 means the ingredient has no quantity restriction
                     quantity = ingredient.get('quantity', '-1 ')
@@ -69,6 +69,8 @@ class Meal_Plan_2_Shopping_List(Resource):
 
                     t = quantity.split(' ')
                     quantity, unit = (Fraction(t[0]), t[1]) if len(t) == 2 else (Fraction(t[0]), None)
+                    # only add the unit when the recipe provides
+                    q_str = '%s %s'%(str(quantity), unit) if unit else '%s'%(str(quantity))
 
                     type_ = ingredient['type']
                     name = ingredient['name']
@@ -80,7 +82,7 @@ class Meal_Plan_2_Shopping_List(Resource):
                         ret_json[name]['detail'].append({
                             'recipe_id': str(x['_id']),
                             'recipe_title': x['title'],
-                            'quantity': '%s %s'%(str(quantity), unit)
+                            'quantity': q_str
                         })
 
                         # add up the quantity is not -1
@@ -95,7 +97,7 @@ class Meal_Plan_2_Shopping_List(Resource):
                                     {
                                         'recipe_id': str(x['_id']),
                                         'recipe_title': x['title'],
-                                        'quantity': '%s %s'%(str(quantity), unit)
+                                        'quantity': q_str
                                     }
                                 ]
                             }
@@ -106,7 +108,8 @@ class Meal_Plan_2_Shopping_List(Resource):
             for x in ret_json:
                 total_q = ret_json[x].pop('total_q')
                 unit = ret_json[x].pop('unit')
-                ret_json[x].update({'quantity': '%s %s'%(total_q, unit)})
+                q_str = '%s %s'%(str(total_q), unit) if unit else '%s'%(str(total_q))
+                ret_json[x].update({'quantity': q_str})
 
 
             print(ret_json)
