@@ -1,6 +1,6 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
-import { Modal, Button, Input, Space, Row, Col, Divider } from 'antd';
+import { Modal, Button, Input, Space, Row, Col, Divider, Form, Checkbox  } from 'antd';
 import { Link } from 'umi';
 import styles from './login.less'
 
@@ -106,6 +106,21 @@ class UserLogin extends PureComponent {
   }
   
 
+  // <Input
+  //                 placeholder="username"
+  //                 onChange={this.username_update}
+  //                 className={styles.input_box}
+  //               />
+  //               <Input.Password
+  //                 placeholder="password"
+  //                 onChange={this.password_update}
+  //                 className={styles.input_box}
+  //               />
+  //               <Button 
+  //                 onClick={this.user_login}
+  //                 className={styles.login_button}
+  //               >Sign In</Button>
+
   render() {
     const { show, login_flag } = this.state
 
@@ -131,20 +146,38 @@ class UserLogin extends PureComponent {
                 </div>
               </Col>
               <Col span={12}>
-                <Input
-                  placeholder="username"
-                  onChange={this.username_update}
-                  className={styles.input_box}
-                />
-                <Input.Password
-                  placeholder="password"
-                  onChange={this.password_update}
-                  className={styles.input_box}
-                />
-                <Button 
-                  onClick={this.user_login}
-                  className={styles.login_button}
-                >Sign In</Button>
+                <Form
+                  name="basic"
+                  initialValues={{ remember: true }}
+
+                >
+                  <Form.Item
+                    label="Username"
+                    name="username"
+                    rules={[{ required: true, message: 'Please input your username!' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[{ required: true, message: 'Please input your password!' }]}
+                  >
+                    <Input.Password />
+                  </Form.Item>
+
+                  <Form.Item name="remember" valuePropName="checked">
+                    <Checkbox>Remember me</Checkbox>
+                  </Form.Item>
+
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                      Submit
+                    </Button>
+                  </Form.Item>
+                </Form>
+
               </Col>
             </Row>
           </div>
