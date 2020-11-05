@@ -17,8 +17,8 @@ class UserLogin extends PureComponent {
     this.logout = this.logout.bind(this)
     this.show_login_modal = this.show_login_modal.bind(this)
     this.close_login_modal = this.close_login_modal.bind(this)
-    this.username_update = this.username_update.bind(this)
-    this.password_update = this.password_update.bind(this)
+    // this.username_update = this.username_update.bind(this)
+    // this.password_update = this.password_update.bind(this)
 
     const username = localStorage.getItem('username')
     var login_flag = true
@@ -28,9 +28,10 @@ class UserLogin extends PureComponent {
 
     this.state = {
       'show':false,
-      'username': username,
-      'password': undefined,
+      // 'username': username,
+      // 'password': undefined,
       'login_flag': login_flag,
+      'login_success_flag': true,
     };
   }
 
@@ -39,8 +40,8 @@ class UserLogin extends PureComponent {
     
   }
 
-  user_login(){
-    const {username, password} = this.state
+  user_login(values){
+    const {username, password} = values
 
     // send to backend
     axios.post(api_endpoint+'v1/users/login', {
@@ -63,15 +64,12 @@ class UserLogin extends PureComponent {
         'login_flag':true,
         'show':false,
       })
-    }).catch(function (error) {
-      console.log(error);
+    }).catch(error => {
+      // raise login flag
+      this.setState({
+        'login_success_flag':false,
+      })
     });
-
-
-    // raise login flag
-    this.setState({
-      'show':false,
-    })
   }
 
   // remove the username in local storage
@@ -83,17 +81,17 @@ class UserLogin extends PureComponent {
     })
   }
 
-  username_update(e){
-    this.setState({
-      'username':e.target.value,
-    })
-  }
+  // username_update(e){
+  //   this.setState({
+  //     'username':e.target.value,
+  //   })
+  // }
 
-  password_update(e){
-    this.setState({
-      'password':e.target.value,
-    })
-  }
+  // password_update(e){
+  //   this.setState({
+  //     'password':e.target.value,
+  //   })
+  // }
 
   // opent the login modal
   show_login_modal(){
@@ -126,7 +124,16 @@ class UserLogin extends PureComponent {
   //               >Sign In</Button>
 
   render() {
-    const { show, login_flag } = this.state
+    const { show, login_flag, login_success_flag } = this.state
+
+    //this logic is to render the input box message 
+    // base on whether user username/password is correct
+    var help_str = undefined
+    var error = "success"
+    if(login_success_flag == false){
+      help_str = "Please input correct username and password!"
+      error = "error"
+    }
 
     const not_login_component = [
       <div>
@@ -149,15 +156,18 @@ class UserLogin extends PureComponent {
                   >Register Now!</Button>
                 </div>
               </Col>
+
               <Col span={12}>
                 <Form
                   name="basic"
                   initialValues={{ remember: true }}
-
+                  onFinish={this.user_login}
                 >
                   <Form.Item
                     label="Username"
                     name="username"
+                    validateStatus={error}
+                    help={help_str}
                     rules={[{ required: true, message: 'Please input your username!' }]}
                   >
                     <Input />
@@ -166,18 +176,16 @@ class UserLogin extends PureComponent {
                   <Form.Item
                     label="Password"
                     name="password"
+                    validateStatus={error}
+                    help={help_str}
                     rules={[{ required: true, message: 'Please input your password!' }]}
                   >
                     <Input.Password />
                   </Form.Item>
 
-                  <Form.Item name="remember" valuePropName="checked">
-                    <Checkbox>Remember me</Checkbox>
-                  </Form.Item>
-
                   <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                      Submit
+                    <Button className={styles.login_button} type="primary" htmlType="submit">
+                      Sign In
                     </Button>
                   </Form.Item>
                 </Form>
