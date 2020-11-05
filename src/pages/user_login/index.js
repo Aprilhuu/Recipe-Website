@@ -4,6 +4,7 @@ import { Modal, Button, Input, Space, Row,
         Col, Divider, Form, Checkbox, Radio } from 'antd';
 import { Link } from 'umi';
 import styles from './login.less'
+import { withRouter } from "react-router-dom";
 
 import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
@@ -75,11 +76,9 @@ class UserLogin extends PureComponent {
 
   // remove the username in local storage
   logout(){
-    localStorage.removeItem('username')
     console.log("logout")
     // send to backend
-    // send to backend
-    axios.post('http://localhost:5000/'+'v1/users/logout', {},
+    axios.post(api_endpoint+'v1/users/logout', {},
     {
       "Access-Control-Allow-Origin": "*",
       "withCredentials": true,
@@ -89,18 +88,18 @@ class UserLogin extends PureComponent {
       console.log(response);
 
       // if success then set the username into the local storage
-      localStorage.setItem('username', username);
+      localStorage.removeItem('username')
 
-      // raise login flag
+      // set down the flag
       this.setState({
-        'login_flag':true,
-        'show':false,
+        'login_flag':false,
       })
+
+      // redirect to home
+      this.props.history.push("/");
+
     }).catch(error => {
-      // raise login flag
-      this.setState({
-        'login_success_flag':false,
-      })
+      console.log(error)
     });
   }
 
@@ -230,4 +229,4 @@ class UserLogin extends PureComponent {
 }
 
 
-export default UserLogin;
+export default withRouter(UserLogin);
