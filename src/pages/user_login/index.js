@@ -1,6 +1,7 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
-import { Modal, Button, Input, Space, Row, Col, Divider, Form, Checkbox  } from 'antd';
+import { Modal, Button, Input, Space, Row, 
+        Col, Divider, Form, Checkbox, Radio } from 'antd';
 import { Link } from 'umi';
 import styles from './login.less'
 
@@ -17,7 +18,7 @@ class UserLogin extends PureComponent {
     this.logout = this.logout.bind(this)
     this.show_login_modal = this.show_login_modal.bind(this)
     this.close_login_modal = this.close_login_modal.bind(this)
-    // this.username_update = this.username_update.bind(this)
+    this.warning = this.warning.bind(this)
     // this.password_update = this.password_update.bind(this)
 
     const username = localStorage.getItem('username')
@@ -75,23 +76,34 @@ class UserLogin extends PureComponent {
   // remove the username in local storage
   logout(){
     localStorage.removeItem('username')
-    // set down the flag
-    this.setState({
-      'login_flag':false,
+    console.log("logout")
+    // send to backend
+    // send to backend
+    axios.post('http://localhost:5000/'+'v1/users/logout', {},
+    {
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
     })
+    // to use the arrow function let the this within the function scope
+    .then(response => {
+      console.log(response);
+
+      // if success then set the username into the local storage
+      localStorage.setItem('username', username);
+
+      // raise login flag
+      this.setState({
+        'login_flag':true,
+        'show':false,
+      })
+    }).catch(error => {
+      // raise login flag
+      this.setState({
+        'login_success_flag':false,
+      })
+    });
   }
 
-  // username_update(e){
-  //   this.setState({
-  //     'username':e.target.value,
-  //   })
-  // }
-
-  // password_update(e){
-  //   this.setState({
-  //     'password':e.target.value,
-  //   })
-  // }
 
   // opent the login modal
   show_login_modal(){
@@ -106,22 +118,16 @@ class UserLogin extends PureComponent {
       'show':false
     })
   }
-  
 
-  // <Input
-  //                 placeholder="username"
-  //                 onChange={this.username_update}
-  //                 className={styles.input_box}
-  //               />
-  //               <Input.Password
-  //                 placeholder="password"
-  //                 onChange={this.password_update}
-  //                 className={styles.input_box}
-  //               />
-  //               <Button 
-  //                 onClick={this.user_login}
-  //                 className={styles.login_button}
-  //               >Sign In</Button>
+  // let user to confirm before logout
+  warning() {
+    Modal.warning({
+      title: 'Confirm to Logout',
+      content: 'Are you sure to logout?',
+      onOk: this.logout
+    });
+  }
+  
 
   render() {
     const { show, login_flag, login_success_flag } = this.state
@@ -136,7 +142,7 @@ class UserLogin extends PureComponent {
     }
 
     const not_login_component = [
-      <div>
+      <div key="user_login">
         <Button onClick={this.show_login_modal}> Login </Button>
         <Modal
           visible={show}
@@ -197,9 +203,14 @@ class UserLogin extends PureComponent {
       </div>
     ]
 
+    // also use username to render it
+    const username = localStorage.getItem('username') || ' '
     const login_component = [
       <div>
-        <Button onClick={this.logout}> Logout </Button>
+        <Button onClick={this.warning} className={styles.input_box}> Logout </Button>
+        <Button type="primary" shape="circle">
+          {username[0]}
+        </Button>
       </div>
     ]
 

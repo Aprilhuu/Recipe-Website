@@ -47,7 +47,8 @@ def create_app(extra_config_settings={}):
         print(request.cookies)
 
         try:
-            token = request.cookies.get('Authorization')
+            token = request.cookies.get('Authorization', None)
+            
             return token
         except Exception as e:
             raise JWTError(description='Error', error=e)
