@@ -1,8 +1,81 @@
 @import '~antd/lib/style/themes/default.less';
 
+@font-face {
+  font-family: "Good Times";
+  src: url("../assets/fonts/good_times.ttf") format("ttf"),
+}
+
 .pre {
   margin: 12px 0;
   padding: 12px 20px;
-  background: @input-bg;
+  // background: @input-bg;
   box-shadow: @card-shadow;
+}
+
+.blackBackground {
+  background:black;
+}
+
+.blackTitleBox {
+  background:black;
+  margin: auto;
+  height: 60vh;
+  width: 30%;
+}
+
+.whiteSubBox {
+  background:white;
+  margin: auto;
+  height: 80vh;
+}
+
+.whiteSubBoxTitle {
+  font-size: 2em;
+}
+
+.blackSubBoxTitle {
+  font-size: 2em;
+  color: white;
+}
+
+.blackSubBoxSubtitle {
+  font-size: 1.2em;
+  color: #e0e0e0;
+}
+
+.blackSubBox{
+  background:black;
+  margin: auto;
+  height: 100vh;
+}
+
+.whiteText {
+  color: white;
+}
+
+.titleText {
+  padding-top: 30%;
+  font-family: "Good Times";
+  font-size: 2em;
+}
+
+.subText {
+  color: #e0e0e0;
+  font-size: 1.2em;
+}
+
+.helpBox {
+  flex: 50%;
+  padding: 5px;
+}
+
+.helpBoxWrapper {
+  padding-top: 5%;
+  width: 50%;
+  margin: auto;
+}
+
+.center_cropped {
+  max-height: 375px;
+  overflow: hidden;
 }
