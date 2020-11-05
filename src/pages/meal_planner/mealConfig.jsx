@@ -109,7 +109,24 @@ class MealConfig extends PureComponent {
     });
 
     const { newItemFunc } = this.props;
-    newItemFunc({'title':select_recipe_title, 'id':recipe_id}, meal, days);
+    // newItemFunc({'title':select_recipe_title, 'id':recipe_id}, meal, days);
+  }
+
+  // after the component is rendered
+  componentDidMount(){
+
+    axios.get(api_endpoint+'v1/users/meal_plan',{
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
+    })
+    .then(response =>{
+      console.log(response['data']['result'])
+      this.setState({
+        meal_plan:response['data']['result'],
+      });
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
   render() {
