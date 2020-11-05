@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Form, Button, Select, DatePicker, Switch, Checkbox, Row, Col, Modal } from 'antd';
 import { recipes } from '../../../recipes/recipes.js';
+import axios from 'axios';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -8,17 +9,17 @@ const { RangePicker } = DatePicker;
 import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
-{
-  /* Setup for recipe select list */
-}
-const recipeList = [];
-for (let i = 0; i < Object.keys(recipes).length; i++) {
-  recipeList.push(
-    <Option key={i} value={i}>
-      {recipes[i].title}
-    </Option>,
-  );
-}
+// {
+//   /* Setup for recipe select list */
+// }
+// const recipeList = [];
+// for (let i = 0; i < Object.keys(recipes).length; i++) {
+//   recipeList.push(
+//     <Option key={i} value={i}>
+//       {recipes[i].title}
+//     </Option>,
+//   );
+// }
 
 {
   /* Formatting */
@@ -52,8 +53,6 @@ const rangeConfig = {
 class MealConfig extends PureComponent {
   /* For Modal View */
 
-  state = { visible: false };
-
   showModal = () => {
     this.setState({
       visible: true,
@@ -77,6 +76,28 @@ class MealConfig extends PureComponent {
     this.closeForm = this.closeForm.bind(this);
 
     // console.log(newItemFunc)
+    this.state = { 
+      'visible': false ,
+      'recipes': [],
+    };
+  }
+
+  // after the component is rendered
+  componentDidMount(){
+
+    axios.get(api_endpoint+'v1/recipes/',{
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
+    })
+    .then(response =>{
+      // console.log(response['data']['result'])
+      this.setState({
+        recipes: response['data']['result'],
+      });
+      
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
   onChange(value) {
@@ -94,10 +115,12 @@ class MealConfig extends PureComponent {
 
   onFinish(values) {
     console.log('Success:', values);
+    const {recipes} =  this.state
+
     // update the name of attribute later
     var recipe_id = values['recipe'];
-    var select_recipe_title = recipes[recipe_id].title
-    console.log(recipes[recipe_id])
+    var rp = recipes[recipe_id]
+    console.log(rp)
 
     var meal = values['meal-time-picker'];
     // const days_to_int = {"monday":1,"tuesday":2,"wednesday":3,"thursday":4,"friday":5,"saturday":6,"sunday":7}
@@ -109,27 +132,21 @@ class MealConfig extends PureComponent {
     });
 
     const { newItemFunc } = this.props;
-    // newItemFunc({'title':select_recipe_title, 'id':recipe_id}, meal, days);
-  }
-
-  // after the component is rendered
-  componentDidMount(){
-
-    axios.get(api_endpoint+'v1/users/meal_plan',{
-      "Access-Control-Allow-Origin": "*",
-      "withCredentials": true,
-    })
-    .then(response =>{
-      console.log(response['data']['result'])
-      this.setState({
-        meal_plan:response['data']['result'],
-      });
-    }).catch(function (error) {
-      console.log(error);
-    });
+    newItemFunc(rp, meal, days);
   }
 
   render() {
+    // start to prepare the drop down
+    const { recipes } =  this.state
+    var recipeList = []
+    for (let i = 0; i < recipes.length; i++) {
+      recipeList.push(
+        <Option key={i} value={i}>
+          {recipes[i].title}
+        </Option>,
+      );
+    }
+
     return (
       /* Modal view */
       <>
@@ -270,16 +287,6 @@ class MealConfig extends PureComponent {
                 <Select.Option value="Lunch">Lunch</Select.Option>
                 <Select.Option value="Dinner">Dinner</Select.Option>
               </Select>
-            </Form.Item>
-
-            {/* Select duration */}
-            <Form.Item name="range-picker" label="Duration of Meal" {...rangeConfig}>
-              <RangePicker />
-            </Form.Item>
-
-            {/* Switch to enable/disable notifications*/}
-            <Form.Item name="noifications" label="Enable Notifications" valuePropName="checked">
-              <Switch />
             </Form.Item>
 
             {/* Save button */}
