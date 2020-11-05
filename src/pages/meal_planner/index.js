@@ -102,13 +102,19 @@ class MealPlanner extends PureComponent {
 
   // after the component is rendered
   componentDidMount(){
-    axios.get(api_endpoint+'/v1/users/meal_plan', {})
+
+    axios.get(api_endpoint+'v1/users/meal_plan',{
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
+    })
     .then(response =>{
       console.log(response['data']['result'])
       this.setState({
         meal_plan:response['data']['result'],
       });
-    })
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
 
@@ -118,8 +124,12 @@ class MealPlanner extends PureComponent {
     // console.log(meal_plan)
 
     // send to backend
-    axios.post(api_endpoint+'/v1/users/meal_plan', {
+    axios.post(api_endpoint+'v1/users/meal_plan', {
       'new_plan': meal_plan,
+    },
+    {
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
     })
     .then(function (response) {
       console.log(response);
