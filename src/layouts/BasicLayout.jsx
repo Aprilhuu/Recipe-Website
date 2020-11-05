@@ -1,6 +1,5 @@
 import { Layout, Menu, Breadcrumb, Anchor, Button, Row, Col } from 'antd';
 import { Link } from 'umi';
-
 import UserLogin from '../pages/user_login/index.js'
 import home from '../assets/images/home.png'
 
@@ -17,7 +16,6 @@ const BasicLayout = ({ children }) => (
           <div className="logo" />
         </Col>
         <Col span={21}>
-          <div className="logo" />
           <Menu theme="dark" mode="horizontal" defaultSelectedKeys="0">
             <Menu.Item key="0">
             <Link to='/'><img width="30" src={home}></img></Link>
