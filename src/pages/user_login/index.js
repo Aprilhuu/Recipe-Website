@@ -75,21 +75,18 @@ class UserLogin extends PureComponent {
 
   // remove the username in local storage
   logout(){
-    localStorage.removeItem('username')
-    console.log("logout")
+    // get the username
+    const username = localStorage.getItem('username')
+    
     // send to backend
-    // send to backend
-    axios.post('http://localhost:5000/'+'v1/users/logout', {},
+    axios.post(api_endpoint+'v1/users/logout', {},
     {
-      "Access-Control-Allow-Origin": "*",
-      "withCredentials": true,
+      headers: {"Authorization":username}
     })
     // to use the arrow function let the this within the function scope
     .then(response => {
-      console.log(response);
-
-      // if success then set the username into the local storage
-      localStorage.setItem('username', username);
+      // and remove the item
+      localStorage.removeItem('username')
 
       // raise login flag
       this.setState({
