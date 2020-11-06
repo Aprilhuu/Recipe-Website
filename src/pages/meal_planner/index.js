@@ -157,7 +157,7 @@ class MealPlanner extends PureComponent {
       // console.log(days[i])
       new_plan[meal_2_int[meal]][days[i]] = {
           'recipe_title':recipe.title, 
-          'description':'Update meals',
+          'description':recipe.description,
           'recipe_id': recipe.id
         }
     }
