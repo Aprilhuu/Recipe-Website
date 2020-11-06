@@ -79,7 +79,7 @@ def create_app(extra_config_settings={}):
         u = uc.find_one({'username':payload})
 
         if not u:
-            raise JWTError(description='Unauthorized', error='')
+            raise None
 
         return {"username": payload}
 
