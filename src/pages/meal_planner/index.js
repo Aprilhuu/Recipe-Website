@@ -106,7 +106,7 @@ class MealPlanner extends PureComponent {
     const username = localStorage.getItem('username')
     console.log(username)
 
-    axios.get('http://localhost:5000/'+'v1/users/meal_plan',{
+    axios.get(api_endpoint+'v1/users/meal_plan',{
       headers: {"Authorization":username}
     })
     .then(response =>{
@@ -127,7 +127,7 @@ class MealPlanner extends PureComponent {
     const username = localStorage.getItem('username')
 
     // send to backend
-    axios.post('http://localhost:5000/'+'v1/users/meal_plan', {
+    axios.post(api_endpoint+'v1/users/meal_plan', {
       'new_plan': meal_plan,
     },
     {
