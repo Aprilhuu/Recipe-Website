@@ -66,6 +66,8 @@ class UserLogin extends PureComponent {
         'login_flag':true,
         'show':false,
       })
+      // force to reload page
+      window.location.reload();
     }).catch(error => {
       // raise login flag
       this.setState({
@@ -76,18 +78,15 @@ class UserLogin extends PureComponent {
 
   // remove the username in local storage
   logout(){
-    console.log("logout")
+    // get the username
+    const username = localStorage.getItem('username')
     // send to backend
     axios.post(api_endpoint+'v1/users/logout', {},
     {
-      "Access-Control-Allow-Origin": "*",
-      "withCredentials": true,
+      headers: {"Authorization":username}
     })
     // to use the arrow function let the this within the function scope
     .then(response => {
-      console.log(response);
-
-      // if success then set the username into the local storage
       localStorage.removeItem('username')
 
       // set down the flag
@@ -97,6 +96,7 @@ class UserLogin extends PureComponent {
 
       // redirect to home
       this.props.history.push("/");
+      window.location.reload();
 
     }).catch(error => {
       console.log(error)

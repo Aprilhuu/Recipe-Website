@@ -102,10 +102,12 @@ class MealPlanner extends PureComponent {
 
   // after the component is rendered
   componentDidMount(){
+    // get logined user if exist
+    const username = localStorage.getItem('username')
+    console.log(username)
 
     axios.get(api_endpoint+'v1/users/meal_plan',{
-      "Access-Control-Allow-Origin": "*",
-      "withCredentials": true,
+      headers: {"Authorization":username}
     })
     .then(response =>{
       console.log(response['data']['result'])
@@ -121,15 +123,15 @@ class MealPlanner extends PureComponent {
   // save the schedule to the database
   save_my_plan(){
     var {meal_plan} = this.state
-    // console.log(meal_plan)
+    // get logined user if exist
+    const username = localStorage.getItem('username')
 
     // send to backend
     axios.post(api_endpoint+'v1/users/meal_plan', {
       'new_plan': meal_plan,
     },
     {
-      "Access-Control-Allow-Origin": "*",
-      "withCredentials": true,
+      headers: {"Authorization": username},
     })
     .then(function (response) {
       console.log(response);
