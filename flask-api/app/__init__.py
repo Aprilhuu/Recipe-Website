@@ -47,7 +47,10 @@ def create_app(extra_config_settings={}):
         print(request.cookies)
 
         try:
-            token = request.cookies.get('Authorization')
+            token = request.headers.get('Authorization', None)
+            if not token:
+                raise Exception("Unauthorized")
+            
             return token
         except Exception as e:
             raise JWTError(description='Error', error=e)
@@ -70,6 +73,14 @@ def create_app(extra_config_settings={}):
     def identify(payload):
         print("###### identify")
         print(payload)
+
+        # connect to user db see if user exist
+        uc = db_connection['users']
+        u = uc.find_one({'username':payload})
+
+        if not u:
+            return None
+
         return {"username": payload}
 
     # hook the flask_restx api
