@@ -115,23 +115,35 @@ class MealPlanner extends PureComponent {
 
   // after the component is rendered
   componentDidMount(){
-    axios.get(api_endpoint+'/v1/users/meal_plan', {})
+    // get logined user if exist
+    const username = localStorage.getItem('username')
+    console.log(username)
+
+    axios.get(api_endpoint+'v1/users/meal_plan',{
+      headers: {"Authorization":username}
+    })
     .then(response =>{
       this.setState({
         meal_plan:response['data']['result'],
       });
-    })
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
 
   // save the schedule to the database
   save_my_plan(){
     var {meal_plan} = this.state
-    // console.log(meal_plan)
+    // get logined user if exist
+    const username = localStorage.getItem('username')
 
     // send to backend
-    axios.post(api_endpoint+'/v1/users/meal_plan', {
+    axios.post(api_endpoint+'v1/users/meal_plan', {
       'new_plan': meal_plan,
+    },
+    {
+      headers: {"Authorization": username},
     })
     .then(function (response) {
       console.log(response);
@@ -157,7 +169,7 @@ class MealPlanner extends PureComponent {
       // console.log(days[i])
       new_plan[meal_2_int[meal]][days[i]] = {
           'recipe_title':recipe.title, 
-          'description':'Update meals',
+          'description':recipe.description,
           'recipe_id': recipe.id
         }
     }
