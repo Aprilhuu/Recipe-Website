@@ -20,7 +20,7 @@ class UserLogin extends PureComponent {
     this.show_login_modal = this.show_login_modal.bind(this)
     this.close_login_modal = this.close_login_modal.bind(this)
     this.warning = this.warning.bind(this)
-    // this.password_update = this.password_update.bind(this)
+    this.switch_bw_login_register = this.switch_bw_login_register.bind(this)
 
     const username = localStorage.getItem('username')
     var login_flag = true
@@ -34,26 +34,25 @@ class UserLogin extends PureComponent {
       // 'password': undefined,
       'login_flag': login_flag,
       'login_success_flag': true,
+      'login_form': true,
     };
   }
 
-  // after the component is rendered
-  componentDidMount(){
-    
-  }
-
   user_login(values){
-    const {username, password} = values
+    const {username, password, login_form} = values
+
+    // add here is the register flag is on
+    // endpoint become register
+    var path = 'v1/users/login'
+    if(login_form == false){
+      path = 'v1/users/register'
+    }
 
     // send to backend
-    axios.post(api_endpoint+'v1/users/login', {
+    axios.post(api_endpoint+path, {
       'username': username,
       'password': password,
-    },
-    {
-      "Access-Control-Allow-Origin": "*",
-      "withCredentials": true,
-    })
+    },{})
     // to use the arrow function let the this within the function scope
     .then(response => {
       console.log(response);
@@ -103,6 +102,12 @@ class UserLogin extends PureComponent {
     });
   }
 
+  switch_bw_login_register(){
+    const { login_form } = this.state
+    this.setState({
+      'login_form':!login_form
+    })
+  }
 
   // opent the login modal
   show_login_modal(){
@@ -129,7 +134,7 @@ class UserLogin extends PureComponent {
   
 
   render() {
-    const { show, login_flag, login_success_flag } = this.state
+    const { show, login_flag, login_success_flag, login_form } = this.state
 
     //this logic is to render the input box message 
     // base on whether user username/password is correct
@@ -138,6 +143,34 @@ class UserLogin extends PureComponent {
     if(login_success_flag == false){
       help_str = "Please input correct username and password!"
       error = "error"
+    }
+
+    // switch between login and register
+    var sign_or_register = (
+      <Button className={styles.login_button} type="primary" htmlType="submit">
+        Sign In
+      </Button>
+    )
+    // also the register button will switch to the login
+    var reg_log_switch_button = (
+      <Button 
+        className={styles.register_button}
+        onClick={this.switch_bw_login_register}
+      >Register Now!</Button>
+    )
+    if(login_form == false){
+      sign_or_register = (
+        <Button className={styles.login_button} type="primary" htmlType="submit">
+          Register
+        </Button>
+      )
+
+      reg_log_switch_button = (
+        <Button 
+          className={styles.register_button}
+          onClick={this.switch_bw_login_register}
+        >Already has account?</Button>
+      )
     }
 
     const not_login_component = [
@@ -156,9 +189,7 @@ class UserLogin extends PureComponent {
                   <h2> Join the Chef Copilot </h2>
                   <h3> Plan Your Healthy Day! </h3>
                   <Divider />
-                  <Button 
-                    className={styles.register_button}
-                  >Register Now!</Button>
+                  {reg_log_switch_button}
                 </div>
               </Col>
 
@@ -189,9 +220,7 @@ class UserLogin extends PureComponent {
                   </Form.Item>
 
                   <Form.Item>
-                    <Button className={styles.login_button} type="primary" htmlType="submit">
-                      Sign In
-                    </Button>
+                    {sign_or_register}
                   </Form.Item>
                 </Form>
 
