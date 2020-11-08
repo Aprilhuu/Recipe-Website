@@ -33,17 +33,15 @@ class UserLogin extends PureComponent {
       // 'username': username,
       // 'password': undefined,
       'login_flag': login_flag,
-      'login_success_flag': true,
       'login_form': true,
+
+      'help_str': undefined,
     };
   }
 
   user_login(values){
     const { username, password } = values
     const { login_form } = this.state
-
-    console.log(login_form)
-
     // add here is the register flag is on
     // endpoint become register
     var path = 'v1/users/login'
@@ -58,7 +56,7 @@ class UserLogin extends PureComponent {
     },{})
     // to use the arrow function let the this within the function scope
     .then(response => {
-      console.log(response);
+      // console.log(response);
 
       // if success then set the username into the local storage
       localStorage.setItem('username', username);
@@ -71,9 +69,15 @@ class UserLogin extends PureComponent {
       // force to reload page
       window.location.reload();
     }).catch(error => {
+      console.log(error.response)
       // raise login flag
+      // based on the flag
+      var error_message = 'please input correct username and password!'
+      if(login_form == false){
+        error_message = 'user already exist! please try another one'
+      }
       this.setState({
-        'login_success_flag':false,
+        'help_str':error_message,
       })
     });
   }
@@ -108,21 +112,24 @@ class UserLogin extends PureComponent {
   switch_bw_login_register(){
     const { login_form } = this.state
     this.setState({
-      'login_form':!login_form
+      'login_form':!login_form,
+      'help_str': undefined,
     })
   }
 
   // opent the login modal
   show_login_modal(){
     this.setState({
-      'show':true
+      'show':true,
+      // reset to login state every time
+      'login_form': true,
     })
   }
 
   // close login modal
   close_login_modal(){
     this.setState({
-      'show':false
+      'show':false,
     })
   }
 
@@ -137,14 +144,12 @@ class UserLogin extends PureComponent {
   
 
   render() {
-    const { show, login_flag, login_success_flag, login_form } = this.state
+    const { show, login_flag, help_str, login_form } = this.state
 
     //this logic is to render the input box message 
     // base on whether user username/password is correct
-    var help_str = undefined
     var error = "success"
-    if(login_success_flag == false){
-      help_str = "Please input correct username and password!"
+    if(help_str != undefined){
       error = "error"
     }
 
@@ -205,8 +210,6 @@ class UserLogin extends PureComponent {
                   <Form.Item
                     label="Username"
                     name="username"
-                    validateStatus={error}
-                    help={help_str}
                     rules={[{ required: true, message: 'Please input your username!' }]}
                   >
                     <Input />
@@ -238,8 +241,8 @@ class UserLogin extends PureComponent {
     const username = localStorage.getItem('username') || ' '
     const login_component = [
       <div>
-        <Button onClick={this.warning} className={styles.input_box}> Logout </Button>
-        <Button type="primary" shape="circle">
+        <Button key='logout_button' onClick={this.warning} className={styles.input_box}> Logout </Button>
+        <Button key='user_icon' type="primary" shape="circle">
           {username[0]}
         </Button>
       </div>
