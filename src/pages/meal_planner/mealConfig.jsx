@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { Form, Button, Select, DatePicker, Switch, Checkbox, Row, Col, Modal } from 'antd';
-import { recipes } from '../../../recipes/recipes.js';
 import axios from 'axios';
 
 const { Option } = Select;
@@ -85,6 +84,7 @@ class MealConfig extends PureComponent {
   // after the component is rendered
   componentDidMount(){
 
+    // this api needs to return the recipe de
     axios.get(api_endpoint+'v1/recipes/',{
       "Access-Control-Allow-Origin": "*",
       "withCredentials": true,
@@ -116,6 +116,8 @@ class MealConfig extends PureComponent {
   onFinish(values) {
     console.log('Success:', values);
     const {recipes} =  this.state
+    console.log( recipes )
+    console.log(' get here')
 
     // update the name of attribute later
     var recipe_id = values['recipe'];
