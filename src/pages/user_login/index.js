@@ -39,7 +39,10 @@ class UserLogin extends PureComponent {
   }
 
   user_login(values){
-    const {username, password, login_form} = values
+    const { username, password } = values
+    const { login_form } = this.state
+
+    console.log(login_form)
 
     // add here is the register flag is on
     // endpoint become register
