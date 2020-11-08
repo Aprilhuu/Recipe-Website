@@ -15,7 +15,7 @@ class Header_bar extends PureComponent {
 
   render(){
     const username = localStorage.getItem('username')
-    console.log(username)
+    // console.log(username)
     var headers = [
       (<Menu.Item key="0">
           <Link to='/'><img width="30" src={home}></img></Link>
@@ -23,7 +23,7 @@ class Header_bar extends PureComponent {
       (<Menu.Item key="1">
           <Link to='/recipe-list'>Recipe List</Link>
         </Menu.Item>),
-      (<Menu.Item key="3">Search Recipe</Menu.Item>)
+      (<Menu.Item key="2">Search Recipe</Menu.Item>)
     ]
     if(username != null){
       headers.push(
