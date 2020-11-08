@@ -129,9 +129,7 @@ class UserRegister(Resource):
                      "sunday":{}
                   }
                ],
-               "shopping_list":{
-                  
-               }
+               "shopping_list":[]
             }
             collection.insert(new_user)
 
