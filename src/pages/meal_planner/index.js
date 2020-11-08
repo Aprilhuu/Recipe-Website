@@ -1,5 +1,3 @@
-// TODO: FIGURE OUT HOW TO SEARCH MEALS FOR THE MEAL PLANNER
-
 import React, {PureComponent } from 'react';
 import axios from 'axios';
 import { Table, PageHeader, Card, Button, Typography } from 'antd';
@@ -10,28 +8,12 @@ const { Title } = Typography;
 const { Meta } = Card;
 
 import defaultSettings from '../../../config/defaultSettings';
-const {api_endpoint} = defaultSettings
-
-// const data = [
-//     {'key':1, 'meals':'Breakfast'},
-//     {'key':2, 'meals':'Lunch'},
-//     {'key':3, 'meals':'Dinner'}
-//   ];
-// // for now, use the fake data
-// for(var i = 0; i < data.length; i++){
-//   for(var j = 1; j < columns.length; j++){
-//     // get the day names
-//     var day_name = columns[j]['dataIndex']
-//     // add the placeholder
-//     data[i][day_name] = ''
-//   }
-// }
-
-// console.log(data)
+const { api_endpoint } = defaultSettings
 
 // https://quaranteam-group3.atlassian.net/browse/CCP-3
 class MealPlanner extends PureComponent {
   constructor(props) {
+    
     super(props);
 
     this.add_new_plan = this.add_new_plan.bind(this);
@@ -96,7 +78,13 @@ class MealPlanner extends PureComponent {
   }
 
   removeEntry(e) {
-    const cardIdParsed = e.target.parentNode.parentNode.id.split('-');
+    let cardIdParsed = e.target.parentNode.parentNode.id.split('-');
+    // if the target happens to be the wrapper of the button
+    // happens if you tap the edge
+    if (e.target.tagName == 'svg') {
+      cardIdParsed = e.target.parentNode.id.split('-');
+    }
+
     const meal_index = cardIdParsed[0]
     const day = cardIdParsed[1]
 
@@ -105,12 +93,14 @@ class MealPlanner extends PureComponent {
     // only removes the entry if the card's ID is correct
     if (meal_index != 'undefined' && day != 'undefined' && meal_index != '' && day != '') {
       meal_plan[meal_index][day] = {}
-      this.setState({ mealplan: meal_plan })
+      // force table update
+      this.setState({ meal_plan: [...meal_plan] })
     }
+
+    this.save_my_plan()
   }
   
   render_column_func(text, record) {
-  
     if(text != undefined && text.recipe_title != undefined){
   
       var url = "/recipe/" + text.recipe_id
@@ -124,15 +114,15 @@ class MealPlanner extends PureComponent {
             <img
             style={{ cursor: 'default' }}
             width={200}
-            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+            src={text.image}
           />
           }
           style={{ overflow:'hidden'}}
         >
+          <CloseSquareFilled id={cardId} onClick={this.removeEntry.bind(this)} style={{ zIndex: 99, position: 'absolute', top: '0', right: '0', backgroundColor: 'white'}}/>
           <Link to={url}>
             <Meta title={text.recipe_title} description={text.description} />
           </Link>
-          <CloseSquareFilled id={cardId} onClick={this.removeEntry.bind(this)} style={{ zIndex: 99, position: 'absolute', top: '2px', right: '2px', color: 'white'}}/>
         </Card>
       )
     }
@@ -168,17 +158,16 @@ class MealPlanner extends PureComponent {
   }
 
   // after the component is rendered
-  componentDidMount(){
-    // get logined user if exist
+  componentDidMount() {
+    // get the user that logged in if they exist
     const username = localStorage.getItem('username')
     console.log(username)
 
     axios.get(api_endpoint+'v1/users/meal_plan',{
       headers: {"Authorization":username}
     })
-    .then(response =>{
+    .then(response => {
       this.setState({meal_plan: response['data']['result']});
-      console.log(this.state.meal_plan)
     }).catch(function (error) {
       console.log(error);
     });
@@ -221,26 +210,36 @@ class MealPlanner extends PureComponent {
     }
 
     const meal_2_int = {'Breakfast':0, 'Lunch':1, 'Dinner':2}
-    for(var i = 0; i < days.length; i++){
-
-      const meal_index = meal_2_int[meal_time];
-      const day = days[i];
-
-      console.log(recipe.id)
-      console.log(recipe)
-      console.log('here')
-      new_plan[meal_index][day] = {
-          'recipe_title':recipe.title, 
-          'description':recipe.description,
-          'recipe_id': recipe.id,
-          'meal_index': meal_index,
-          'day': day
-        }
-    }
-
-    this.setState({
-      meal_plan: new_plan,
-    });
+    
+    // get the image of the recipe
+    let meal_image = null;
+    axios.get(api_endpoint + 'v1/recipes/' + recipe.id, {
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
+    }).then(response => {
+      if (response.data.result.mediaURL.type == 'image') {
+        meal_image = response.data.result.mediaURL.url
+      }
+      
+      // store into meal plan
+      for(var i = 0; i < days.length; i++) {
+  
+        const meal_index = meal_2_int[meal_time];
+        const day = days[i];
+  
+        new_plan[meal_index][day] = {
+            'recipe_title': recipe.title, 
+            'description': recipe.description,
+            'recipe_id': recipe.id,
+            'image': meal_image,
+            'meal_index': meal_index,
+            'day': day
+          }
+      }
+  
+      this.setState({ meal_plan: new_plan });
+      this.save_my_plan()
+    })
   }
 
   render() {
@@ -265,10 +264,6 @@ class MealPlanner extends PureComponent {
         <Table pagination={false} tableLayout='fixed' columns={columns} dataSource={meal_plan} bordered />
       </Card>
     )
-  }
-
-  componentWillUnmount() {
-    this.save_my_plan()
   }
 }
 
