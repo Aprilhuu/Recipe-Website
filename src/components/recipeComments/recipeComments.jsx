@@ -3,33 +3,36 @@ import {Comment, Tooltip, Row, List, Typography, Form, Button, Input} from 'antd
 import moment from 'moment';
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from '@ant-design/icons';
 import styles from './recipeComments.less';
+import axios from "axios";
+import defaultSettings from "../../../config/defaultSettings";
 
 const { Title } = Typography;
 const { TextArea } = Input;
+const {api_endpoint} = defaultSettings;
 const commentAvatar = 'https://media.istockphoto.com/vectors/chef-icon-vector-id930443798?b=1&k=6&m=930443798&s=612x612&w=0&h=0Aird0vBFPJmJYr_2TSZk9WwXLU9cPkhQiS_K-_UGsw=';
 
 
-// TODO: Hacking with dummy comments for now
-const commentData = [
-  {
-    author: 'April',
-    content: "We supply a series of design principles, practical patterns and high quality design " +
-      "resources (Sketch and Axure), to help people create their product prototypes beautifully and " +
-      "efficiently.",
-    datetime: "2020-11-03 13:40:45",
-    like: 1,
-    dislike: 2
-  },
-  {
-    author: 'Color',
-    content: "We supply a series of design principles, practical patterns and high quality design " +
-      "resources (Sketch and Axure), to help people create their product prototypes beautifully and " +
-      "efficiently.",
-    datetime: "2020-11-01 13:40:45",
-    like: 3,
-    dislike: 0
-  },
-];
+// // TODO: Hacking with dummy comments for now
+// const commentData = [
+//   {
+//     author: 'April',
+//     content: "We supply a series of design principles, practical patterns and high quality design " +
+//       "resources (Sketch and Axure), to help people create their product prototypes beautifully and " +
+//       "efficiently.",
+//     datetime: "2020-11-03 13:40:45",
+//     like: 1,
+//     dislike: 2
+//   },
+//   {
+//     author: 'Color',
+//     content: "We supply a series of design principles, practical patterns and high quality design " +
+//       "resources (Sketch and Axure), to help people create their product prototypes beautifully and " +
+//       "efficiently.",
+//     datetime: "2020-11-01 13:40:45",
+//     like: 3,
+//     dislike: 0
+//   },
+// ];
 
 
 /**
@@ -39,7 +42,7 @@ const commentData = [
  *
  * @return Ant design Comment element for one comment
  */
-const CommentItem = ( {comment} ) => {
+const CommentItem = ( {comment, index} ) => {
   // Used for setting like and dislike button
   const [likes, setLikes] = useState(comment.like);
   const [dislikes, setDislikes] = useState(comment.dislike);
@@ -52,6 +55,7 @@ const CommentItem = ( {comment} ) => {
     setLikes(comment.like + 1);
     setDislikes(comment.dislike);
     setAction('liked');
+
   };
 
   const dislike = () => {
@@ -105,7 +109,7 @@ const CommentList = ( { commentData } ) => (
     header={`${commentData.length} ${commentData.length > 1 ? 'replies' : 'reply'}`}
     itemLayout="horizontal"
     dataSource={commentData}
-    renderItem={comment => <CommentItem comment={comment}/>}
+    renderItem={(comment, index) => <CommentItem comment={comment} index={index}/>}
   />
 );
 
@@ -155,12 +159,14 @@ class CommentSection extends PureComponent {
     comments: [],
     submitting: false,
     value: '',
-    name: ''
+    name: '',
+    recipeID: ''
   };
 
   constructor(props) {
     super(props);
-    this.state.comments = commentData;
+    this.state.comments = props.commentData;
+    this.state.recipeID = props.recipeID;
   }
 
   handleSubmit = () => {
@@ -177,6 +183,17 @@ class CommentSection extends PureComponent {
     const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const dateTime = date+' '+time;
 
+    const newComment = {
+      author: this.state.name,
+      content: this.state.value,
+      datetime: dateTime,
+      like: 0,
+      dislike: 0
+    }
+
+    axios.post(api_endpoint +'/v1/reviews/'+ this.state.recipeID, {"comment": newComment})
+      .then(response =>{})
+
     this.setState({
       submitting: false,
       value: '',
@@ -184,13 +201,7 @@ class CommentSection extends PureComponent {
       reload: true,
       comments: [
         ...this.state.comments,
-        {
-          author: this.state.name,
-          content: this.state.value,
-          datetime: dateTime,
-          like: 0,
-          dislike: 0
-        }
+        newComment
       ],
     });
   };
@@ -210,12 +221,22 @@ class CommentSection extends PureComponent {
   render() {
     const { comments, submitting, value, name } = this.state;
 
+    // If no comment data found for this recipe, customize displayed message
+    let commentComponent;
+    if (!comments.length){
+      commentComponent = <Title level={4} style={{width: '100%', textAlign: 'center'}}>
+        No comments yet. Be the first one to leave a comment! </Title>
+    }
+    else{
+      commentComponent = <CommentList commentData={comments} />
+    }
+
     return (
       <div>
         {/* Row 1: Displaying all comments */}
         <Row className={ styles.rowContent } align="bottom">
           <Title level={2} style={{width: '100%'}}> COMMENTS: </Title>
-          {comments.length > 0 && <CommentList commentData={comments} /> }
+          { commentComponent }
         </Row>
         {/* Row 2: Form for submitting new comments */}
         <Row className={ styles.rowContent } align="bottom">

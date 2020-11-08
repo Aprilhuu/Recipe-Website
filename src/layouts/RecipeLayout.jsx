@@ -24,21 +24,27 @@ const tagColor = {'vegetable': 'green', 'spice': 'red', 'seafood': 'blue', 'oil'
  * @return react components for recipe summary part in one row
  */
 const recipeSummary = (rating, difficulty, prepTime) => {
+  let ratingNum;
+  if (!rating){
+    ratingNum = '-'
+  } else{
+    ratingNum = Math.round(rating * 10) / 10
+  }
   return(
     <Row className={ styles.rowContent } align="bottom">
       {/* Col1: Rating */}
       <Col span={6}>
           <span>
-            <Rate disabled defaultValue={ Math.round(rating * 10) / 10 } allowHalf={true} />
-            <span className={ styles.labelText }>{"Rating: " + Math.round(rating * 10) / 10 + "/5"}</span>
+            <Rate disabled value={ Math.round(rating * 10) / 10 } allowHalf={true} />
+            <span className={ styles.labelText }>{"Rating: " + ratingNum + "/5"}</span>
           </span>
       </Col>
 
       {/* Col2: difficulty */}
       <Col span={6}>
           <span>
-            <Rate character={ <RocketOutlined /> } disabled defaultValue={ difficulty } allowHalf={true} />
-            <span className={ styles.labelText }>{"Difficulty: " + difficulty + "/5"}</span>
+            <Rate character={ <RocketOutlined /> } disabled defaultValue={ difficulty/2 } allowHalf={true} />
+            <span className={ styles.labelText }>{"Difficulty: " + difficulty/2 + "/5"}</span>
           </span>
       </Col>
 
@@ -296,10 +302,13 @@ const ratingBar = (onRatingChanged, ratingSubmitted) => (
  * @param {function} onRatingChanged Callback function used to handle state updates after user submit a rating
  * @param {boolean} ratingSubmitted A boolean indicating if the user has submitted a rating
  *
+ * @param commentData
  * @return Ant design Layout element for the entire recipe detail page
  */
 const RecipeLayout = ({ recipeDetail, fastReading,
-                        onSwitchChanged, rating, onRatingChanged, ratingSubmitted}) => {
+                        onSwitchChanged, rating, onRatingChanged, ratingSubmitted,
+                        commentData}) => {
+  console.log(recipeDetail)
   return (
     <Layout className={ styles.recipeLayout }>
       <Content>
@@ -331,7 +340,7 @@ const RecipeLayout = ({ recipeDetail, fastReading,
         { ratingBar(onRatingChanged, ratingSubmitted) }
 
         {/* Row 7: Display users' comments */}
-        <CommentSection />
+        <CommentSection commentData={commentData} recipeID={recipeDetail['_id']}/>
 
       </Content>
     </Layout>
