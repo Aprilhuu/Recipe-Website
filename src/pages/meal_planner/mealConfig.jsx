@@ -157,6 +157,7 @@ class MealConfig extends PureComponent {
           title="Meal Configuration"
           visible={this.state.visible}
           // onOk={this.handleOk}
+          width={550}
           footer={null}
           onCancel={this.closeForm}
         >
