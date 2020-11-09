@@ -10,23 +10,41 @@ class Recipes extends PureComponent {
     state = {
       hasErrors: false,
       isFetching: true,
+      isFetchingComments: true,
       recipe_detail: {},
-      fastReadingMode: false
+      recipe_comments: [],
+      fastReadingMode: false,
+      rating: 0,
+      ratingCount: 0,
+      ratingSubmitted: false
     };
 
     constructor(props) {
       super(props);
       const { match } = this.props
       const { params } = match
-      console.log(params)
       const { recipe_id } = params
       this.recipe_id = recipe_id
-      console.log(recipe_id)
     }
 
     componentDidMount() {
-      this.setState({isFetching: true});
-      axios.get(api_endpoint+'/v1/recipes/'+ this.recipe_id, {})
+      this.setState({isFetching: true, isFetchingComments: true});
+
+      axios.get(api_endpoint +'/v1/reviews/'+ this.recipe_id, {})
+        .then(response =>{
+          console.log(response['data']['result']['comments'])
+          this.setState({ recipe_comments: response['data']['result']['comments'],
+            rating: response['data']['result']['rating'],
+            ratingCount: response['data']['result']['rating_count'], isFetchingComments: false
+            });
+        }).catch(error => {
+          // This indicates that no reviews or ratings have been submitted for this recipe.
+          // Keep initialized default values
+        console.log(error)
+        this.setState({ isFetchingComments: false });
+      })
+
+      axios.get(api_endpoint +'/v1/recipes/'+ this.recipe_id, {})
         .then(response =>{
           this.setState({ recipe_detail: response['data']['result'], isFetching: false });
         })
@@ -36,9 +54,18 @@ class Recipes extends PureComponent {
       this.setState({ fastReadingMode: !this.state.fastReadingMode });
     };
 
-    render() {
+    // This callback will update recipe rating displayed in the summary section
+    // automatically after user submits a new rating
+    handleRatingChanged = value => {
+      const newRating = (value + this.state.rating * this.state.ratingCount)/ (this.state.ratingCount + 1)
+      axios.post(api_endpoint +'/v1/reviews/'+ this.recipe_id, {"rating": newRating})
+        .then(response =>{})
+      this.setState({ rating: newRating, ratingSubmitted: true});
+    };
+
+  render() {
       // if your component is while fetching shows a loading to the user
-      if(this.state.isFetching){
+      if(this.state.isFetching || this.state.isFetchingComments ){
         return (
           <div style={{display: 'flex', justifyContent: 'center'}}>
             <Spin size="large" />
@@ -47,7 +74,9 @@ class Recipes extends PureComponent {
       } else {
         return(
           <RecipeLayout recipeDetail={this.state.recipe_detail} fastReading={this.state.fastReadingMode}
-                        onSwitchChanged={ this.handleSwitchChanged }/>
+                        onSwitchChanged={ this.handleSwitchChanged } rating={this.state.rating}
+                        onRatingChanged={this.handleRatingChanged} ratingSubmitted={this.state.ratingSubmitted}
+                        commentData={this.state.recipe_comments}/>
         )
       }
     }

@@ -6,7 +6,7 @@ from app import db_connection
 
 # this api instance is to handle with all the recipes
 class Recipes(Resource):
-    
+
     def get(self):
         '''
         Retrieve all the recipe id and title for list displaying
@@ -14,10 +14,10 @@ class Recipes(Resource):
 
         # example curl localhost:5000/v1/recipes/
         try:
-            collection = db_connection["group3_collection"]
+            collection = db_connection["recipe"]
             # for now just return the 8 recipe in total
             # to keep minimun only return the id and title of list
-            cursor = collection.find()
+            cursor = collection.find().limit(20)
             recipes = []
             for x in cursor:
                 # for displaying pick the first instruction
@@ -42,7 +42,7 @@ class Recipes(Resource):
 # this api instance deal with the specific recipe
 # the recipe is target by rid
 class Recipe(Resource):
-    
+
     def get(self, rid):
         '''
         Retrieve the recipe detail by id
@@ -51,7 +51,7 @@ class Recipe(Resource):
         # example curl localhost:5000/v1/recipes/5f8c67b8708d83b9867302b6
 
         try:
-            collection = db_connection["group3_collection"]
+            collection = db_connection["recipe"]
             # for now just return the 8 recipe in total
             # to keep minimun only return the id and title of list
             recipe = collection.find_one(ObjectId(rid))
@@ -66,7 +66,7 @@ class Recipe(Resource):
 
 
 class RecipeQuery(Resource):
-    
+
     def post(self):
         '''
         Retrieve the recipe detail by input attribute
@@ -84,7 +84,7 @@ class RecipeQuery(Resource):
 
             collection = db_connection["group3_collection"]
             # for now just return the 8 recipe in total
-            # to keep minimun only return the id and title of list
+            # to keep minimum only return the id and title of list
             recipe = collection.find_one({'title': title})
 
             # change the id to string if we find it

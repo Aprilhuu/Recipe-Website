@@ -24,7 +24,7 @@ export default ({nutritionFact, servingSize}) => (
       <tr>
         <th colSpan="2">
           <b>Calories </b>
-          { nutritionFact["nutrition facts"]["calories"] }
+          { nutritionFact["nutrition facts"]["CALORIES"] }
         </th>
       </tr>
       <tr className={styles.thickRow}>
@@ -35,10 +35,10 @@ export default ({nutritionFact, servingSize}) => (
       <tr>
         <th colSpan="2">
           <b>Total Fat </b>
-          { nutritionFact["nutrition facts"]["fat"] }
+          { nutritionFact["nutrition facts"]["FAT"] }
         </th>
         <td>
-          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["fat"])/65) + "%" }</b>
+          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["FAT"])/65) + "%" }</b>
         </td>
       </tr>
       <tr>
@@ -46,10 +46,10 @@ export default ({nutritionFact, servingSize}) => (
         </td>
         <th>
           <span>Saturated Fat </span>
-          { nutritionFact["nutrition facts"]["saturated fat"] }
+          { nutritionFact["nutrition facts"]["SAT FAT"] }
         </th>
         <td>
-          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["saturated fat"])/20) + "%" }</b>
+          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["SAT FAT"])/20) + "%" }</b>
         </td>
       </tr>
       <tr>
@@ -57,7 +57,7 @@ export default ({nutritionFact, servingSize}) => (
         </td>
         <th>
           <span>Trans Fat </span>
-          { nutritionFact["nutrition facts"]["trans fat"] }
+          { nutritionFact["nutrition facts"]["TRANS FAT"] }
         </th>
         <td>
         </td>
@@ -65,28 +65,28 @@ export default ({nutritionFact, servingSize}) => (
       <tr>
         <th colSpan="2">
           <b>Cholesterol </b>
-          { nutritionFact["nutrition facts"]["cholesterol"] }
+          { nutritionFact["nutrition facts"]["CHOL"] }
         </th>
         <td>
-          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["cholesterol"])/300) + "%" }</b>
+          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["CHOL"])/300) + "%" }</b>
         </td>
       </tr>
       <tr>
         <th colSpan="2">
           <b>Sodium </b>
-          { nutritionFact["nutrition facts"]["sodium"] }
+          { nutritionFact["nutrition facts"]["SODIUM"] }
         </th>
         <td>
-          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["sodium"])/2400) + "%" }</b>
+          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["SODIUM"])/2400) + "%" }</b>
         </td>
       </tr>
       <tr>
         <th colSpan="2">
           <b>Total Carbohydrate </b>
-          { nutritionFact["nutrition facts"]["total carbohydrate"] }
+          { nutritionFact["nutrition facts"]["CARB"] }
         </th>
         <td>
-          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["total carbohydrate"])/300) + "%" }</b>
+          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["CARB"])/300) + "%" }</b>
         </td>
       </tr>
       <tr>
@@ -94,10 +94,10 @@ export default ({nutritionFact, servingSize}) => (
         </td>
         <th>
           <span>Dietary Fiber </span>
-          { nutritionFact["nutrition facts"]["fiber"] }
+          { nutritionFact["nutrition facts"]["FIBER"] }
         </th>
         <td>
-          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["fiber"])/25) + "%" }</b>
+          <b>{ Math.round(100 * parseFloat(nutritionFact["nutrition facts"]["FIBER"])/25) + "%" }</b>
         </td>
       </tr>
       <tr>
@@ -105,7 +105,7 @@ export default ({nutritionFact, servingSize}) => (
         </td>
         <th>
           <span>Sugars </span>
-          { nutritionFact["nutrition facts"]["sugars"] }
+          { nutritionFact["nutrition facts"]["SUGARS"] }
         </th>
         <td>
         </td>
@@ -113,7 +113,7 @@ export default ({nutritionFact, servingSize}) => (
       <tr className={styles.thickEnd}>
         <th colSpan="2">
           <b>Protein </b>
-          { nutritionFact["nutrition facts"]["protein"] }
+          { nutritionFact["nutrition facts"]["PROTEIN"] }
         </th>
         <td>
         </td>
@@ -126,21 +126,21 @@ export default ({nutritionFact, servingSize}) => (
       <tr>
         <td colSpan="2">
           <span>Vitamin A </span>
-          { nutritionFact["nutrition facts"]["vit a"] }
+          { nutritionFact["nutrition facts"]["VIT A"] }
         </td>
         <td>
           <span>Vitamin C </span>
-          { nutritionFact["nutrition facts"]["vit c"] }
+          { nutritionFact["nutrition facts"]["VIT C"] }
         </td>
       </tr>
       <tr className={styles.thinEnd}>
         <td colSpan="2">
           <span>Calcium </span>
-          { nutritionFact["nutrition facts"]["calc"] }
+          { nutritionFact["nutrition facts"]["CALC"] }
         </td>
         <td>
           <span>Iron </span>
-          { nutritionFact["nutrition facts"]["iron"] }
+          { nutritionFact["nutrition facts"]["IRON"] }
         </td>
       </tr>
       </tbody>
