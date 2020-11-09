@@ -16,6 +16,7 @@ module_api = Api()
 # then we can import since order mattered
 from recipes import recipe_ns
 from users import user_ns
+from reviews import review_ns
 
 def create_app(extra_config_settings={}):
     # initialize app and config app

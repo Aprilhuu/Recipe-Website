@@ -18,7 +18,7 @@ class Recipes(Resource):
             collection = db_connection["group3_collection"]
             # for now just return the 8 recipe in total
             # to keep minimun only return the id and title of list
-            cursor = collection.find()
+            cursor = collection.find().limit(20)
             recipes = [{'id': str(x['_id']), 'title': x['title']} for x in cursor]
         except Exception as e:
             return {'result': str(e)}, 400
@@ -90,6 +90,7 @@ class RecipeQuery(Resource):
 
             # Step 3: Query the database collection based on preprocessed filter
             collection = db_connection["group3_collection"]
+
             if title and ingredients:
                 # Adding title as one filter as well to filter both by title and by ingredients
                 ingredient_filter_array.append({'title': title})
