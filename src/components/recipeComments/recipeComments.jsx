@@ -12,37 +12,16 @@ const {api_endpoint} = defaultSettings;
 const commentAvatar = 'https://media.istockphoto.com/vectors/chef-icon-vector-id930443798?b=1&k=6&m=930443798&s=612x612&w=0&h=0Aird0vBFPJmJYr_2TSZk9WwXLU9cPkhQiS_K-_UGsw=';
 
 
-// // TODO: Hacking with dummy comments for now
-// const commentData = [
-//   {
-//     author: 'April',
-//     content: "We supply a series of design principles, practical patterns and high quality design " +
-//       "resources (Sketch and Axure), to help people create their product prototypes beautifully and " +
-//       "efficiently.",
-//     datetime: "2020-11-03 13:40:45",
-//     like: 1,
-//     dislike: 2
-//   },
-//   {
-//     author: 'Color',
-//     content: "We supply a series of design principles, practical patterns and high quality design " +
-//       "resources (Sketch and Axure), to help people create their product prototypes beautifully and " +
-//       "efficiently.",
-//     datetime: "2020-11-01 13:40:45",
-//     like: 3,
-//     dislike: 0
-//   },
-// ];
-
-
 /**
  * This function is used to construct each comment item within the comment list
  *
  * @param {object} comment A JSON containing all information about one comment
  *
+ * @param {number} index: An integer specifying which comment in the list has its dislike or like data updated
+ * @param {string} recipeID: ID to identify current recipe
  * @return Ant design Comment element for one comment
  */
-const CommentItem = ( {comment, index} ) => {
+const CommentItem = ( {comment, index, recipeID} ) => {
   // Used for setting like and dislike button
   const [likes, setLikes] = useState(comment.like);
   const [dislikes, setDislikes] = useState(comment.dislike);
@@ -56,12 +35,33 @@ const CommentItem = ( {comment, index} ) => {
     setDislikes(comment.dislike);
     setAction('liked');
 
+    axios.post(api_endpoint +'/v1/reviews/like/'+ recipeID,
+      {"comment_index": index, "like_num": comment.like + 1})
+      .then(response =>{
+        console.log(response)
+      })
+    axios.post(api_endpoint +'/v1/reviews/dislike/'+ recipeID,
+      {"comment_index": index, "dislike_num": comment.dislike})
+      .then(response =>{
+        console.log(response)
+      })
   };
 
   const dislike = () => {
     setLikes(comment.like);
     setDislikes(comment.dislike + 1);
     setAction('disliked');
+
+    axios.post(api_endpoint +'/v1/reviews/dislike/'+ recipeID,
+      {"comment_index": index, "dislike_num": comment.dislike + 1})
+      .then(response =>{
+        console.log(response)
+      })
+    axios.post(api_endpoint +'/v1/reviews/like/'+ recipeID,
+      {"comment_index": index, "like_num": comment.like})
+      .then(response =>{
+        console.log(response)
+      })
   };
 
   const actions = [
@@ -99,17 +99,18 @@ const CommentItem = ( {comment, index} ) => {
  * This function is used to construct the entire comment list
  *
  * @param {[object]} commentData An array of comment objects
+ * @param {string} recipeID: ID to identify current recipe
  *
  * @return Ant design List element for all comments
  */
-const CommentList = ( { commentData } ) => (
+const CommentList = ( { commentData, recipeID } ) => (
   <List
     style={{width: '100%'}}
     className="comment-list"
     header={`${commentData.length} ${commentData.length > 1 ? 'replies' : 'reply'}`}
     itemLayout="horizontal"
     dataSource={commentData}
-    renderItem={(comment, index) => <CommentItem comment={comment} index={index}/>}
+    renderItem={(comment, index) => <CommentItem comment={comment} index={index} recipeID={recipeID}/>}
   />
 );
 
@@ -192,7 +193,9 @@ class CommentSection extends PureComponent {
     }
 
     axios.post(api_endpoint +'/v1/reviews/'+ this.state.recipeID, {"comment": newComment})
-      .then(response =>{})
+      .then(response =>{
+        console.log(response)
+      })
 
     this.setState({
       submitting: false,
@@ -228,7 +231,7 @@ class CommentSection extends PureComponent {
         No comments yet. Be the first one to leave a comment! </Title>
     }
     else{
-      commentComponent = <CommentList commentData={comments} />
+      commentComponent = <CommentList commentData={comments} recipeID={this.state.recipeID}/>
     }
 
     return (
