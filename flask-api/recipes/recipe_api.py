@@ -1,6 +1,7 @@
 from flask_restx import Resource
 from flask import request
 from bson.objectid import ObjectId
+import math
 
 from app import db_connection
 
@@ -11,13 +12,19 @@ class Recipes(Resource):
         '''
         Retrieve all the recipe id and title for list displaying
         '''
+        page_size = request.args.get('page_size', 10)
+        page = request.args.get('page', 0)
 
         # example curl localhost:5000/v1/recipes/
         try:
+            # convert to int
+            page_size = int(page_size)
+            page = int(page)
+
             collection = db_connection["recipe"]
             # for now just return the 8 recipe in total
             # to keep minimun only return the id and title of list
-            cursor = collection.find().limit(20)
+            cursor = collection.find().skip(page_size*page).limit(page_size)
             recipes = []
             for x in cursor:
                 # for displaying pick the first instruction
@@ -29,13 +36,34 @@ class Recipes(Resource):
                     'id': str(x['_id']), 
                     'title': x['title'], 
                     'description': description + ' ...',
-                    'image': x.get('mediaURL').get('url', None)
+                    'image': x.get('mediaURL').get('url', 
+                        "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"
+                    )
                 })
 
         except Exception as e:
             return {'result': str(e)}, 400
 
         return {'result':recipes}, 200
+
+
+class RecipesTotal(Resource):
+
+    def get(self):
+        '''
+        Retrieve number of page for the pagination
+        '''
+        # example curl localhost:5000/v1/recipes/
+        try:
+            collection = db_connection["recipe"]
+            # for now just return the 8 recipe in total
+            # to keep minimun only return the id and title of list
+            cursor = collection.count()
+            
+        except Exception as e:
+            return {'result': str(e)}, 400
+
+        return {'result':cursor}, 200
 
 
 

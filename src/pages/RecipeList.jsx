@@ -1,25 +1,23 @@
 import React, {PureComponent} from 'react';
-import {Card, Button, Spin, List, Typography, Divider} from 'antd';
+import {Card, Button, Spin, List, Typography, Divider, BackTop } from 'antd';
 import axios from "axios";
 import { Link } from 'umi';
 import defaultSettings from '../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
-const data = [
-  'Racing car sprays burning fuel into crowd.',
-  'Japanese princess to wed commoner.',
-  'Australian walks 100km after outback crash.',
-  'Man charged over missing wedding girl.',
-  'Los Angeles battles huge wildfires.',
-];
-
 class RecipeList extends PureComponent {
-  state = {
-    hasErrors: false,
-    isFetching: true,
-    recipeList: [],
-    fastReadingMode: false
-  };
+  constructor(props) {
+    super(props);
+
+    this.onChange = this.onChange.bind(this)
+
+    this.state = {
+      hasErrors: false,
+      isFetching: true,
+      recipeList: [],
+      fastReadingMode: false
+    };
+  }
 
   componentDidMount() {
     this.setState({isFetching: true});
@@ -28,9 +26,26 @@ class RecipeList extends PureComponent {
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
       })
+
+    axios.get(api_endpoint +'/v1/recipes/count', {})
+      .then(response =>{
+        this.setState({ totalPage: response['data']['result'], isFetching: false });
+      })
+  }
+
+  onChange(page){
+    console.log(page);
+
+    axios.get(api_endpoint +'/v1/recipes/?page='+page+'&page_size=10', {})
+      .then(response =>{
+        // console.log(response);
+        this.setState({ recipeList: response['data']['result'], isFetching: false });
+      })
   }
 
   render() {
+    const { totalPage } = this.state
+
     // if your component is while fetching shows a loading to the user
     if(this.state.isFetching){
       return (
@@ -39,40 +54,37 @@ class RecipeList extends PureComponent {
         </div>
       );
     } else {
-      // var buttonList = []
-      // for(let i = 0; i < this.state.recipeList.length-19; i++) {
-      //   console.log(this.state.recipeList[i].title)
-      //   const recipeDetail = this.state.recipeList[i];
-      //   buttonList.push(<Button
-      //     key = {recipeDetail.id}
-      //     size = "large"
-      //     block
-      //     href={"/recipe/" + recipeDetail.id}>{recipeDetail.title}
-      //   </Button>)
-      //   buttonList.push(<br key={recipeDetail.id + "br1"}/>)
-      //   buttonList.push(<br key={recipeDetail.id + "br2"}/>)
-      // }
-
-      // console.log(this.state.recipeList)
 
       return(
         <Card>
+          <BackTop>
+            <div style={{
+              height: 40,
+              width: 40,
+              lineHeight: '40px',
+              borderRadius: 4,
+              backgroundColor: '#1088e9',
+              color: '#fff',
+              textAlign: 'center',
+              fontSize: 14,
+            }}>UP</div>
+          </BackTop>
           <List
             itemLayout="vertical"
             size="large"
             header={<h1 style={{'margin':'20px'}}>Recipes</h1>}
             pagination={{
-              onChange: page => {
-                console.log(page);
-              },
+              onChange: this.onChange,
               pageSize: 10,
+              total: totalPage,
+              pageSizeOptions: [10],
             }}
             bordered={true}
             dataSource={this.state.recipeList}
             renderItem={item => {
               var img_url = item.image
               if(img_url == null){
-                img_url = "https://ww4.publix.com/-/media/aprons/default/no-image-recip…=1&w=417&h=306&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"
+                img_url = "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"
               }
 
               return(
