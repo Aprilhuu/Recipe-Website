@@ -37,6 +37,20 @@ def update_comment_by_recipe_id(client, recipe_id, new_comment):
         follow_redirects=True,
     )
 
+def update_dislike_by_recipe_id(client, recipe_id, comment_index, dislike_num):
+    return client.post(
+        "/v1/reviews/dislike/" + recipe_id,
+        json={'dislike_num': dislike_num, "comment_index": comment_index},
+        follow_redirects=True,
+    )
+
+def update_like_by_recipe_id(client, recipe_id, comment_index, like_num):
+    return client.post(
+        "/v1/reviews/like/" + recipe_id,
+        json={'like_num': like_num, "comment_index": comment_index},
+        follow_redirects=True,
+    )
+
 ################################################ TEST FUnction ######################################
 def test_get_review_by_recipe_id(client):
     res = get_review_by_recipe_id(client, '5f8c67b7708d83b9867302af')
@@ -49,8 +63,8 @@ def test_get_review_by_recipe_id(client):
 
 # def test_update_rating_by_recipe_id(client):
 #     res = update_rating_by_recipe_id(client, '5f8c67b7708d83b9867302af', 3)
-#     recipe_res = res.get_json()
-#     assert recipe_res is None
+#     recipe_res = res.get_json()['result']
+#     assert recipe_res == "successful"
 #
 #
 # def test_update_comments_by_recipe_id(client):
@@ -64,5 +78,17 @@ def test_get_review_by_recipe_id(client):
 #      "dislike": 0}
 #
 #     res = update_comment_by_recipe_id(client, '5f8c67b7708d83b9867302af', new_comment)
-#     recipe_res = res.get_json()
-#     assert recipe_res is None
+#     recipe_res = res.get_json()['result']
+#     assert recipe_res == "successful"
+#
+#
+# def test_update_dislike_by_recipe_id(client):
+#     res = update_dislike_by_recipe_id(client, recipe_id='5f8c67b7708d83b9867302af', comment_index=0, dislike_num=5)
+#     recipe_res = res.get_json()['result']
+#     assert recipe_res == "successful"
+#
+#
+# def test_update_like_by_recipe_id(client):
+#     res = update_like_by_recipe_id(client, recipe_id='5f8c67b7708d83b9867302af', comment_index=2, like_num=3)
+#     recipe_res = res.get_json()['result']
+#     assert recipe_res == "successful"
