@@ -40,6 +40,9 @@ class RecipeList extends PureComponent {
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
+
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0;
       })
   }
 
@@ -57,18 +60,6 @@ class RecipeList extends PureComponent {
 
       return(
         <Card>
-          <BackTop>
-            <div style={{
-              height: 40,
-              width: 40,
-              lineHeight: '40px',
-              borderRadius: 4,
-              backgroundColor: '#1088e9',
-              color: '#fff',
-              textAlign: 'center',
-              fontSize: 14,
-            }}>UP</div>
-          </BackTop>
           <List
             itemLayout="vertical"
             size="large"
