@@ -32,11 +32,14 @@ class Recipes extends PureComponent {
 
       axios.get(api_endpoint +'/v1/reviews/'+ this.recipe_id, {})
         .then(response =>{
-          console.log(response['data']['result']['comments'])
-          this.setState({ recipe_comments: response['data']['result']['comments'],
-            rating: response['data']['result']['rating'],
-            ratingCount: response['data']['result']['rating_count'], isFetchingComments: false
+          if (response['data']){
+            this.setState({ recipe_comments: response['data']['result']['comments'],
+              rating: response['data']['result']['rating'],
+              ratingCount: response['data']['result']['rating_count'], isFetchingComments: false
             });
+          } else {
+            this.setState({ isFetchingComments: false });
+          }
         }).catch(error => {
           // This indicates that no reviews or ratings have been submitted for this recipe.
           // Keep initialized default values
@@ -59,7 +62,9 @@ class Recipes extends PureComponent {
     handleRatingChanged = value => {
       const newRating = (value + this.state.rating * this.state.ratingCount)/ (this.state.ratingCount + 1)
       axios.post(api_endpoint +'/v1/reviews/'+ this.recipe_id, {"rating": newRating})
-        .then(response =>{})
+        .then(response =>{
+          console.log(response)
+        })
       this.setState({ rating: newRating, ratingSubmitted: true});
     };
 
