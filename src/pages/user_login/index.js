@@ -240,7 +240,7 @@ class UserLogin extends PureComponent {
     // also use username to render it
     const username = localStorage.getItem('username') || ' '
     const login_component = [
-      <div>
+      <div key='user_login_logout'>
         <Button key='logout_button' onClick={this.warning} className={styles.input_box}> Logout </Button>
         <Button key='user_icon' type="primary" shape="circle">
           {username[0]}
