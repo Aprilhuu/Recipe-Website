@@ -14,7 +14,7 @@ class Recipes(Resource):
 
         # example curl localhost:5000/v1/recipes/
         try:
-            collection = db_connection["recipe"]
+            collection = db_connection["group3_collection"]
             # for now just return the 8 recipe in total
             # to keep minimun only return the id and title of list
             cursor = collection.find().limit(20)
@@ -37,7 +37,7 @@ class Recipe(Resource):
         # example curl localhost:5000/v1/recipes/5f8c67b8708d83b9867302b6
 
         try:
-            collection = db_connection["recipe"]
+            collection = db_connection["group3_collection"]
             # for now just return the 8 recipe in total
             # to keep minimun only return the id and title of list
             recipe = collection.find_one(ObjectId(rid))
