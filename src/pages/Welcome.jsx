@@ -1,5 +1,5 @@
 import React, {PureComponent } from 'react';
-import { Card, Image, Carousel } from 'antd';
+import { Card, Image, Carousel, Popover } from 'antd';
 import styles from './Welcome.less';
 import searchIllust from '../assets/images/search_illust.jpg'
 import mealPlanIllust from '../assets/images/meal_plan_illust.jpg'
@@ -12,16 +12,53 @@ const { Meta } = Card;
 class WelcomePage extends PureComponent {
   constructor(props) {
     super(props);
+    this.handleResize = this.handleResize.bind(this);
     this.carouselRef = React.createRef();
     this.featuredRecipeRef = React.createRef();
     this.descriptionCharLength = 50;
     this.featuredRecipesDisplayed = 3;
     this.state = {
-      recipeCardList: []
+      recipeCardList: [],
+      windowWidth: window.innerWidth,
+      popoverPlacement: 'right',
     }
+    this.mealPlannerDescription = <div style={{maxWidth: '200px'}}>
+      <div>
+        <b>1. Adding items:</b> click 'Add item' on the top right of the meal planner. Search for your meal and save.
+      </div>
+      <div>
+        <b>2. Removing items:</b> click the 'x' on the top right of each meal card to remove it.
+      </div>
+      <div>
+        <b>3. Plan your week:</b> each week, your meal plan will refresh, so don't forget to fill it out for that week! 
+      </div>
+    </div>
+
+    this.virtualPantryDescription = <div style={{maxWidth: '200px'}}>
+      todo
+    </div>
+
+    this.searchDescription = <div style={{maxWidth: '200px'}}>
+      todo
+    </div>
   }
 
+  handleResize(e) {
+    console.log(window.innerWidth)
+
+    let { popoverPlacement } = this.state;
+
+    if (window.innerWidth > 1000) {
+      popoverPlacement = 'right';
+    } else {
+      popoverPlacement = 'bottomLeft';
+    }
+
+    this.setState({ windowWidth: window.innerWidth, popoverPlacement: popoverPlacement });
+   };
+
   componentDidMount() {
+    window.addEventListener("resize", this.handleResize);
     let recipeCardList = []
     let i = 0;
     for (const [key, value] of Object.entries(recipes)) {
@@ -53,12 +90,16 @@ class WelcomePage extends PureComponent {
       }
     }
   }
+
+  componentWillUnMount() {
+    window.addEventListener("resize", this.handleResize);
+   }
   
-  onMouseEnterSearch = () => this.carouselRef.current.goTo(0, false);
+  onMouseEnterSearch = () => this.carouselRef.current.goTo(0, true);
 
-  onMouseEnterMealPlanner = () => this.carouselRef.current.goTo(1, false);
+  onMouseEnterMealPlanner = () => this.carouselRef.current.goTo(1, true);
 
-  onMouseEnterVirtualPantry = () => this.carouselRef.current.goTo(2, false);
+  onMouseEnterVirtualPantry = () => this.carouselRef.current.goTo(2, true);
 
   slideLeft = () => this.featuredRecipeRef.current.prev();
 
@@ -73,7 +114,7 @@ class WelcomePage extends PureComponent {
         </Card>
         <Card bordered={false} className={styles.whiteSubBox}>
           <div className={styles.helpBoxWrapper} style={{ width: '50%' }}>
-            <div className={styles.whiteSubBoxTitle}>Learn about our functions.</div>
+            <div className={styles.whiteSubBoxTitle}>Hover over each box for help and tips regarding our functions.</div>
             <div className={styles.helpFlex}>
               <Carousel className={styles.helpBox} style={{ minWidth: '300px', width:"20vw"}} ref={this.carouselRef}>
                 <div> <Image
@@ -90,24 +131,30 @@ class WelcomePage extends PureComponent {
                 </div>
               </Carousel>
               <div className={styles.helpBox}>
-                <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterSearch}>
-                  <Meta 
-                    title="Search"
-                    description="Search by ingredients or recipe name, we have you covered."
-                  />
-                </Card>
-                <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterMealPlanner}>
-                  <Meta 
-                    title="Meal Planner"
-                    description="Plan your meals week by week. We'll sort out your shopping list."
-                  />
-                </Card>
-                <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterVirtualPantry}>
-                  <Meta 
-                    title="Virtual Pantry"
-                    description="Let us know your inventory and we'll let you know what to cook."
-                  />
-                </Card>
+                <Popover placement={this.state.popoverPlacement} key='search-popover' content={this.searchDescription} title="How to Use Search">    
+                  <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterSearch}>
+                    <Meta 
+                      title="Search"
+                      description="Search by ingredients or recipe name, we have you covered."
+                    />
+                  </Card>
+                </Popover>
+                <Popover placement={this.state.popoverPlacement} key='meal-planner-popover' content={this.mealPlannerDescription} title="How to Use Meal Planner">
+                  <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterMealPlanner}>
+                    <Meta 
+                      title="Meal Planner"
+                      description="Plan your meals week by week. We'll sort out your shopping list."
+                    />
+                  </Card>
+                </Popover>
+                <Popover  placement={this.state.popoverPlacement} key='virtual-pantry' content={this.virtualPantryDescription} title="How to Use Virtual Pantry">
+                  <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterVirtualPantry}>
+                    <Meta 
+                      title="Virtual Pantry"
+                      description="Let us know your inventory and we'll let you know what to cook."
+                    />
+                  </Card>
+                </Popover>
               </div>
             </div>
           </div>
