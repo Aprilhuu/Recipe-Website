@@ -1,12 +1,15 @@
 import React, {PureComponent } from 'react';
 import { Card, Image, Carousel, Popover } from 'antd';
+import { Link } from 'umi';
 import styles from './Welcome.less';
 import searchIllust from '../assets/images/search_illust.jpg'
 import mealPlanIllust from '../assets/images/meal_plan_illust.jpg'
 import pantryIllust from '../assets/images/pantry_illust.jpg'
-import { recipes } from '../../recipes/recipes.js';
 import { LeftCircleFilled, RightCircleFilled } from '@ant-design/icons';
+import axios from 'axios';
 
+import defaultSettings from '../../config/defaultSettings';
+const { api_endpoint } = defaultSettings
 const { Meta } = Card;
 
 class WelcomePage extends PureComponent {
@@ -59,36 +62,37 @@ class WelcomePage extends PureComponent {
 
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
-    let recipeCardList = []
-    let i = 0;
-    for (const [key, value] of Object.entries(recipes)) {
-      if (i >= this.featuredRecipesDisplayed) break;
 
-      // don't use the featured recipe if it does not have an image
-      if (value.mediaURL.type == 'image') {
+    axios.get(api_endpoint +'/v1/recipes/query/random', {})
+    .then(response =>{
+      let recipeCardList = []
+      console.log(response)
+      console.log(response.data.result);
+      const recipeArray = response.data.result;
+      for (let i = 0; i < recipeArray.length; i++ ) {
         recipeCardList.push(
-          <div key={i}>
-            <Card
-              cover={
-                <div className={styles.imageWrapper} style={{ width:'100%', height: '30vh'}}>
-                  <img
-                  src={value.mediaURL.url}
-                  className={styles.featuredImage}
-                  />
-                </div>    
-              }
-            >
-              <Meta
-                title={value.title}
-                description={(value.instructions[0].description).slice(0, this.descriptionCharLength) + "..."}
-              />
-            </Card>
+          <div key={i + '-featured-recipe'}>
+            <Link to={"/recipe/" + recipeArray[i].id}>
+              <Card
+                cover={
+                  <div className={styles.imageWrapper} style={{ width:'100%', height: '30vh'}}>
+                    <img
+                    src={recipeArray[i].image}
+                    className={styles.featuredImage}
+                    />
+                  </div>    
+                }
+              >
+                <Meta
+                  title={recipeArray[i].title}
+                  description={recipeArray[i].description}
+                />
+              </Card>
+            </Link>
           </div>)
-    
-          this.setState({ recipeCardList: recipeCardList})
-          i++;
       }
-    }
+      this.setState({ recipeCardList: recipeCardList})
+    })
   }
 
   componentWillUnMount() {
