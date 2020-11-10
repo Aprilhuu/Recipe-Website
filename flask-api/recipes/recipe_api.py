@@ -2,6 +2,7 @@ from flask_restx import Resource
 from flask import request
 from bson.objectid import ObjectId
 import inflect
+import math
 
 from app import db_connection
 
@@ -12,18 +13,59 @@ class Recipes(Resource):
         '''
         Retrieve all the recipe id and title for list displaying
         '''
+        page_size = request.args.get('page_size', 10)
+        page = request.args.get('page', 0)
 
         # example curl localhost:5000/v1/recipes/
         try:
-            collection = db_connection["group3_collection"]
+            # convert to int
+            page_size = int(page_size)
+            page = int(page)
+
+            collection = db_connection["recipe"]
             # for now just return the 8 recipe in total
-            # to keep minimum only return the id and title of list
-            cursor = collection.find().limit(20)
-            recipes = [{'id': str(x['_id']), 'title': x['title']} for x in cursor]
+            # to keep minimun only return the id and title of list
+            cursor = collection.find().skip(page_size*page).limit(page_size)
+            recipes = []
+            for x in cursor:
+                # for displaying pick the first instruction
+                description = x['instructions'][0]['description'] if len(x['instructions']) > 0 else ''
+                # some of the instruction are over length so pick first 20 word if greater
+                description = description[:50] if len(description) > 50 else description
+
+                recipes.append({
+                    'id': str(x['_id']),
+                    'title': x['title'],
+                    'description': description + ' ...',
+                    'image': x.get('mediaURL').get('url',
+                        "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"
+                    )
+                })
+
         except Exception as e:
             return {'result': str(e)}, 400
 
         return {'result': recipes}, 200
+
+
+class RecipesTotal(Resource):
+
+    def get(self):
+        '''
+        Retrieve number of page for the pagination
+        '''
+        # example curl localhost:5000/v1/recipes/
+        try:
+            collection = db_connection["recipe"]
+            # for now just return the 8 recipe in total
+            # to keep minimun only return the id and title of list
+            cursor = collection.count()
+
+        except Exception as e:
+            return {'result': str(e)}, 400
+
+        return {'result':cursor}, 200
+
 
 
 # this api instance deal with the specific recipe
@@ -122,4 +164,40 @@ class RecipeQuery(Resource):
         except Exception as e:
             return {'result': str(e)}, 400
 
-        return {'result': recipe}, 200
+        return {'result':recipe}, 200
+
+
+# this api instance is make random number of recipe for front page
+class RecipesRadom(Resource):
+
+    def get(self):
+        '''
+        Retrieve random number the recipe and title for list displaying
+        '''
+        # set the default random size as 3
+        random_number = request.args.get('size', 3)
+
+        # example curl localhost:5000/v1/recipes/
+        try:
+            collection = db_connection["group3_collection"]
+            # for now just return the 8 recipe in total
+            # to keep minimun only return the id and title of list
+            cursor = collection.aggregate([{ '$sample': { 'size': random_number } }])
+            recipes = []
+            for x in cursor:
+                # for displaying pick the first instruction
+                description = x['instructions'][0]['description'] if len(x['instructions']) > 0 else ''
+                # some of the instruction are over length so pick first 20 word if greater
+                description = description[:50] if len(description) > 50 else description
+
+                recipes.append({
+                    'id': str(x['_id']),
+                    'title': x['title'],
+                    'description': description + ' ...',
+                    'image': x.get('mediaURL').get('url', None)
+                })
+
+        except Exception as e:
+            return {'result': str(e)}, 400
+
+        return {'result':recipes}, 200
