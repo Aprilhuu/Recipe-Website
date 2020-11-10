@@ -17,8 +17,20 @@ class Recipes(Resource):
             collection = db_connection["group3_collection"]
             # for now just return the 8 recipe in total
             # to keep minimun only return the id and title of list
-            cursor = collection.find().limit(20)
-            recipes = [{'id': str(x['_id']), 'title': x['title']} for x in cursor]
+            cursor = collection.find()
+            recipes = []
+            for x in cursor:
+                # for displaying pick the first instruction
+                description = x['instructions'][0]['description'] if len(x['instructions']) > 0 else ''
+                # some of the instruction are over length so pick first 20 word if greater
+                description = description[:50] if len(description) > 50 else description
+
+                recipes.append({
+                    'id': str(x['_id']), 
+                    'title': x['title'], 
+                    'description': description + ' ...'
+                })
+
         except Exception as e:
             return {'result': str(e)}, 400
 
