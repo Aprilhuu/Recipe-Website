@@ -68,19 +68,20 @@ def test_get_recipe_by_title(client):
     res = get_recipe_by_title(client, "Tofu Breakfast Burrito")
     recipe_res = res.get_json()['result']
     recipe_title_id = {
-        'id': str(recipe_res['_id']), 'title': recipe_res['title']}
+        'id': str(recipe_res[0]['_id']), 'title': recipe_res[0]['title']}
     assert recipe_title_id == {
         'id': '5f8c67b8708d83b9867302b6', 'title': "Tofu Breakfast Burrito"}
-    assert 'instructions' not in recipe_res.keys()
+    assert 'instructions' not in recipe_res[0].keys()
 
     # check if we can find recipe "Creamy Sweet Chili Shrimp"
     res = get_recipe_by_title(client, "Creamy Sweet Chili Shrimp")
     recipe_res = res.get_json()['result']
+    assert len(recipe_res) >= 1
     recipe_title_id = {
-        'id': str(recipe_res['_id']), 'title': recipe_res['title']}
+        'id': str(recipe_res[0]['_id']), 'title': recipe_res[0]['title']}
     assert recipe_title_id == {
         'id': '5f8c67b7708d83b9867302af', 'title': "Creamy Sweet Chili Shrimp"}
-    assert 'ingredients' not in recipe_res.keys()
+    assert 'ingredients' not in recipe_res[0].keys()
 
 
 # made by ZIAN HU

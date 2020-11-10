@@ -17,7 +17,7 @@ class Recipes(Resource):
         try:
             collection = db_connection["group3_collection"]
             # for now just return the 8 recipe in total
-            # to keep minimun only return the id and title of list
+            # to keep minimum only return the id and title of list
             cursor = collection.find().limit(20)
             recipes = [{'id': str(x['_id']), 'title': x['title']} for x in cursor]
         except Exception as e:
@@ -40,7 +40,7 @@ class Recipe(Resource):
         try:
             collection = db_connection["group3_collection"]
             # for now just return the 8 recipe in total
-            # to keep minimun only return the id and title of list
+            # to keep minimum only return the id and title of list
             recipe = collection.find_one(ObjectId(rid))
 
             # change the id to string
@@ -104,10 +104,14 @@ class RecipeQuery(Resource):
 
             # Step 4: Process results returned from database before returning. We are
             # changing the id to string if we find it and remove unnecessary attributes.
+            if not recipe:
+                recipe = []
+
             if isinstance(recipe, dict):
                 recipe['_id'] = str(recipe['_id'])
                 del recipe['ingredients']
                 del recipe['instructions']
+                recipe = [recipe]
             else:
                 recipe = list(recipe)
                 for one_recipe in recipe:

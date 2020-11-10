@@ -1,25 +1,23 @@
 import React, {PureComponent} from 'react';
 import {Card, Button, Spin} from 'antd';
-import axios from "axios";
-import defaultSettings from '../../config/defaultSettings';
-const {api_endpoint} = defaultSettings
-
 
 class RecipeList extends PureComponent {
   state = {
     hasErrors: false,
-    isFetching: true,
+    isFetching: false,
     recipeList: [],
     fastReadingMode: false
   };
 
   componentDidMount() {
-    this.setState({isFetching: true});
-    axios.get(api_endpoint +'/v1/recipes/', {})
-      .then(response =>{
-        console.log(response);
-        this.setState({ recipeList: response['data']['result'], isFetching: false });
-      })
+    // this.setState({isFetching: true});
+    // axios.get(api_endpoint +'/v1/recipes/', {})
+    //   .then(response =>{
+    //     console.log(response);
+    //     this.setState({ recipeList: response['data']['result'], isFetching: false });
+    //   })
+    console.log(this.props.location.state.recipes)
+    this.setState({ recipeList: this.props.location.state.recipes });
   }
 
   render() {
@@ -31,18 +29,18 @@ class RecipeList extends PureComponent {
         </div>
       );
     } else {
-      var buttonList = []
+      const buttonList = [];
       for(let i = 0; i < this.state.recipeList.length; i++) {
         console.log(this.state.recipeList[i].title)
         const recipeDetail = this.state.recipeList[i];
         buttonList.push(<Button
-          key = {recipeDetail.id}
+          key = {recipeDetail['_id']}
           size = "large"
           block
-          href={"/recipe/" + recipeDetail.id}>{recipeDetail.title}
+          href={"/recipe/" + recipeDetail['_id']}>{recipeDetail.title}
         </Button>)
-        buttonList.push(<br key={recipeDetail.id + "br1"}/>)
-        buttonList.push(<br key={recipeDetail.id + "br2"}/>)
+        buttonList.push(<br key={recipeDetail['_id'] + "br1"}/>)
+        buttonList.push(<br key={recipeDetail['_id'] + "br2"}/>)
       }
       return(
         <Card>
@@ -53,4 +51,4 @@ class RecipeList extends PureComponent {
   }
 }
 
-export default RecipeList
+export default RecipeList;
