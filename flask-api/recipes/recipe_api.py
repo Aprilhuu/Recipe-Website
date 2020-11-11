@@ -39,8 +39,9 @@ class Recipes(Resource):
                     'description': description + ' ...',
                     'image': x.get('mediaURL').get('url',
                         "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306"
-                        "&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C "
-                    )
+                        "&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"),
+                    'difficulty': x['difficulty'],
+                    'cooktime': x['total time']
                 })
 
         except Exception as e:
@@ -164,7 +165,9 @@ class RecipeQuery(Resource):
                     'description': description + ' ...',
                     'image': x.get('mediaURL').get('url',
                         "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306"
-                        "&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C")
+                        "&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"),
+                    'difficulty': x['difficulty'],
+                    'cooktime': x['total time']
                 })
 
         except Exception as e:
@@ -200,7 +203,9 @@ class RecipesRadom(Resource):
                     'id': str(x['_id']),
                     'title': x['title'],
                     'description': description + ' ...',
-                    'image': x.get('mediaURL').get('url', None)
+                    'image': x.get('mediaURL').get('url', None),
+                    'difficulty': x['difficulty'],
+                    'cooktime': x['total time']
                 })
 
         except Exception as e:
