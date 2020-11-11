@@ -90,6 +90,7 @@ class WelcomePage extends PureComponent {
           />
         </Card>
       </div>)
+    }
 
     axios.get(api_endpoint +'/v1/recipes/query/random', {})
     .then(response =>{
