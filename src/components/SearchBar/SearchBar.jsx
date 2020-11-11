@@ -57,7 +57,8 @@ class SearchBar extends PureComponent {
     searchType: searchType.BYINGREDIENTS,
     allIngredients: [],
     redirect: false,
-    queryResults:[]
+    queryResults:[],
+    previousSearch:[]
   };
 
   constructor(props) {
@@ -70,7 +71,8 @@ class SearchBar extends PureComponent {
 
   handlePressEnter = () => {
     const newIngredient = this.state.value;
-    if (!newIngredient || (newIngredient && this.state.searchType === searchType.BYTITLE)){
+    if ((!newIngredient && this.state.allIngredients.length)
+      || (newIngredient && this.state.searchType === searchType.BYTITLE)){
       this.handleClick();
     }
     if (newIngredient && this.state.searchType === searchType.BYINGREDIENTS){
@@ -109,19 +111,20 @@ class SearchBar extends PureComponent {
       axios.post(api_endpoint +'/v1/recipes/query', {"ingredients": searchArray})
         .then(response =>{
           this.setState({ redirect: true, queryResults: response['data']['result'],
-            allIngredients: [], value: "" })
+            allIngredients: [], value: "", previousSearch: searchArray })
           if (!this.redirectPage){
-            this.handleRedirect(response['data']['result'])
+            this.handleRedirect(response['data']['result'], searchArray)
           }
         })
     }
     else if (this.state.searchType === searchType.BYTITLE){
-      axios.post(api_endpoint +'/v1/recipes/query', {"title": this.state.value})
+      const recipeTitle = this.state.value
+      axios.post(api_endpoint +'/v1/recipes/query', {"title": recipeTitle})
         .then(response =>{
           this.setState({ redirect: true, queryResults: response['data']['result'],
-          allIngredients: [], value: "" })
+          allIngredients: [], value: "", previousSearch: recipeTitle })
           if (!this.redirectPage){
-            this.handleRedirect(response['data']['result'])
+            this.handleRedirect(response['data']['result'], recipeTitle)
           }
         })
     }
@@ -138,7 +141,7 @@ class SearchBar extends PureComponent {
     if (this.state.redirect && this.redirectPage){
       return <Redirect push to={{
         pathname: "/search-page",
-        state: { recipes: this.state.queryResults }
+        state: { recipes: this.state.queryResults, searchCriteria: this.state.previousSearch }
       }}/>
     }
     else{

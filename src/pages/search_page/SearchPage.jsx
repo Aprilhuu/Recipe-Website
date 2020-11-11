@@ -10,13 +10,16 @@ import defaultSettings from '../../../config/defaultSettings';
 const { api_endpoint } = defaultSettings
 
 import { Link } from 'react-router-dom';
+import FilterConfig from "../../components/FilterConfig/FilterConfig";
 
 class SearchPage extends PureComponent {
   state = {
     hasErrors: false,
     isFetching: true,
     recipeList: [],
-    sampleRecipes: []
+    sampleRecipes: [],
+    searchCriteria: [],
+    noResult: false
   };
 
   constructor(props) {
@@ -24,8 +27,14 @@ class SearchPage extends PureComponent {
   }
 
   componentDidMount() {
-    if (this.props.location.state && this.props.location.state.recipes){
-      this.setState({ recipeList: this.props.location.state.recipes, isFetching: false });
+    if (this.props.location.state){
+      this.setState({ recipeList: this.props.location.state.recipes,
+        searchCriteria: this.props.location.state.searchCriteria, isFetching: false });
+      if (!this.props.location.state.recipes.length){
+        this.setState({noResult: true})
+      }else{
+        this.setState({noResult: false})
+      }
     } else{
       const state = Store.getResultList();
       this.setState(state)
@@ -42,12 +51,17 @@ class SearchPage extends PureComponent {
     Store.saveResultList(this.state);
   }
 
-  handleRedirect = (searchResults) => {
-    this.setState({ recipeList: searchResults});
+  handleRedirect = (searchResults, searchCriteria) => {
+    this.setState({ recipeList: searchResults, searchCriteria: searchCriteria});
+    if (!searchResults.length){
+      this.setState({noResult: true})
+    } else{
+      this.setState({noResult: false})
+    }
   }
 
   render() {
-    if (!this.state.recipeList.length){
+    if (!this.state.recipeList.length && !this.state.noResult){
       let recipeCardList = []
       const recipeArray = this.state.sampleRecipes
       for (let i = 0; i < recipeArray.length; i++ ) {
@@ -92,9 +106,11 @@ class SearchPage extends PureComponent {
       );
     }
     else{
+      console.log(this.state.searchCriteria)
       return(
         <div>
           <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
+          <FilterConfig />
           <SearchResults recipeList={this.state.recipeList} handleChange={()=>{}}
                          totalPage={this.state.recipeList.length} />
         </div>
