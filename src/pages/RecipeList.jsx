@@ -70,7 +70,7 @@ class RecipeList extends PureComponent {
             header={<h1 style={{'margin':'20px'}}>Recipes</h1>}
             pagination={{
               onChange: this.onChange,
-              pageSize: 10,
+              pageSize: 5,
               total: totalPage,
               pageSizeOptions: [10],
             }}
