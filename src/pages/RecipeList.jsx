@@ -61,7 +61,6 @@ class RecipeList extends PureComponent {
         </div>
       );
     } else {
-
       return(
         <Card>
           <List
@@ -103,4 +102,4 @@ class RecipeList extends PureComponent {
   }
 }
 
-export default RecipeList
+export default RecipeList;

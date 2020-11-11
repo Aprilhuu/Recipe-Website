@@ -12,3 +12,4 @@ recipe_ns.add_resource(RecipeQuery, '/query')
 recipe_ns.add_resource(RecipeMealPlanQuery, '/query/meal_plan')
 recipe_ns.add_resource(RecipesRadom, '/query/random')
 recipe_ns.add_resource(RecipesTotal, '/count')
+
