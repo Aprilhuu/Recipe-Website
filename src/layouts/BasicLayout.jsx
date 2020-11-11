@@ -23,7 +23,9 @@ class Header_bar extends PureComponent {
       (<Menu.Item key="1">
           <Link to='/recipe-list'>Recipe List</Link>
         </Menu.Item>),
-      (<Menu.Item key="2">Search Recipe</Menu.Item>)
+      (<Menu.Item key="2">
+        <Link to='/search-page'>Search Recipe</Link>
+      </Menu.Item>)
     ]
     if(username != null){
       headers.push(

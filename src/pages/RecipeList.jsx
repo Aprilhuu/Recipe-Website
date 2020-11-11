@@ -3,20 +3,22 @@ import {Card, Button, Spin, List, Typography, Divider, BackTop } from 'antd';
 import axios from "axios";
 import { Link } from 'umi';
 import defaultSettings from '../../config/defaultSettings';
+import RecipeListing from "../components/RecipeListing/RecipeListing";
 const {api_endpoint} = defaultSettings
 
 class RecipeList extends PureComponent {
+  state = {
+    hasErrors: false,
+    isFetching: true,
+    recipeList: [],
+    fastReadingMode: false
+  };
+
   constructor(props) {
     super(props);
 
     this.onChange = this.onChange.bind(this)
 
-    this.state = {
-      hasErrors: false,
-      isFetching: true,
-      recipeList: [],
-      fastReadingMode: false
-    };
   }
 
   componentDidMount() {
@@ -58,45 +60,7 @@ class RecipeList extends PureComponent {
       );
     } else {
       return(
-        <Card>
-          <List
-            itemLayout="vertical"
-            size="large"
-            header={<h1 style={{'margin':'20px'}}>Recipes</h1>}
-            pagination={{
-              onChange: this.onChange,
-              pageSize: 10,
-              total: totalPage,
-              pageSizeOptions: [10],
-            }}
-            bordered={true}
-            dataSource={this.state.recipeList}
-            renderItem={item => {
-              var img_url = item.image
-              if(img_url == null){
-                img_url = "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"
-              }
-
-              return(
-                <List.Item
-                  key={item.id+"_list_item"}
-                  extra={
-                    <img
-                      width={272}
-                      alt="recipe_image"
-                      src={img_url}
-                    />
-                  }
-                >
-                  <List.Item.Meta
-                    title={<Link to={"/recipe/" + item.id}>{item.title}</Link>}
-                  />
-                  {item.description}
-                </List.Item>
-              )
-            }}
-          />
-        </Card>
+        <RecipeListing handleChange={this.onChange} recipeList={this.state.recipeList} totalPage={totalPage} />
       )
     }
   }
