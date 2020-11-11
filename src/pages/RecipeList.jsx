@@ -21,22 +21,26 @@ class RecipeList extends PureComponent {
 
   componentDidMount() {
     this.setState({isFetching: true});
-    axios.get(api_endpoint +'/v1/recipes/', {})
+    axios.get(api_endpoint +'v1/recipes/', {})
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
-      })
+    }).catch(function (error) {
+      console.log(error);
+    });
 
-    axios.get(api_endpoint +'/v1/recipes/count', {})
+    axios.get(api_endpoint +'v1/recipes/count', {})
       .then(response =>{
         this.setState({ totalPage: response['data']['result'], isFetching: false });
-      })
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
   onChange(page){
     console.log(page);
 
-    axios.get(api_endpoint +'/v1/recipes/?page='+page+'&page_size=10', {})
+    axios.get(api_endpoint +'/v1/recipes/?page='+(page-1)+'&page_size=10', {})
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
@@ -65,7 +69,7 @@ class RecipeList extends PureComponent {
             header={<h1 style={{'margin':'20px'}}>Recipes</h1>}
             pagination={{
               onChange: this.onChange,
-              pageSize: 10,
+              pageSize: 5,
               total: totalPage,
               pageSizeOptions: [10],
             }}
@@ -73,10 +77,6 @@ class RecipeList extends PureComponent {
             dataSource={this.state.recipeList}
             renderItem={item => {
               var img_url = item.image
-              if(img_url == null){
-                img_url = "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"
-              }
-
               return(
                 <List.Item
                   key={item.id+"_list_item"}
