@@ -151,7 +151,7 @@ class MealConfig extends PureComponent {
 
     return (
       /* Modal view */
-      <>
+      <div>
         <Button style={{float: 'right', marginTop: '20px'}} type="primary" onClick={this.showModal}>
           Add Meal
         </Button>
@@ -159,10 +159,11 @@ class MealConfig extends PureComponent {
           title="Meal Configuration"
           visible={this.state.visible}
           // onOk={this.handleOk}
+          width={600}
           footer={null}
           onCancel={this.closeForm}
         >
-          {/* Select Recipe */}
+
           <Form
             {...layout}
             name="basic"
@@ -198,8 +199,8 @@ class MealConfig extends PureComponent {
                 },
               ]}
             >
-              <Checkbox.Group>
-                <Row>
+              <Checkbox.Group style={{ width: '100%' }}> 
+                <Row >
                   <Col span={8}>
                     <Checkbox
                       value="sunday"
@@ -300,7 +301,7 @@ class MealConfig extends PureComponent {
             </Form.Item>
           </Form>
         </Modal>
-      </>
+      </div>
     );
   }
 }

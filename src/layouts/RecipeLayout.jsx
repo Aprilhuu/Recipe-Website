@@ -4,6 +4,7 @@ import {CloseOutlined, CheckOutlined, RocketOutlined, FieldTimeOutlined, FireOut
 import styles from './RecipeLayout.less'
 import NutritionLabel from "../components/NutritionLabel/NutritionLabel";
 import constructTag from '../helper_functions/constructTag.jsx';
+import CommentSection from "../components/recipeComments/recipeComments";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -23,21 +24,27 @@ const tagColor = {'vegetable': 'green', 'spice': 'red', 'seafood': 'blue', 'oil'
  * @return react components for recipe summary part in one row
  */
 const recipeSummary = (rating, difficulty, prepTime) => {
+  let ratingNum;
+  if (!rating){
+    ratingNum = '-'
+  } else{
+    ratingNum = Math.round(rating * 10) / 10
+  }
   return(
     <Row className={ styles.rowContent } align="bottom">
       {/* Col1: Rating */}
       <Col span={6}>
           <span>
-            <Rate disabled defaultValue={ rating } allowHalf={true} />
-            <span className={ styles.labelText }>{"Rating: " + rating + "/5"}</span>
+            <Rate disabled value={ Math.round(rating * 10) / 10 } allowHalf={true} />
+            <span className={ styles.labelText }>{"Rating: " + ratingNum + "/5"}</span>
           </span>
       </Col>
 
       {/* Col2: difficulty */}
       <Col span={6}>
           <span>
-            <Rate character={ <RocketOutlined /> } disabled defaultValue={ difficulty } allowHalf={true} />
-            <span className={ styles.labelText }>{"Difficulty: " + difficulty + "/5"}</span>
+            <Rate character={ <RocketOutlined /> } disabled defaultValue={ difficulty/2 } allowHalf={true} />
+            <span className={ styles.labelText }>{"Difficulty: " + difficulty/2 + "/5"}</span>
           </span>
       </Col>
 
@@ -264,6 +271,26 @@ const instructionList = (recipeInstructionList, fastReading, nutritionDetails, s
   );
 }
 
+
+/**
+ * This function is used to construct a componenet for submitting ratings
+ *
+ * @param {function} onRatingChanged Callback function used to handle state updates after user submit a rating
+ * @param {boolean} ratingSubmitted A boolean indicating if the user has submitted a rating
+ *
+ * @return React component submitting ratings and give feedback to user
+
+ */
+const ratingBar = (onRatingChanged, ratingSubmitted) => (
+  <div className={ styles.rowContentBody }>
+    <Title level={2} style={{display: 'inline'}}> Give your rating: </Title>
+      <span>
+        <Rate onChange={onRatingChanged} disabled={ratingSubmitted} />
+          {ratingSubmitted ? <span className={ styles.labelText }>Thanks for your feedback!</span> : ''}
+        </span>
+  </div>
+)
+
 /**
  * This function is used to construct a layout of the entire recipe layout page
  *
@@ -271,9 +298,17 @@ const instructionList = (recipeInstructionList, fastReading, nutritionDetails, s
  * @param {boolean} fastReading A boolean indicating if fast-reading mode has been activated or not
  * @param {function} onSwitchChanged callback function used to set state fastReadingMode in Recipe.jsx
  *
+ * @param {number} rating A integer value indicating current rating of this recipe
+ * @param {function} onRatingChanged Callback function used to handle state updates after user submit a rating
+ * @param {boolean} ratingSubmitted A boolean indicating if the user has submitted a rating
+ *
+ * @param commentData
  * @return Ant design Layout element for the entire recipe detail page
  */
-const RecipeLayout = ({ recipeDetail, fastReading, onSwitchChanged }) => {
+const RecipeLayout = ({ recipeDetail, fastReading,
+                        onSwitchChanged, rating, onRatingChanged, ratingSubmitted,
+                        commentData}) => {
+  console.log(recipeDetail)
   return (
     <Layout className={ styles.recipeLayout }>
       <Content>
@@ -286,8 +321,7 @@ const RecipeLayout = ({ recipeDetail, fastReading, onSwitchChanged }) => {
         <Divider />
 
         {/* Row 1: Recipe summary (rating, difficulty, prep time) */}
-        {/* TODO: Hacking with fake rating for now. Need a separate database to store all rating and comments info */}
-        { recipeSummary(3.5, recipeDetail.difficulty, recipeDetail["total time"]) }
+        { recipeSummary(rating, recipeDetail.difficulty, recipeDetail["total time"]) }
 
         {/* Row 2: Tags associated with a recipe */}
         { recipeTags(recipeDetail.tags) }
@@ -301,6 +335,13 @@ const RecipeLayout = ({ recipeDetail, fastReading, onSwitchChanged }) => {
         {/* Row 5: Instructions and nutrition facts */}
         { instructionList(recipeDetail.instructions, fastReading,
           recipeDetail["nutritional info"], recipeDetail.servings) }
+
+        {/* Row 6: Allow users to give rating */}
+        { ratingBar(onRatingChanged, ratingSubmitted) }
+
+        {/* Row 7: Display users' comments */}
+        <CommentSection commentData={commentData} recipeID={recipeDetail['_id']}/>
+
       </Content>
     </Layout>
   );

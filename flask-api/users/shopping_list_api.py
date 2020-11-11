@@ -2,6 +2,7 @@ from flask_restx import Resource
 from flask import request
 from bson.objectid import ObjectId
 from fractions import Fraction
+from flask_jwt import jwt_required, current_identity
 
 from app import db_connection
 
@@ -118,3 +119,46 @@ class Meal_Plan_2_Shopping_List(Resource):
             return {'result': str(e)}, 400
 
         return {'result':ret_json}, 200
+
+
+class ShoppingList(Resource):
+    @jwt_required()
+    def post(self):
+        '''
+        update the meal plan by user name
+        '''
+
+        post_data = request.get_json()
+        print(post_data)
+        new_plan = post_data.get('shopping_list', None)
+        print(new_plan)
+        if not new_plan:
+            return {'result': 'Error please enter shopping list'}, 403
+
+        user_col = db_connection['users']
+
+        # get the logined username
+        username = current_identity.get('username')
+        u = user_col.update(
+            {'username': username},
+            { '$set':{'shopping_list': new_plan}}
+        )
+        # get meal plan
+        # mp = u.get('meal_plan', {})
+
+        return {'result': 'success'}, 200
+
+    @jwt_required()
+    def get(self):
+        '''
+        get saved meal plan schedule by user name
+        '''
+        user_col = db_connection['users']
+        
+        # get the logined username
+        username = current_identity.get('username')
+        u = user_col.find_one({'username': username})
+        # get meal plan
+        shopping_list = u.get('shopping_list', {})
+
+        return {'result': shopping_list}, 200

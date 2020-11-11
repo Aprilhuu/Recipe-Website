@@ -16,6 +16,7 @@ module_api = Api(doc='/v1/doc')
 # then we can import since order mattered
 from recipes import recipe_ns
 from users import user_ns
+from reviews import review_ns
 
 def create_app(extra_config_settings={}):
     # initialize app and config app template_folder="dist", static_folder="dist", static_url_path=""
@@ -50,7 +51,7 @@ def create_app(extra_config_settings={}):
             token = request.headers.get('Authorization', None)
             if not token:
                 raise Exception("Unauthorized")
-            
+
             return token
         except Exception as e:
             raise JWTError(description='Error', error=e)
@@ -90,9 +91,11 @@ def create_app(extra_config_settings={}):
     @app.route('/meal-planner')
     @app.route('/shopping-list')
     @app.route('/recipe-list')
-    @app.route('/recipe/<recipe_id>')
-    def everyone_welcome():
+    def no_arg_route():
         return render_template('./index.html'), 200
 
+    @app.route('/recipe/<recipe_id>')
+    def recipe_arg_route(recipe_id):
+        return render_template('./index.html'), 200
 
     return app
