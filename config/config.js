@@ -64,7 +64,7 @@ export default defineConfig({
         {
           path: '/search-page',
           name: 'default',
-          component: './SearchPage.jsx'
+          component: './search_page/SearchPage.jsx'
         },
       ],
     },

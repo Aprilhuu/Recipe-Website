@@ -1,9 +1,10 @@
 import React, {PureComponent} from 'react';
-import {Card, Button, Spin, List, Typography, Divider, BackTop } from 'antd';
+import {Spin} from 'antd';
 import axios from "axios";
-import { Link } from 'umi';
 import defaultSettings from '../../config/defaultSettings';
 import RecipeListing from "../components/RecipeListing/RecipeListing";
+import Store from "./storage";
+
 const {api_endpoint} = defaultSettings
 
 class RecipeList extends PureComponent {
@@ -23,6 +24,7 @@ class RecipeList extends PureComponent {
 
   componentDidMount() {
     this.setState({isFetching: true});
+    Store.clearResultList()
     axios.get(api_endpoint +'/v1/recipes/', {})
       .then(response =>{
         // console.log(response);

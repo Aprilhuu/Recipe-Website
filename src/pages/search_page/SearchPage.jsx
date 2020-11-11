@@ -1,11 +1,12 @@
 import React, {PureComponent} from 'react';
-import SearchBar from "../components/SearchBar/SearchBar";
-import SearchResults from "../components/SearchResults/SearchResults";
+import SearchBar from "../../components/SearchBar/SearchBar";
+import SearchResults from "../../components/SearchResults/SearchResults";
 import {Carousel, Card} from "antd";
 import axios from 'axios';
 import styles from './SearchPage.less';
+import Store from "../storage";
 
-import defaultSettings from '../../config/defaultSettings';
+import defaultSettings from '../../../config/defaultSettings';
 const { api_endpoint } = defaultSettings
 
 import { Link } from 'react-router-dom';
@@ -25,6 +26,9 @@ class SearchPage extends PureComponent {
   componentDidMount() {
     if (this.props.location.state && this.props.location.state.recipes){
       this.setState({ recipeList: this.props.location.state.recipes, isFetching: false });
+    } else{
+      const state = Store.getResultList();
+      this.setState(state)
     }
     if (!this.state.recipeList.length){
       axios.get(api_endpoint +'/v1/recipes/query/random', {})
@@ -32,6 +36,10 @@ class SearchPage extends PureComponent {
           this.setState({ sampleRecipes: response.data.result })
         })
     }
+  }
+
+  componentWillUnmount() {
+    Store.saveResultList(this.state);
   }
 
   handleRedirect = (searchResults) => {
