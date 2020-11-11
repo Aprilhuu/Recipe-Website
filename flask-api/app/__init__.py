@@ -51,7 +51,7 @@ def create_app(extra_config_settings={}):
             token = request.headers.get('Authorization', None)
             if not token:
                 raise Exception("Unauthorized")
-            
+
             return token
         except Exception as e:
             raise JWTError(description='Error', error=e)
@@ -91,8 +91,11 @@ def create_app(extra_config_settings={}):
     @app.route('/meal-planner')
     @app.route('/shopping-list')
     @app.route('/recipe-list')
+    def no_arg_route():
+        return render_template('./index.html'), 200
+
     @app.route('/recipe/<recipe_id>')
-    def everyone_welcome():
+    def recipe_arg_route(recipe_id):
         return render_template('./index.html'), 200
 
     return app
