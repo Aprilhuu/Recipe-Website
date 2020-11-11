@@ -1,10 +1,6 @@
 import React, {PureComponent} from 'react';
-import defaultSettings from '../../config/defaultSettings';
 import SearchBar from "../components/SearchBar/SearchBar";
-import RecipeList from "./RecipeList";
 import RecipeListing from "../components/RecipeListing/RecipeListing";
-import {Redirect} from "react-router";
-const {api_endpoint} = defaultSettings
 
 class SearchPage extends PureComponent {
   state = {
@@ -15,7 +11,6 @@ class SearchPage extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.handleRedirect = this.handleRedirect.bind(this)
   }
 
   componentDidMount() {
@@ -29,6 +24,16 @@ class SearchPage extends PureComponent {
   }
 
   render() {
+    if (!this.state.recipeList.length){
+      return(
+        <div>
+          <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
+          <RecipeListing recipeList={this.state.recipeList} handleChange={()=>{}}
+                         totalPage={this.state.recipeList.length} />
+        </div>
+      );
+    }
+    else{
       return(
         <div>
           <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
@@ -36,6 +41,7 @@ class SearchPage extends PureComponent {
                          totalPage={this.state.recipeList.length} />
         </div>
       )
+    }
   }
 }
 

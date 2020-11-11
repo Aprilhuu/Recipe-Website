@@ -81,18 +81,6 @@ class SearchBar extends PureComponent {
     }
   };
 
-  renderRedirect = () => {
-    if (this.state.redirect && this.redirectPage) {
-      return <Redirect push to={{
-        pathname: "/search-page",
-        state: { recipes: this.state.queryResults }
-      }}/>
-    }
-    else if (this.state.redirect && !this.redirectPage){
-      this.handleRedirect(this.state.queryResults)
-    }
-  }
-
   handleChange = event => {
     this.setState({
       value: event.target.value
@@ -122,6 +110,9 @@ class SearchBar extends PureComponent {
         .then(response =>{
           this.setState({ redirect: true, queryResults: response['data']['result'],
             allIngredients: [], value: "" })
+          if (!this.redirectPage){
+            this.handleRedirect(response['data']['result'])
+          }
         })
     }
     else if (this.state.searchType === searchType.BYTITLE){
@@ -129,6 +120,9 @@ class SearchBar extends PureComponent {
         .then(response =>{
           this.setState({ redirect: true, queryResults: response['data']['result'],
           allIngredients: [], value: "" })
+          if (!this.redirectPage){
+            this.handleRedirect(response['data']['result'])
+          }
         })
     }
   }
@@ -141,21 +135,28 @@ class SearchBar extends PureComponent {
       placeholderMsg = "Please enter recipe title to search..."
     }
 
-    return (
-      <div style={{ marginBottom: 16 }}>
-        <Input addonBefore={selectBefore(this.handleSelectChange)}
-               suffix={suffix(this.handleClick)}
-               value={this.state.value}
-               placeholder={placeholderMsg}
-               onPressEnter={this.handlePressEnter}
-               onChange={this.handleChange}
-        />
-        <div style={{ marginTop: 16 }}>
-          { constructTag(this.state.allIngredients, this.handleTagClose) }
+    if (this.state.redirect && this.redirectPage){
+      return <Redirect push to={{
+        pathname: "/search-page",
+        state: { recipes: this.state.queryResults }
+      }}/>
+    }
+    else{
+      return (
+        <div style={{ marginBottom: 16 }}>
+          <Input addonBefore={selectBefore(this.handleSelectChange)}
+                 suffix={suffix(this.handleClick)}
+                 value={this.state.value}
+                 placeholder={placeholderMsg}
+                 onPressEnter={this.handlePressEnter}
+                 onChange={this.handleChange}
+          />
+          <div style={{ marginTop: 16 }}>
+            { constructTag(this.state.allIngredients, this.handleTagClose) }
+          </div>
         </div>
-        {this.renderRedirect()}
-      </div>
-    );
+      );
+    }
   }
 }
 
