@@ -115,11 +115,38 @@ class Meal_Plan(Resource):
 
         # get the logined username
         username = current_identity.get('username')
+        # but remove the old nutrition first
+        if len(new_plan) > 3: new_plan.pop()
+
         u = user_col.update(
             {'username': username},
             { '$set':{'meal_plan': new_plan}}
         )
-        # get meal plan
-        # mp = u.get('meal_plan', {})
+        
+        # also return the new plan with nutrition target
+
+        # else loop over each recipe to find nutrition
+        r_col = db_connection['recipe']
+        days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        nutritions = {x:{
+            "Calories": 0,
+            "Carbon": 0,
+            "Fiber": 0,
+        } for x in days}
+        for meal in new_plan:
+            for day in days:
+                rid = meal[day].get('recipe_id', None)
+                if rid != None:
+                    r = r_col.find_one(ObjectId(rid))
+                    r_nutrition = r['nutritional info']['nutrition facts']
+                    # print(r_nutrition)
+
+                    # add for the number
+                    nutritions[day]['Calories'] += float(r_nutrition['CALORIES']['value'])
+                    nutritions[day]['Carbon'] += float(r_nutrition['CARB']['value'])
+                    nutritions[day]['Fiber'] += float(r_nutrition['FIBER']['value'])
+
+        new_plan.append(nutritions)
+
 
         return {'result': 'success'}, 200
