@@ -62,10 +62,8 @@ class Meal_Plan(Resource):
              "friday":{},
              "saturday":{},
              "sunday":{}
-          }
+          },
         ]
-        print(last_datetime)
-        print(start_weekday)
         # give the empty plan if we got next week
         if start_weekday > last_datetime:
             # also set back to database
@@ -73,7 +71,31 @@ class Meal_Plan(Resource):
                 {'username': username},
                 { '$set':{'meal_plan': empty_plan}}
             )
-            return {'result': empty_plan}, 200
+            # return {'result': empty_plan}, 200
+            mp = empty_plan
+
+        # else loop over each recipe to find nutrition
+        r_col = db_connection['recipe']
+        days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        nutritions = {x:{
+            "Calories": 0,
+            "Carbon": 0,
+            "Fiber": 0,
+        } for x in days}
+        for meal in mp:
+            for day in days:
+                rid = meal[day].get('recipe_id', None)
+                if rid != None:
+                    r = r_col.find_one(ObjectId(rid))
+                    r_nutrition = r['nutritional info']['nutrition facts']
+                    # print(r_nutrition)
+
+                    # add for the number
+                    nutritions[day]['Calories'] += float(r_nutrition['CALORIES']['value'])
+                    nutritions[day]['Carbon'] += float(r_nutrition['CARB']['value'])
+                    nutritions[day]['Fiber'] += float(r_nutrition['FIBER']['value'])
+
+        mp.append(nutritions)
 
 
         return {'result': mp}, 200
