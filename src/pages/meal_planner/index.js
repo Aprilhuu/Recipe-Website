@@ -1,6 +1,6 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
-import { Table, PageHeader, Card, Button, Typography } from 'antd';
+import { Table, PageHeader, Card, Button, Typography, Row, Col } from 'antd';
 import MealConfig from './mealConfig.jsx'
 import { Link } from 'umi';
 import { CloseSquareFilled } from '@ant-design/icons';
@@ -22,7 +22,7 @@ class MealPlanner extends PureComponent {
     this.render_column_func = this.render_column_func.bind(this);
 
     this.state = {
-      // 'meal_plan': data,
+      'meal_plan': [],
       'columns': [
         {
           title: 'Meal Time',
@@ -126,6 +126,18 @@ class MealPlanner extends PureComponent {
         </Card>
       )
     }
+    else if(text != undefined && text.Calories != undefined){
+      console.log(text)
+      return (
+        <Card>
+          Calories: {text.Calories}/200
+          <br />
+          Carbon: {text.Carbon}/200
+          <br />
+          Fiber: {text.Fiber}/200
+        </Card>
+      )
+    }
   }
 
   // https://stackoverflow.com/questions/5210376/how-to-get-first-and-last-day-of-the-week-in-javascript
@@ -168,6 +180,7 @@ class MealPlanner extends PureComponent {
     })
     .then(response => {
       this.setState({meal_plan: response['data']['result']});
+      // this.load_nutrition(response['data']['result'])
     }).catch(function (error) {
       console.log(error);
     });
@@ -194,10 +207,13 @@ class MealPlanner extends PureComponent {
     })
     .then(function (response) {
       console.log(response);
+      // this.load_nutrition()
     })
     .catch(function (error) {
       console.log(error);
     });
+
+    // this.load_nutrition()
   }
 
   add_new_plan(recipe, meal_time, days){
@@ -242,8 +258,69 @@ class MealPlanner extends PureComponent {
     })
   }
 
+  load_nutrition(meal_plan){
+    // const { meal_plan, columns, week } = this.state;
+
+    const int_2_day = ['monday', 'tuesday', 'wednesday', 
+    'thursday', 'friday', 'saturday', 'sunday']
+    // generate the nutrition template
+    const nutritions = {}
+    for(var i = 0; i < 7; i++) {
+      nutritions[int_2_day[i]] = {
+        'Calories': 0.0,
+        'Carbon': 0.0,
+        'Fiber': 0.0,
+      }
+    }
+
+    // loop over meal plan to calculate the nutrition
+    // console.log(meal_plan);
+    var cached_recipe = {}
+    for(var i = 0; i < meal_plan.length; i++) {
+      // loop over each day
+      for (const [key, value] of Object.entries(meal_plan[i])) {
+        if(typeof(value) == typeof({})){
+          // console.log(`${key}: ${value.recipe_id}`);
+          
+          // then find recipe id
+          if(value.recipe_id != undefined){
+            axios.get(api_endpoint + 'v1/recipes/' + value.recipe_id, {
+              "Access-Control-Allow-Origin": "*",
+              "withCredentials": true,
+            }).then(response => {
+              // console.log(day_2_int[key])
+              // console.log(response.data.result['nutritional info']['nutrition facts'])
+
+              var all_info = response.data.result['nutritional info']['nutrition facts']
+              // add up the nutrition for each day
+              nutritions[key]['Calories'] = 100
+              nutritions[key].Carbon += parseFloat(all_info['CARB'].value)
+              nutritions[key].Fiber += parseFloat(all_info['FIBER'].value)
+              console.log(nutritions[key]['Calories'])
+
+            })
+          }
+        }
+      }
+    }
+
+    var new_plan = []
+    // make a deep copy here
+    for (var i = 0; i < meal_plan.length; i++){
+      new_plan.push(meal_plan[i])
+    }
+    new_plan.push(nutritions)
+
+    // console.log(nutritions)
+    // console.log(new_plan)
+
+    this.setState({'meal_plan': new_plan})
+  }
+
   render() {
     const { meal_plan, columns, week } = this.state;
+
+    console.log(meal_plan)
 
     return(
       <Card>
