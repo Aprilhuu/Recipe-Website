@@ -149,4 +149,4 @@ class Meal_Plan(Resource):
         new_plan.append(nutritions)
 
 
-        return {'result': 'success'}, 200
+        return {'result': new_plan}, 200
