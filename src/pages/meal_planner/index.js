@@ -1,7 +1,9 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
 import { Table, PageHeader, Card, Button, Typography, Row, Col } from 'antd';
+import { CheckCircleTwoTone } from '@ant-design/icons';
 import MealConfig from './mealConfig.jsx'
+import NutritionTarget from './nutritionTarget.js'
 import { Link } from 'umi';
 import { CloseSquareFilled } from '@ant-design/icons';
 const { Title } = Typography;
@@ -131,11 +133,11 @@ class MealPlanner extends PureComponent {
       // console.log(text)
       return (
         <Card>
-          Calories: {text.Calories}/200
+          Calories: {text.Calories}/200 <CheckCircleTwoTone twoToneColor="#52c41a" />
           <br />
-          Carbon: {text.Carbon}/200
+          Carbon: {text.Carbon}/200 <CheckCircleTwoTone twoToneColor="#52c41a" />
           <br />
-          Fiber: {text.Fiber}/200
+          Fiber: {text.Fiber}/200 <CheckCircleTwoTone twoToneColor="#52c41a" />
         </Card>
       )
     }
@@ -207,9 +209,9 @@ class MealPlanner extends PureComponent {
       headers: {"Authorization": username},
     })
     .then(response => {
-      console.log(response['data']['result']);
+      // console.log(response['data']['result']);
       // this.load_nutrition()
-      // this.setState({meal_plan: response['data']['result']});
+      this.setState({meal_plan: response['data']['result']});
     })
     .catch(function (error) {
       console.log(error);
@@ -277,8 +279,8 @@ class MealPlanner extends PureComponent {
           <Title level={2} style={{float: 'left', paddingTop: '10px', paddingLeft: '10px'}}>
             {week}
           </Title>
+          <NutritionTarget />
           <MealConfig newItemFunc={this.add_new_plan}/>
-          <Button></Button>
         </Card>
 
         <Table pagination={false} tableLayout='fixed' columns={columns} dataSource={meal_plan} bordered />
