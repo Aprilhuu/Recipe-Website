@@ -8,18 +8,6 @@ const { RangePicker } = DatePicker;
 import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
-// {
-//   /* Setup for recipe select list */
-// }
-// const recipeList = [];
-// for (let i = 0; i < Object.keys(recipes).length; i++) {
-//   recipeList.push(
-//     <Option key={i} value={i}>
-//       {recipes[i].title}
-//     </Option>,
-//   );
-// }
-
 {
   /* Formatting */
 }

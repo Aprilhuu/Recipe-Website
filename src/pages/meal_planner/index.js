@@ -1,7 +1,9 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
-import { Table, PageHeader, Card, Button, Typography } from 'antd';
+import { Table, PageHeader, Card, Button, Typography, Row, Col } from 'antd';
+import { CheckCircleTwoTone } from '@ant-design/icons';
 import MealConfig from './mealConfig.jsx'
+import NutritionTarget from './nutritionTarget.js'
 import { Link } from 'umi';
 import { CloseSquareFilled } from '@ant-design/icons';
 const { Title } = Typography;
@@ -20,9 +22,11 @@ class MealPlanner extends PureComponent {
     this.save_my_plan = this.save_my_plan.bind(this);
     this.removeEntry = this.removeEntry.bind(this);
     this.render_column_func = this.render_column_func.bind(this);
+    this.save_my_plan = this.save_my_plan.bind(this);
+    this.update_nutrition = this.update_nutrition.bind(this);
 
     this.state = {
-      // 'meal_plan': data,
+      'meal_plan': [],
       'columns': [
         {
           title: 'Meal Time',
@@ -74,6 +78,7 @@ class MealPlanner extends PureComponent {
         }
       ],
       week: [],
+      nutrition_target:{'calories':0, 'carbon':0, 'fiber':0}
     };
   }
 
@@ -126,6 +131,26 @@ class MealPlanner extends PureComponent {
         </Card>
       )
     }
+    else if(text != undefined && text.Calories != undefined){
+      const {nutrition_target} = this.state
+
+      // go throught 3 entries to see if the nutrition reached
+      // if reach then give the checkup
+      const temp_func = (cur, target) => {
+        if(cur >=  target) return [<CheckCircleTwoTone twoToneColor="#52c41a" />]
+        else return []
+      }
+
+      return (
+        <Card>
+          Calories: {text.Calories} / {nutrition_target['calories']}  {temp_func(text.Calories, nutrition_target['calories'])}
+          <br />
+          Carbon: {text.Carbon} / {nutrition_target['carbon']}  {temp_func(text.Carbon, nutrition_target['carbon'])}
+          <br />
+          Fiber: {text.Fiber} / {nutrition_target['fiber']}  {temp_func(text.Fiber, nutrition_target['fiber'])}
+        </Card>
+      )
+    }
   }
 
   // https://stackoverflow.com/questions/5210376/how-to-get-first-and-last-day-of-the-week-in-javascript
@@ -161,13 +186,26 @@ class MealPlanner extends PureComponent {
   componentDidMount() {
     // get the user that logged in if they exist
     const username = localStorage.getItem('username')
-    console.log(username)
+    // console.log(username)
 
     axios.get(api_endpoint+'v1/users/meal_plan',{
       headers: {"Authorization":username}
     })
     .then(response => {
       this.setState({meal_plan: response['data']['result']});
+      // this.load_nutrition(response['data']['result'])
+    }).catch(function (error) {
+      console.log(error);
+    });
+
+
+    // get the nutrition target
+    axios.get(api_endpoint+'v1/users/nutrition_target',{
+      headers: {"Authorization":username}
+    })
+    .then(response => {
+      console.log(response['data']['result']);
+      this.setState({nutrition_target: response['data']['result']});
     }).catch(function (error) {
       console.log(error);
     });
@@ -192,12 +230,16 @@ class MealPlanner extends PureComponent {
     {
       headers: {"Authorization": username},
     })
-    .then(function (response) {
-      console.log(response);
+    .then(response => {
+      // console.log(response['data']['result']);
+      // this.load_nutrition()
+      this.setState({meal_plan: response['data']['result']});
     })
     .catch(function (error) {
       console.log(error);
     });
+
+    // this.load_nutrition()
   }
 
   add_new_plan(recipe, meal_time, days){
@@ -242,8 +284,14 @@ class MealPlanner extends PureComponent {
     })
   }
 
+  update_nutrition(value){
+    this.setState({ nutrition_target: value });
+  }
+
   render() {
-    const { meal_plan, columns, week } = this.state;
+    const { meal_plan, columns, week, nutrition_target } = this.state;
+
+    // console.log(meal_plan)
 
     return(
       <Card>
@@ -257,8 +305,8 @@ class MealPlanner extends PureComponent {
           <Title level={2} style={{float: 'left', paddingTop: '10px', paddingLeft: '10px'}}>
             {week}
           </Title>
+          <NutritionTarget update_nutrition={this.update_nutrition}/>
           <MealConfig newItemFunc={this.add_new_plan}/>
-          <Button></Button>
         </Card>
 
         <Table pagination={false} tableLayout='fixed' columns={columns} dataSource={meal_plan} bordered />
