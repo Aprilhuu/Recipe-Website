@@ -184,6 +184,9 @@ class RecipeMealPlanQuery(Resource):
             if title == None:
                 return {'result':'Please input the title'}, 403
 
+            # here remove the case sensitive in the first char
+            title = title.title()
+
             collection = db_connection["recipe"]
             # find start with
             recipe = collection.find({"title": {'$regex':'^%s'%title}}).limit(10)

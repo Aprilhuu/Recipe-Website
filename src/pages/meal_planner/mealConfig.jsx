@@ -163,7 +163,7 @@ class MealConfig extends PureComponent {
             preserve={false}
           >
             <Form.Item
-              label="Select Recipe"
+              label="Search Recipe"
               name="recipe"
               rules={[
                 {
@@ -175,6 +175,7 @@ class MealConfig extends PureComponent {
               <Select
                 showSearch
                 defaultActiveFirstOption={false}
+                placeholder="eg. Chicken"
                 showArrow={false}
                 filterOption={false}
                 onSearch={this.handleSearch}

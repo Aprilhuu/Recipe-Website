@@ -123,7 +123,7 @@ class NutritionTarget extends PureComponent {
     return (
       /* Modal view */
       <div>
-        <Button style={{float: 'right', marginTop: '20px'}} type="primary" onClick={this.showModal}>
+        <Button style={{float: 'right', marginTop: '20px'}} onClick={this.showModal}>
           Set Nutrition
         </Button>
         <Modal

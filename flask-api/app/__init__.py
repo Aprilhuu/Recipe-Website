@@ -87,6 +87,7 @@ def create_app(extra_config_settings={}):
     # hook the flask_restx api
     module_api.init_app(app)
 
+    @app.route('/')
     @app.route('/copilot')
     @app.route('/meal-planner')
     @app.route('/shopping-list')
