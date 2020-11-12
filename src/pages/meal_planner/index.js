@@ -23,6 +23,7 @@ class MealPlanner extends PureComponent {
     this.removeEntry = this.removeEntry.bind(this);
     this.render_column_func = this.render_column_func.bind(this);
     this.save_my_plan = this.save_my_plan.bind(this);
+    this.update_nutrition = this.update_nutrition.bind(this);
 
     this.state = {
       'meal_plan': [],
@@ -77,6 +78,7 @@ class MealPlanner extends PureComponent {
         }
       ],
       week: [],
+      nutrition_target:{'calories':0, 'carbon':0, 'fiber':0}
     };
   }
 
@@ -130,14 +132,22 @@ class MealPlanner extends PureComponent {
       )
     }
     else if(text != undefined && text.Calories != undefined){
-      // console.log(text)
+      const {nutrition_target} = this.state
+
+      // go throught 3 entries to see if the nutrition reached
+      // if reach then give the checkup
+      const temp_func = (cur, target) => {
+        if(cur >=  target) return [<CheckCircleTwoTone twoToneColor="#52c41a" />]
+        else return []
+      }
+
       return (
         <Card>
-          Calories: {text.Calories}/200 <CheckCircleTwoTone twoToneColor="#52c41a" />
+          Calories: {text.Calories} / {nutrition_target['calories']}  {temp_func(text.Calories, nutrition_target['calories'])}
           <br />
-          Carbon: {text.Carbon}/200 <CheckCircleTwoTone twoToneColor="#52c41a" />
+          Carbon: {text.Carbon} / {nutrition_target['carbon']}  {temp_func(text.Carbon, nutrition_target['carbon'])}
           <br />
-          Fiber: {text.Fiber}/200 <CheckCircleTwoTone twoToneColor="#52c41a" />
+          Fiber: {text.Fiber} / {nutrition_target['fiber']}  {temp_func(text.Fiber, nutrition_target['fiber'])}
         </Card>
       )
     }
@@ -176,7 +186,7 @@ class MealPlanner extends PureComponent {
   componentDidMount() {
     // get the user that logged in if they exist
     const username = localStorage.getItem('username')
-    console.log(username)
+    // console.log(username)
 
     axios.get(api_endpoint+'v1/users/meal_plan',{
       headers: {"Authorization":username}
@@ -184,6 +194,18 @@ class MealPlanner extends PureComponent {
     .then(response => {
       this.setState({meal_plan: response['data']['result']});
       // this.load_nutrition(response['data']['result'])
+    }).catch(function (error) {
+      console.log(error);
+    });
+
+
+    // get the nutrition target
+    axios.get(api_endpoint+'v1/users/nutrition_target',{
+      headers: {"Authorization":username}
+    })
+    .then(response => {
+      console.log(response['data']['result']);
+      this.setState({nutrition_target: response['data']['result']});
     }).catch(function (error) {
       console.log(error);
     });
@@ -262,8 +284,12 @@ class MealPlanner extends PureComponent {
     })
   }
 
+  update_nutrition(value){
+    this.setState({ nutrition_target: value });
+  }
+
   render() {
-    const { meal_plan, columns, week } = this.state;
+    const { meal_plan, columns, week, nutrition_target } = this.state;
 
     // console.log(meal_plan)
 
@@ -279,7 +305,7 @@ class MealPlanner extends PureComponent {
           <Title level={2} style={{float: 'left', paddingTop: '10px', paddingLeft: '10px'}}>
             {week}
           </Title>
-          <NutritionTarget />
+          <NutritionTarget update_nutrition={this.update_nutrition}/>
           <MealConfig newItemFunc={this.add_new_plan}/>
         </Card>
 

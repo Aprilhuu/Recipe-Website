@@ -37,13 +37,23 @@ class NutritionTarget extends PureComponent {
 
     // console.log(newItemFunc)
     this.state = { 
-      'visible': false ,    
+      'visible': false ,
+      'nutrition_target': {'calories':0, 'carbon':0, 'fiber':0},  
     };
   }
 
   // after the component is rendered
   componentDidMount(){
-
+    const username = localStorage.getItem('username')
+    // get the nutrition target
+    axios.get(api_endpoint+'v1/users/nutrition_target',{
+      headers: {"Authorization":username}
+    })
+    .then(response => {
+      this.setState({nutrition_target: response['data']['result']});
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
 
@@ -70,31 +80,45 @@ class NutritionTarget extends PureComponent {
 
 
   onFinish(values) {
-    console.log('Success:', values);
-    // const {recipes} =  this.state
-    // // console.log( recipes )
-    // // console.log(' get here')
+    const {nutrition_target} = this.state
 
-    // // update the name of attribute later
-    // var recipe_id = values['recipe'];
-    // var rp = recipes[recipe_id]
-    // // console.log(rp)
+    // conner case for undefined
+    if(values.calories == undefined){
+      values.calories = nutrition_target.calories
+    }
+    if(values.carbon == undefined){
+      values.carbon = nutrition_target.carbon
+    }
+    if(values.fiber == undefined){
+      values.fiber = nutrition_target.fiber
+    }
 
-    // var meal = values['meal-time-picker'];
-    // // const days_to_int = {"monday":1,"tuesday":2,"wednesday":3,"thursday":4,"friday":5,"saturday":6,"sunday":7}
-    // var days = values['checkbox-group'];
+    // save to backend
+    console.log(values)
+    const username = localStorage.getItem('username')
+    // get the nutrition target
+    axios.post(api_endpoint+'v1/users/nutrition_target', {
+      'nutrition_target': values
+    }, {
+      headers: {"Authorization":username}
+    })
+    .then(response => {
+      this.setState({nutrition_target: response['data']['result']});
+    }).catch(function (error) {
+      console.log(error);
+    });
 
-    // //close the modal
-    // this.setState({
-    //   visible: false,
-    // });
+    // close the form
+    this.setState({
+      visible: false,
+    });
 
-    // const { newItemFunc } = this.props;
-    // newItemFunc(rp, meal, days);
+    const { update_nutrition } = this.props;
+    update_nutrition(values);
   }
 
   render() {
-
+    const {nutrition_target} = this.state
 
     return (
       /* Modal view */
@@ -121,34 +145,28 @@ class NutritionTarget extends PureComponent {
           >
 
             {/* input nutrition */}
-            <Form.Item name="calories_input" label="Calories(0~1000): ">
+            <Form.Item name="calories" label="Calories(0~1000kj): ">
               <InputNumber 
                 min={0} 
                 max={1000} 
-                defaultValue={0} 
+                defaultValue={nutrition_target['calories']} 
                 step={100}
-                formatter={value => `${value}kj`}
-                parser={value => value.replace('kj', '')}
               />
             </Form.Item>
-            <Form.Item name="carbon_input" label="Carbon(0~200): " >
+            <Form.Item name="carbon" label="Carbon(0~200g): " >
               <InputNumber 
                 min={0} 
-                max={200} 
-                defaultValue={0} 
+                max={100} 
+                defaultValue={nutrition_target['carbon']}  
                 step={10}
-                formatter={value => `${value}g`}
-                parser={value => value.replace('g', '')}
               />
             </Form.Item>
-            <Form.Item name="fiber_input" label="Fiber(0~50): " >
+            <Form.Item name="fiber" label="Fiber(0~50g): " >
               <InputNumber 
                 min={0} 
                 max={50} 
-                defaultValue={0} 
+                defaultValue={nutrition_target['fiber']}  
                 step={1}
-                formatter={value => `${value}g`}
-                parser={value => value.replace('g', '')}
               />
             </Form.Item>
 
