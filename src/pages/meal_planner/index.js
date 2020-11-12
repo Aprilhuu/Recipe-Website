@@ -258,64 +258,64 @@ class MealPlanner extends PureComponent {
     })
   }
 
-  load_nutrition(meal_plan){
-    // const { meal_plan, columns, week } = this.state;
+  // load_nutrition(meal_plan){
+  //   // const { meal_plan, columns, week } = this.state;
 
-    const int_2_day = ['monday', 'tuesday', 'wednesday', 
-    'thursday', 'friday', 'saturday', 'sunday']
-    // generate the nutrition template
-    const nutritions = {}
-    for(var i = 0; i < 7; i++) {
-      nutritions[int_2_day[i]] = {
-        'Calories': 0.0,
-        'Carbon': 0.0,
-        'Fiber': 0.0,
-      }
-    }
+  //   const int_2_day = ['monday', 'tuesday', 'wednesday', 
+  //   'thursday', 'friday', 'saturday', 'sunday']
+  //   // generate the nutrition template
+  //   const nutritions = {}
+  //   for(var i = 0; i < 7; i++) {
+  //     nutritions[int_2_day[i]] = {
+  //       'Calories': 0.0,
+  //       'Carbon': 0.0,
+  //       'Fiber': 0.0,
+  //     }
+  //   }
 
-    // loop over meal plan to calculate the nutrition
-    // console.log(meal_plan);
-    var cached_recipe = {}
-    for(var i = 0; i < meal_plan.length; i++) {
-      // loop over each day
-      for (const [key, value] of Object.entries(meal_plan[i])) {
-        if(typeof(value) == typeof({})){
-          // console.log(`${key}: ${value.recipe_id}`);
+  //   // loop over meal plan to calculate the nutrition
+  //   // console.log(meal_plan);
+  //   var cached_recipe = {}
+  //   for(var i = 0; i < meal_plan.length; i++) {
+  //     // loop over each day
+  //     for (const [key, value] of Object.entries(meal_plan[i])) {
+  //       if(typeof(value) == typeof({})){
+  //         // console.log(`${key}: ${value.recipe_id}`);
           
-          // then find recipe id
-          if(value.recipe_id != undefined){
-            axios.get(api_endpoint + 'v1/recipes/' + value.recipe_id, {
-              "Access-Control-Allow-Origin": "*",
-              "withCredentials": true,
-            }).then(response => {
-              // console.log(day_2_int[key])
-              // console.log(response.data.result['nutritional info']['nutrition facts'])
+  //         // then find recipe id
+  //         if(value.recipe_id != undefined){
+  //           axios.get(api_endpoint + 'v1/recipes/' + value.recipe_id, {
+  //             "Access-Control-Allow-Origin": "*",
+  //             "withCredentials": true,
+  //           }).then(response => {
+  //             // console.log(day_2_int[key])
+  //             // console.log(response.data.result['nutritional info']['nutrition facts'])
 
-              var all_info = response.data.result['nutritional info']['nutrition facts']
-              // add up the nutrition for each day
-              nutritions[key]['Calories'] = 100
-              nutritions[key].Carbon += parseFloat(all_info['CARB'].value)
-              nutritions[key].Fiber += parseFloat(all_info['FIBER'].value)
-              console.log(nutritions[key]['Calories'])
+  //             var all_info = response.data.result['nutritional info']['nutrition facts']
+  //             // add up the nutrition for each day
+  //             nutritions[key]['Calories'] = 100
+  //             nutritions[key].Carbon += parseFloat(all_info['CARB'].value)
+  //             nutritions[key].Fiber += parseFloat(all_info['FIBER'].value)
+  //             console.log(nutritions[key]['Calories'])
 
-            })
-          }
-        }
-      }
-    }
+  //           })
+  //         }
+  //       }
+  //     }
+  //   }
 
-    var new_plan = []
-    // make a deep copy here
-    for (var i = 0; i < meal_plan.length; i++){
-      new_plan.push(meal_plan[i])
-    }
-    new_plan.push(nutritions)
+  //   var new_plan = []
+  //   // make a deep copy here
+  //   for (var i = 0; i < meal_plan.length; i++){
+  //     new_plan.push(meal_plan[i])
+  //   }
+  //   new_plan.push(nutritions)
 
-    // console.log(nutritions)
-    // console.log(new_plan)
+  //   // console.log(nutritions)
+  //   // console.log(new_plan)
 
-    this.setState({'meal_plan': new_plan})
-  }
+  //   this.setState({'meal_plan': new_plan})
+  // }
 
   render() {
     const { meal_plan, columns, week } = this.state;
