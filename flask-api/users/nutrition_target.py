@@ -43,14 +43,22 @@ class Nutrition_Target(Resource):
         try:
             for x in nutrition_target:
                 # check value is number
-                int(nutrition_target[x])
+                temp = int(nutrition_target[x])
+
+                # also set limit
+                if x == 'calories' and not (temp<1000 and temp>0):
+                    raise Exception("invalid range")
+                elif x == 'carbon' and not (temp<200 and temp>0):
+                    raise Exception("invalid range")
+                elif x == 'fiber' and not (temp<50 and temp>0):
+                    raise Exception("invalid range")
 
                 # check key is in the list
                 if x not in ['calories', 'carbon', 'fiber']:
                     raise Exception("key %s is not in list"%x)
         except Exception as e:
             print(e)
-            return {'result': 'invalid input'}, 403
+            return {'result': str(e)}, 403
 
         user_col = db_connection['users']
         # get the logined username
