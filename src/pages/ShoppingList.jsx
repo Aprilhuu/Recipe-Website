@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import { Card, List, Popover, Checkbox, PageHeader, notification } from 'antd';
 import axios from 'axios';
 import { CheckOutlined, PlusOutlined, SmileOutlined } from '@ant-design/icons';
+import { Link } from 'umi';
 
 import defaultSettings from '../../config/defaultSettings';
 const { api_endpoint } = defaultSettings
+import Store from "./storage";
 
 class ShoppingList extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            listInfo: {}, 
+            listInfo: {},
             listItem: [],
             tickedListInfo: {},
             tickedListItem: [],
@@ -37,7 +39,7 @@ class ShoppingList extends Component {
         let parsed_id = e.target.id.split("-")
         let entry_id = parsed_id[0]
         let checkboxType = parsed_id[1]
-    
+
         let { tickedListInfo, listInfo } = this.state;
         if (checkboxType == 'tickbox') {
             this.openNotification('1 item ticked', 'If this was a misclick, click the \'+\' button in your Ticked Items list below to add the item back.')
@@ -57,7 +59,7 @@ class ShoppingList extends Component {
 
         //update shopping list
         this.updateList(listInfo, false)
-        
+
         //update ticked list
         this.updateList(tickedListInfo, true)
     }
@@ -88,11 +90,11 @@ class ShoppingList extends Component {
 
             let i = 0;
             for (const [key, value] of Object.entries(value.detail)) {
-            
+
                 // popup that shows after hovering each shopping list item
                 popoverItem.push(
                     <div key={i}>
-                        <a href={"/recipe/" + value.recipe_id}>{value.recipe_title}</a> needs {value.quantity} of this ingredient
+                        <Link to={"/recipe/" + value.recipe_id}>{value.recipe_title}</Link> needs {value.quantity} of this ingredient
                     </div>
                 )
             i++;
@@ -116,7 +118,7 @@ class ShoppingList extends Component {
                 checkboxId += '-tickbox';
                 checkSign = <CheckOutlined/>
             }
-                
+
             checkbox = <Checkbox id={checkboxId} onChange={this.onChange}>
                     {checkSign}
                 </Checkbox>
@@ -124,18 +126,18 @@ class ShoppingList extends Component {
             const popoverKey = titleKey + '-popover'
             items.push(
                 <List.Item key={titleKey}>
-                    <List.Item.Meta 
+                    <List.Item.Meta
                         title={titleKey}
                         description={
                         <Popover key={popoverKey} content={popoverItem} title="Recipe and Amount Needed">
                             <div>Needed amount for all recipes: {value.quantity}</div>
                         </Popover>
                     }
-                    /> 
+                    />
                     {checkbox}
                 </List.Item>
             )
-            
+
             // initial update
             if (typeof listInfo != 'undefined' && listInfo != null) curId++;
         }
@@ -151,9 +153,10 @@ class ShoppingList extends Component {
     // after the component is rendered
     componentDidMount(){
         axios.get(api_endpoint+'/v1/users/meal_plan/shopping_list', {}).then(
-            response => { 
+            response => {
                 this.updateList(response.data.result, false);
             })
+        Store.clearResultList()
     }
 
     render() {
@@ -182,7 +185,7 @@ class ShoppingList extends Component {
                         {this.state.tickedListItem}
                     </List>
                 </div>
-                
+
             </Card>
         );
     }

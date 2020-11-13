@@ -1,27 +1,32 @@
 import React, {PureComponent} from 'react';
-import {Card, Button, Spin, List, Typography, Divider, BackTop } from 'antd';
+import {Spin} from 'antd';
 import axios from "axios";
-import { Link } from 'umi';
 import defaultSettings from '../../config/defaultSettings';
+import RecipeListing from "../components/RecipeListing/RecipeListing";
+import SearchResults from "../components/SearchResults/SearchResults";
+import Store from "./storage";
+
 const {api_endpoint} = defaultSettings
 
 class RecipeList extends PureComponent {
+  state = {
+    hasErrors: false,
+    isFetching: true,
+    recipeList: [],
+    fastReadingMode: false
+  };
+
   constructor(props) {
     super(props);
 
     this.onChange = this.onChange.bind(this)
 
-    this.state = {
-      hasErrors: false,
-      isFetching: true,
-      recipeList: [],
-      fastReadingMode: false
-    };
   }
 
   componentDidMount() {
     this.setState({isFetching: true});
-    axios.get(api_endpoint +'v1/recipes/', {})
+    Store.clearResultList()
+    axios.get(api_endpoint +'/v1/recipes/', {})
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
@@ -40,7 +45,7 @@ class RecipeList extends PureComponent {
   onChange(page){
     console.log(page);
 
-    axios.get(api_endpoint +'/v1/recipes/?page='+(page-1)+'&page_size=10', {})
+    axios.get(api_endpoint +'/v1/recipes/?page='+(page-1)+'&page_size=9', {})
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
@@ -62,41 +67,7 @@ class RecipeList extends PureComponent {
       );
     } else {
       return(
-        <Card>
-          <List
-            itemLayout="vertical"
-            size="large"
-            header={<h1 style={{'margin':'20px'}}>Recipes</h1>}
-            pagination={{
-              onChange: this.onChange,
-              pageSize: 5,
-              total: totalPage,
-              pageSizeOptions: [10],
-            }}
-            bordered={true}
-            dataSource={this.state.recipeList}
-            renderItem={item => {
-              var img_url = item.image
-              return(
-                <List.Item
-                  key={item.id+"_list_item"}
-                  extra={
-                    <img
-                      width={272}
-                      alt="recipe_image"
-                      src={img_url}
-                    />
-                  }
-                >
-                  <List.Item.Meta
-                    title={<Link to={"/recipe/" + item.id}>{item.title}</Link>}
-                  />
-                  {item.description}
-                </List.Item>
-              )
-            }}
-          />
-        </Card>
+        <SearchResults handleChange={this.onChange} recipeList={this.state.recipeList} totalPage={totalPage} />
       )
     }
   }

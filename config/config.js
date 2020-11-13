@@ -33,7 +33,7 @@ export default defineConfig({
           component: './ShoppingList.jsx'
         },
         {
-          path: '/',
+          path: '/copilot',
           //redirect: '/dashboard/analysis',
           name: 'default',
           component: './Welcome.jsx'
@@ -60,7 +60,12 @@ export default defineConfig({
           path: '/recipe/:recipe_id',
           name: 'default',
           component: './Recipe.jsx'
-        }
+        },
+        {
+          path: '/search-page',
+          name: 'default',
+          component: './search_page/SearchPage.jsx'
+        },
       ],
     },
   ],

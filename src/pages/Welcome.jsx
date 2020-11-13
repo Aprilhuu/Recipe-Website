@@ -5,6 +5,8 @@ import styles from './Welcome.less';
 import searchIllust from '../assets/images/search_illust.jpg'
 import mealPlanIllust from '../assets/images/meal_plan_illust.jpg'
 import pantryIllust from '../assets/images/pantry_illust.jpg'
+import {recipes} from '../../recipes/recipes.js';
+import Store from "./storage";
 import { LeftCircleFilled, RightCircleFilled } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -61,72 +63,6 @@ class WelcomePage extends PureComponent {
    };
 
   componentDidMount() {
-// <<<<<<< HEAD
-//     // let recipeCardList = []
-//     // let i = 0;
-//     // for (const [key, value] of Object.entries(recipes)) {
-//     //   if (i >= this.featuredRecipesDisplayed) break;
-//     //   // console.log(key)
-//     //   // console.log(value.title)
-//     //   // if (value.mediaURL.type == 'image') {
-//     //   //   console.log(value.mediaURL.url)
-//     //   // }
-//     //   // console.log(value.difficulty)
-//     //   // console.log((value.instructions[0].description).slice(0, this.descriptionCharLength)  + "...")
-      
-
-//     //   recipeCardList.push(
-//     //   <div style={{ flex: "33.33%", padding: "5px"}} key={value.title}>
-//     //     <Card
-//     //         style={{ width: "300px" }}
-//     //         cover={            
-//     //             <img
-//     //             src={value.mediaURL.url}
-//     //             />
-//     //         }
-//     //       >
-//     //       <Meta
-//     //         title={value.title}
-//     //         description={(value.instructions[0].description).slice(0, this.descriptionCharLength) + "..."}
-//     //       />
-//     //     </Card>
-//     //   </div>)
-//     // }
-//     // window.addEventListener("resize", this.handleResize);
-
-// =======
-//     let recipeCardList = []
-//     let i = 0;
-//     for (const [key, value] of Object.entries(recipes)) {
-//       if (i >= this.featuredRecipesDisplayed) break;
-//       // console.log(key)
-//       // console.log(value.title)
-//       // if (value.mediaURL.type == 'image') {
-//       //   console.log(value.mediaURL.url)
-//       // }
-//       // console.log(value.difficulty)
-//       // console.log((value.instructions[0].description).slice(0, this.descriptionCharLength)  + "...")
-      
-
-//       recipeCardList.push(
-//       <div style={{ flex: "33.33%", padding: "5px"}} key={value.title}>
-//         <Card
-//             style={{ width: "300px" }}
-//             cover={            
-//                 <img
-//                 src={value.mediaURL.url}
-//                 />
-//             }
-//           >
-//           <Meta
-//             title={value.title}
-//             description={(value.instructions[0].description).slice(0, this.descriptionCharLength) + "..."}
-//           />
-//         </Card>
-//       </div>)
-//     }
-// >>>>>>> master
-
     axios.get(api_endpoint +'/v1/recipes/query/random', {})
     .then(response =>{
       let recipeCardList = []
@@ -156,25 +92,13 @@ class WelcomePage extends PureComponent {
           </div>)
       }
       this.setState({ recipeCardList: recipeCardList})
+      Store.clearResultList();
     })
   }
 
-// <<<<<<< HEAD
-  // createRecipeCard() {
-  //   for (const [key, value] of Object.entries(recipes)) {
-  //     // console.log(key)
-  //     // console.log(value)
-  //   }
-  // }
+
   componentWillUnMount() {
     window.addEventListener("resize", this.handleResize);
-// =======
-//   createRecipeCard() {
-//     for (const [key, value] of Object.entries(recipes)) {
-//       // console.log(key)
-//       // console.log(value)
-//     }
-// >>>>>>> master
   }
   
   onMouseEnterSearch = () => this.carouselRef.current.goTo(0, true);
@@ -257,7 +181,6 @@ class WelcomePage extends PureComponent {
               <LeftCircleFilled onClick={this.slideLeft} className={styles.arrows}/>
               <RightCircleFilled onClick={this.slideRight} className={styles.arrows}/>
             </div>
-
           </div>
 
         </Card>

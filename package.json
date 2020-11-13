@@ -121,6 +121,7 @@
     "prettier": "^2.1.2",
     "pro-download": "1.0.1",
     "puppeteer-core": "^4.0.1",
+    "react-router-dom": "^5.2.0",
     "stylelint": "^13.0.0"
   },
   "engines": {

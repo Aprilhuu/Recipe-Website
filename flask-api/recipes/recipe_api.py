@@ -41,7 +41,11 @@ class Recipes(Resource):
                     'id': str(x['_id']),
                     'title': x['title'],
                     'description': description + ' ...',
-                    'image': x.get('mediaURL').get('url', None)
+                    'image': x.get('mediaURL').get('url',
+                        "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306"
+                        "&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"),
+                    'difficulty': x['difficulty'],
+                    'cooktime': x['total time']
                 })
 
         except Exception as e:
@@ -138,35 +142,42 @@ class RecipeQuery(Resource):
             if title and ingredients:
                 # Adding title as one filter as well to filter both by title and by ingredients
                 ingredient_filter_array.append({'title': title})
-                recipe = collection.find({'$and': ingredient_filter_array})
+                cursor = collection.find({'$and': ingredient_filter_array})
             elif ingredients:
-                recipe = collection.find({'$and': ingredient_filter_array})
+                cursor = collection.find({'$and': ingredient_filter_array})
             else:
                 # TODO: Right now only support search by exact title. Do we need to support more
                 #  flexible search later?
-                recipe = collection.find_one({'title': title})
+                cursor = collection.find_one({'title': title})
 
             # Step 4: Process results returned from database before returning. We are
             # changing the id to string if we find it and remove unnecessary attributes.
-            if not recipe:
-                recipe = []
+            recipes = []
 
-            if isinstance(recipe, dict):
-                recipe['_id'] = str(recipe['_id'])
-                del recipe['ingredients']
-                del recipe['instructions']
-                recipe = [recipe]
-            else:
-                recipe = list(recipe)
-                for one_recipe in recipe:
-                    one_recipe['_id'] = str(one_recipe['_id'])
-                    del one_recipe['ingredients']
-                    del one_recipe['instructions']
+            if isinstance(cursor, dict):
+                cursor = [cursor]
+
+            for x in cursor:
+                # for displaying pick the first instruction
+                description = x['instructions'][0]['description'] if len(x['instructions']) > 0 else ''
+                # some of the instruction are over length so pick first 20 word if greater
+                description = description[:50] if len(description) > 50 else description
+
+                recipes.append({
+                    'id': str(x['_id']),
+                    'title': x['title'],
+                    'description': description + ' ...',
+                    'image': x.get('mediaURL').get('url',
+                        "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306"
+                        "&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"),
+                    'difficulty': x['difficulty'],
+                    'cooktime': x['total time']
+                })
 
         except Exception as e:
             return {'result': str(e)}, 400
 
-        return {'result':recipe}, 200
+        return {'result': recipes}, 200
 
 class RecipeMealPlanQuery(Resource):
 
@@ -183,6 +194,9 @@ class RecipeMealPlanQuery(Resource):
             title = post_data.get('title', None)
             if title == None:
                 return {'result':'Please input the title'}, 403
+
+            # here remove the case sensitive in the first char
+            title = title.title()
 
             collection = db_connection["recipe"]
             # find start with
@@ -236,7 +250,9 @@ class RecipesRadom(Resource):
                     'id': str(x['_id']),
                     'title': x['title'],
                     'description': description + ' ...',
-                    'image': x.get('mediaURL').get('url', None)
+                    'image': x.get('mediaURL').get('url', None),
+                    'difficulty': x['difficulty'],
+                    'cooktime': x['total time']
                 })
 
         except Exception as e:

@@ -8,18 +8,6 @@ const { RangePicker } = DatePicker;
 import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
-// {
-//   /* Setup for recipe select list */
-// }
-// const recipeList = [];
-// for (let i = 0; i < Object.keys(recipes).length; i++) {
-//   recipeList.push(
-//     <Option key={i} value={i}>
-//       {recipes[i].title}
-//     </Option>,
-//   );
-// }
-
 {
   /* Formatting */
 }
@@ -175,7 +163,7 @@ class MealConfig extends PureComponent {
             preserve={false}
           >
             <Form.Item
-              label="Select Recipe"
+              label="Search Recipe"
               name="recipe"
               rules={[
                 {
@@ -187,6 +175,7 @@ class MealConfig extends PureComponent {
               <Select
                 showSearch
                 defaultActiveFirstOption={false}
+                placeholder="eg. Chicken"
                 showArrow={false}
                 filterOption={false}
                 onSearch={this.handleSearch}

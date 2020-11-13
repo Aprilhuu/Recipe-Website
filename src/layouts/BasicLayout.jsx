@@ -18,12 +18,14 @@ class Header_bar extends PureComponent {
     // console.log(username)
     var headers = [
       (<Menu.Item key="0">
-          <Link to='/'><img width="30" src={home}></img></Link>
+          <Link to='/copilot'><img width="30" src={home}></img></Link>
         </Menu.Item>),
       (<Menu.Item key="1">
           <Link to='/recipe-list'>Recipe List</Link>
         </Menu.Item>),
-      (<Menu.Item key="2">Search Recipe</Menu.Item>)
+      (<Menu.Item key="2">
+        <Link to='/search-page'>Search Recipe</Link>
+      </Menu.Item>)
     ]
     if(username != null){
       headers.push(
