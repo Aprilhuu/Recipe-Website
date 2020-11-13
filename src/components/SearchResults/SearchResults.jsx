@@ -54,14 +54,14 @@ export default ({handleChange, recipeList, totalPage}) => {
           onChange: handleChange,
           pageSize: 9,
           total: totalPage,
-          pageSizeOptions: [10],
+          pageSizeOptions: [9],
         }}
         bordered={true}
         dataSource={recipeList}
         renderItem={item => {
           let img_url = item.image
           if(img_url == null){
-            img_url = "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"
+            img_url = item.mediaURL.url
           }
 
           let titleClassName;

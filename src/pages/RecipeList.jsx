@@ -3,6 +3,7 @@ import {Spin} from 'antd';
 import axios from "axios";
 import defaultSettings from '../../config/defaultSettings';
 import RecipeListing from "../components/RecipeListing/RecipeListing";
+import SearchResults from "../components/SearchResults/SearchResults";
 import Store from "./storage";
 
 const {api_endpoint} = defaultSettings
@@ -44,7 +45,7 @@ class RecipeList extends PureComponent {
   onChange(page){
     console.log(page);
 
-    axios.get(api_endpoint +'/v1/recipes/?page='+(page-1)+'&page_size=5', {})
+    axios.get(api_endpoint +'/v1/recipes/?page='+(page-1)+'&page_size=9', {})
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
@@ -66,7 +67,7 @@ class RecipeList extends PureComponent {
       );
     } else {
       return(
-        <RecipeListing handleChange={this.onChange} recipeList={this.state.recipeList} totalPage={totalPage} />
+        <SearchResults handleChange={this.onChange} recipeList={this.state.recipeList} totalPage={totalPage} />
       )
     }
   }

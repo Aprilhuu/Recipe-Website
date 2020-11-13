@@ -99,6 +99,7 @@ class WelcomePage extends PureComponent {
 
   componentWillUnMount() {
     window.addEventListener("resize", this.handleResize);
+  }
   
   onMouseEnterSearch = () => this.carouselRef.current.goTo(0, true);
 
