@@ -49,7 +49,6 @@ class RecipeList extends PureComponent {
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
-
         document.body.scrollTop = 0; // For Safari
         document.documentElement.scrollTop = 0;
       })

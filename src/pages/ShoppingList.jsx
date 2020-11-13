@@ -31,10 +31,6 @@ class ShoppingList extends Component {
     }
 
     onChange(e) {
-
-        // console.log(this)
-        // console.log(e)
-
         // get the id
         let parsed_id = e.target.id.split("-")
         let entry_id = parsed_id[0]
@@ -62,6 +58,20 @@ class ShoppingList extends Component {
 
         //update ticked list
         this.updateList(tickedListInfo, true)
+
+        let { curId } = this.state;
+
+        const username = localStorage.getItem('username');
+        axios.post(api_endpoint + '/v1/users/shopping_list', {
+            'shopping_list' : {
+                'tickedListInfo': tickedListInfo,
+                'listInfo': listInfo,
+                'curId': curId
+            }
+          },
+          {
+            headers: {"Authorization": username},
+          })
     }
 
     updateList(list, tickedItems) {
@@ -75,7 +85,6 @@ class ShoppingList extends Component {
         if (curId == 0) {
             listInfo = {};
         }
-
 
         for (const [key, value] of Object.entries(list)) {
             let popoverItem = [];
@@ -152,16 +161,38 @@ class ShoppingList extends Component {
 
     // after the component is rendered
     componentDidMount(){
-        axios.get(api_endpoint+'/v1/users/meal_plan/shopping_list', {}).then(
-            response => {
-                this.updateList(response.data.result, false);
-            })
+        const username = localStorage.getItem('username')
+
+        // if shopping list api is empty, get ingredients from the meal planner
+        // otherwise, get ingredients from the shopping list api
+        axios.get(api_endpoint+'/v1/users/shopping_list', {
+            headers: {"Authorization":username}
+        })
+        .then(response => {
+            if (Object.keys(response.data.result).length === 0 && response.data.result.constructor === Object) {
+                axios.get(api_endpoint+'/v1/users/meal_plan/shopping_list', {}).then(
+                    response => {
+                        this.updateList(response.data.result, false);
+                    })
+            } else {
+                this.setState({ 
+                    listInfo: response.data.result.listInfo,
+                    tickedListInfo: response.data.result.tickedListInfo,
+                    curId: response.data.result.curId
+                })
+                
+                this.updateList(response.data.result.listInfo, false)
+                this.updateList(response.data.result.tickedListInfo, true)
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
         Store.clearResultList()
     }
 
     render() {
         return(
-            <Card style={{ width: '50%', margin: 'auto' }}>
+            <Card style={{ minWidth: '420px', width: '50%', margin: 'auto' }}>
                 <PageHeader
                     title="Shopping List"
                     onBack={() => window.history.back()}
@@ -172,7 +203,7 @@ class ShoppingList extends Component {
                 <div style={{ margin: 'auto' }}>
                     <List
                         bordered
-                        header={<div style={{fontSize: '2em'}}>For Your Next Grocery Trip</div>}
+                        header={<div style={{fontSize: '2em'}}>Your Shopping List</div>}
                         style={{marginTop: '50px', backgroundColor: 'white'}}
                     >
                         {this.state.listItem}
