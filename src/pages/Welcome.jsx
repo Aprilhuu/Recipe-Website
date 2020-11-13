@@ -96,7 +96,6 @@ class WelcomePage extends PureComponent {
     })
   }
 
-
   componentWillUnMount() {
     window.addEventListener("resize", this.handleResize);
   }
