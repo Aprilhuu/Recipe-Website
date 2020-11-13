@@ -61,72 +61,6 @@ class WelcomePage extends PureComponent {
    };
 
   componentDidMount() {
-// <<<<<<< HEAD
-//     // let recipeCardList = []
-//     // let i = 0;
-//     // for (const [key, value] of Object.entries(recipes)) {
-//     //   if (i >= this.featuredRecipesDisplayed) break;
-//     //   // console.log(key)
-//     //   // console.log(value.title)
-//     //   // if (value.mediaURL.type == 'image') {
-//     //   //   console.log(value.mediaURL.url)
-//     //   // }
-//     //   // console.log(value.difficulty)
-//     //   // console.log((value.instructions[0].description).slice(0, this.descriptionCharLength)  + "...")
-      
-
-//     //   recipeCardList.push(
-//     //   <div style={{ flex: "33.33%", padding: "5px"}} key={value.title}>
-//     //     <Card
-//     //         style={{ width: "300px" }}
-//     //         cover={            
-//     //             <img
-//     //             src={value.mediaURL.url}
-//     //             />
-//     //         }
-//     //       >
-//     //       <Meta
-//     //         title={value.title}
-//     //         description={(value.instructions[0].description).slice(0, this.descriptionCharLength) + "..."}
-//     //       />
-//     //     </Card>
-//     //   </div>)
-//     // }
-//     // window.addEventListener("resize", this.handleResize);
-
-// =======
-//     let recipeCardList = []
-//     let i = 0;
-//     for (const [key, value] of Object.entries(recipes)) {
-//       if (i >= this.featuredRecipesDisplayed) break;
-//       // console.log(key)
-//       // console.log(value.title)
-//       // if (value.mediaURL.type == 'image') {
-//       //   console.log(value.mediaURL.url)
-//       // }
-//       // console.log(value.difficulty)
-//       // console.log((value.instructions[0].description).slice(0, this.descriptionCharLength)  + "...")
-      
-
-//       recipeCardList.push(
-//       <div style={{ flex: "33.33%", padding: "5px"}} key={value.title}>
-//         <Card
-//             style={{ width: "300px" }}
-//             cover={            
-//                 <img
-//                 src={value.mediaURL.url}
-//                 />
-//             }
-//           >
-//           <Meta
-//             title={value.title}
-//             description={(value.instructions[0].description).slice(0, this.descriptionCharLength) + "..."}
-//           />
-//         </Card>
-//       </div>)
-//     }
-// >>>>>>> master
-
     axios.get(api_endpoint +'/v1/recipes/query/random', {})
     .then(response =>{
       let recipeCardList = []
@@ -159,22 +93,9 @@ class WelcomePage extends PureComponent {
     })
   }
 
-// <<<<<<< HEAD
-  // createRecipeCard() {
-  //   for (const [key, value] of Object.entries(recipes)) {
-  //     // console.log(key)
-  //     // console.log(value)
-  //   }
-  // }
+
   componentWillUnMount() {
     window.addEventListener("resize", this.handleResize);
-// =======
-//   createRecipeCard() {
-//     for (const [key, value] of Object.entries(recipes)) {
-//       // console.log(key)
-//       // console.log(value)
-//     }
-// >>>>>>> master
   }
   
   onMouseEnterSearch = () => this.carouselRef.current.goTo(0, true);

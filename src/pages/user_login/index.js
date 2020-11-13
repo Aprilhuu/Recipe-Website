@@ -1,7 +1,7 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
 import { Modal, Button, Input, Space, Row, 
-        Col, Divider, Form, Checkbox, Radio } from 'antd';
+        Col, Divider, Form, Menu, Dropdown } from 'antd';
 import { Link } from 'umi';
 import styles from './login.less'
 import { withRouter } from "react-router-dom";
@@ -135,10 +135,10 @@ class UserLogin extends PureComponent {
 
   // let user to confirm before logout
   warning() {
-    Modal.warning({
+    Modal.confirm({
       title: 'Confirm to Logout',
       content: 'Are you sure to logout?',
-      onOk: this.logout
+      onOk: this.logout,
     });
   }
   
@@ -239,13 +239,19 @@ class UserLogin extends PureComponent {
 
     // also use username to render it
     const username = localStorage.getItem('username') || ' '
+    const dropdown_menu = (
+      <Menu>
+        <Menu.Item>
+          <Button key='logout_button' onClick={this.warning} className={styles.input_box}> Logout </Button>
+        </Menu.Item>
+      </Menu>
+    );
     const login_component = [
-      <div key='user_login_logout'>
-        <Button key='logout_button' onClick={this.warning} className={styles.input_box}> Logout </Button>
+      <Dropdown overlay={dropdown_menu} placement="bottomCenter">
         <Button key='user_icon' type="primary" shape="circle">
           {username[0]}
         </Button>
-      </div>
+      </Dropdown>
     ]
 
     // get the username from local storage

@@ -40,7 +40,7 @@ class RecipeList extends PureComponent {
   onChange(page){
     console.log(page);
 
-    axios.get(api_endpoint +'/v1/recipes/?page='+(page-1)+'&page_size=10', {})
+    axios.get(api_endpoint +'/v1/recipes/?page='+(page-1)+'&page_size=5', {})
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
