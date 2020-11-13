@@ -8,6 +8,7 @@ import { Link } from 'umi';
 import { CloseSquareFilled } from '@ant-design/icons';
 const { Title } = Typography;
 const { Meta } = Card;
+import Store from "../storage";
 
 import defaultSettings from '../../../config/defaultSettings';
 const { api_endpoint } = defaultSettings
@@ -15,7 +16,7 @@ const { api_endpoint } = defaultSettings
 // https://quaranteam-group3.atlassian.net/browse/CCP-3
 class MealPlanner extends PureComponent {
   constructor(props) {
-    
+
     super(props);
 
     this.add_new_plan = this.add_new_plan.bind(this);
@@ -104,13 +105,13 @@ class MealPlanner extends PureComponent {
 
     this.save_my_plan()
   }
-  
+
   render_column_func(text, record) {
     if(text != undefined && text.recipe_title != undefined){
-  
+
       var url = "/recipe/" + text.recipe_id
       const cardId = text.meal_index + '-' + text.day;
-  
+
       return (
         <Card
           hoverable
@@ -160,7 +161,7 @@ class MealPlanner extends PureComponent {
         diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
     return new Date(d.setDate(diff));
   }
-  
+
   getDateString(date) {
     const dateData = date.toString().split(' ');
     const dateString = dateData[0] + 'day, ' + dateData[1] + ' ' + dateData[2] + ' ' + dateData[3];
@@ -209,10 +210,11 @@ class MealPlanner extends PureComponent {
     }).catch(function (error) {
       console.log(error);
     });
-    
+
     // add the dynamically changing week
     const weekString = this.getWeekString()
     this.setState({ week: weekString})
+    Store.clearResultList()
   }
 
 
@@ -252,7 +254,7 @@ class MealPlanner extends PureComponent {
     }
 
     const meal_2_int = {'Breakfast':0, 'Lunch':1, 'Dinner':2}
-    
+
     // get the image of the recipe
     let meal_image = null;
     axios.get(api_endpoint + 'v1/recipes/' + recipe.id, {
@@ -262,15 +264,15 @@ class MealPlanner extends PureComponent {
       if (response.data.result.mediaURL.type == 'image') {
         meal_image = response.data.result.mediaURL.url
       }
-      
+
       // store into meal plan
       for(var i = 0; i < days.length; i++) {
-  
+
         const meal_index = meal_2_int[meal_time];
         const day = days[i];
-  
+
         new_plan[meal_index][day] = {
-            'recipe_title': recipe.title, 
+            'recipe_title': recipe.title,
             'description': recipe.description,
             'recipe_id': recipe.id,
             'image': meal_image,

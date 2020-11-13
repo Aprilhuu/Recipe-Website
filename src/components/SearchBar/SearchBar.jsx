@@ -62,10 +62,17 @@ class SearchBar extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.redirectPage = props.redirect
+    if (props.redirectCallback){
+      this.handleRedirect = props.redirectCallback
+    }
   }
 
   handlePressEnter = () => {
     const newIngredient = this.state.value;
+    if (!newIngredient || (newIngredient && this.state.searchType === searchType.BYTITLE)){
+      this.handleClick();
+    }
     if (newIngredient && this.state.searchType === searchType.BYINGREDIENTS){
       this.setState({
         value: "",
@@ -73,15 +80,6 @@ class SearchBar extends PureComponent {
       })
     }
   };
-
-  renderRedirect = () => {
-    if (this.state.redirect) {
-      return <Redirect push to={{
-        pathname: "/recipe-list",
-        state: { recipes: this.state.queryResults }
-      }}/>
-    }
-  }
 
   handleChange = event => {
     this.setState({
@@ -104,15 +102,27 @@ class SearchBar extends PureComponent {
 
   handleClick = () => {
     if (this.state.searchType === searchType.BYINGREDIENTS){
-      axios.post(api_endpoint +'/v1/recipes/query', {"ingredients": this.state.allIngredients})
+      let searchArray = this.state.allIngredients
+      if (this.state.value){
+        searchArray = searchArray.concat(this.state.value)
+      }
+      axios.post(api_endpoint +'/v1/recipes/query', {"ingredients": searchArray})
         .then(response =>{
-          this.setState({ redirect: true, queryResults: response['data']['result']})
+          this.setState({ redirect: true, queryResults: response['data']['result'],
+            allIngredients: [], value: "" })
+          if (!this.redirectPage){
+            this.handleRedirect(response['data']['result'])
+          }
         })
     }
     else if (this.state.searchType === searchType.BYTITLE){
       axios.post(api_endpoint +'/v1/recipes/query', {"title": this.state.value})
         .then(response =>{
-          this.setState({ redirect: true, queryResults: response['data']['result'] })
+          this.setState({ redirect: true, queryResults: response['data']['result'],
+          allIngredients: [], value: "" })
+          if (!this.redirectPage){
+            this.handleRedirect(response['data']['result'])
+          }
         })
     }
   }
@@ -125,21 +135,28 @@ class SearchBar extends PureComponent {
       placeholderMsg = "Please enter recipe title to search..."
     }
 
-    return (
-      <div style={{ marginBottom: 16 }}>
-        <Input addonBefore={selectBefore(this.handleSelectChange)}
-               suffix={suffix(this.handleClick)}
-               value={this.state.value}
-               placeholder={placeholderMsg}
-               onPressEnter={this.handlePressEnter}
-               onChange={this.handleChange}
-        />
-        <div style={{ marginTop: 16 }}>
-          { constructTag(this.state.allIngredients, this.handleTagClose) }
+    if (this.state.redirect && this.redirectPage){
+      return <Redirect push to={{
+        pathname: "/search-page",
+        state: { recipes: this.state.queryResults }
+      }}/>
+    }
+    else{
+      return (
+        <div style={{ marginBottom: 16 }}>
+          <Input addonBefore={selectBefore(this.handleSelectChange)}
+                 suffix={suffix(this.handleClick)}
+                 value={this.state.value}
+                 placeholder={placeholderMsg}
+                 onPressEnter={this.handlePressEnter}
+                 onChange={this.handleChange}
+          />
+          <div style={{ marginTop: 16 }}>
+            { constructTag(this.state.allIngredients, this.handleTagClose) }
+          </div>
         </div>
-        {this.renderRedirect()}
-      </div>
-    );
+      );
+    }
   }
 }
 

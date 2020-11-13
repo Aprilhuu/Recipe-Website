@@ -5,6 +5,8 @@ import styles from './Welcome.less';
 import searchIllust from '../assets/images/search_illust.jpg'
 import mealPlanIllust from '../assets/images/meal_plan_illust.jpg'
 import pantryIllust from '../assets/images/pantry_illust.jpg'
+import {recipes} from '../../recipes/recipes.js';
+import Store from "./storage";
 import { LeftCircleFilled, RightCircleFilled } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -90,13 +92,13 @@ class WelcomePage extends PureComponent {
           </div>)
       }
       this.setState({ recipeCardList: recipeCardList})
+      Store.clearResultList();
     })
   }
 
 
   componentWillUnMount() {
     window.addEventListener("resize", this.handleResize);
-  }
   
   onMouseEnterSearch = () => this.carouselRef.current.goTo(0, true);
 
@@ -178,7 +180,6 @@ class WelcomePage extends PureComponent {
               <LeftCircleFilled onClick={this.slideLeft} className={styles.arrows}/>
               <RightCircleFilled onClick={this.slideRight} className={styles.arrows}/>
             </div>
-
           </div>
 
         </Card>
