@@ -33,7 +33,7 @@ export default defineConfig({
           component: './ShoppingList.jsx'
         },
         {
-          path: '/',
+          path: '/copilot',
           //redirect: '/dashboard/analysis',
           name: 'default',
           component: './Welcome.jsx'
