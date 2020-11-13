@@ -10,6 +10,7 @@ from app import db_connection
 # into shopping list
 class Meal_Plan_2_Shopping_List(Resource):
     
+    # @jwt_required()
     def get(self):
         '''
         aggregate the recipe ingradients in meal planer
@@ -19,64 +20,63 @@ class Meal_Plan_2_Shopping_List(Resource):
         # example curl localhost:5000/v1/recipes/
         try:
             # for now tempory user is group3
-            # username = 'group3'
+            username = 'group3'
 
+            user_col = db_connection['users']
+            # find the exist key for that user
+            u = user_col.find_one({'username':username})
+            mp = u.get('meal_plan', {})
 
+            # then get all recipe id with count
+            recipe_ids = {}
+            DAYS = ['friday', 'monday', 'saturday', 'sunday', 'thursday', 'tuesday', 'wednesday']
+            for meals in mp:
+                for days in DAYS:
+                    # if we have the plan on that day
+                    recipe_per_day = meals[days].get('recipe_id', None)
+                    if recipe_per_day:
+                        # check if we store the id before
+                        if recipe_ids.get(recipe_per_day, None):
+                            recipe_ids[recipe_per_day] += 1
+                        else:
+                            recipe_ids.update({recipe_per_day:1})
+            print(recipe_ids)
 
-            # mp_collection = db_connection['meal_plan']
-            # # find the exist key for that user
-            # record = mp_collection.find_one({username:{'$exists': True}})
+            # then get the recipe by id
+            # TODO add to util function <-----------------------------------------------------
+            recipes = []
+            r_collection = db_connection['recipe']
+            for rid in recipe_ids:
+                recipe = r_collection.find_one({'_id':ObjectId(rid)})
+                # print(recipe)
+                recipes.append(recipe)
 
-            # # then get all recipe id with count
-            # recipe_ids = {}
-            # DAYS = ['friday', 'monday', 'saturday', 'sunday', 'thursday', 'tuesday', 'wednesday']
-            # for meals in record[username]:
-            #     for days in DAYS:
-            #         # if we have the plan on that day
-            #         recipe_per_day = meals[days].get('recipe_title', None)
-            #         if recipe_per_day:
-            #             # check if we store the id before
-            #             if recipe_ids.get(recipe_per_day, None):
-            #                 recipe_ids[recipe_per_day] += 1
-            #             else:
-            #                 recipe_ids.update({recipe_per_day:1})
-            # print(recipe_ids)
-
-            # # then get the recipe by id
-            # # TODO add to util function <-----------------------------------------------------
-            # r_collection = db_connection['group3_collection']
-            # for rid in recipe_ids:
-            #     # ingredient x number
-            #     multiplier = recipe_ids[rid]
-
-            #     # get the recipe detail
-            #     # tempory use the title here <--------------------------------------------------
-            #     recipe = r_collection.find_one({'title':rid})
-            #     print(recipe)
+            print(recipes)
 
             ##############################################
             # temporary return all
-            r_collection = db_connection['group3_collection']
+            # r_collection = db_connection['group3_collection']
             ret_json = {}
-            recipe = r_collection.find()
-            for x in recipe[:3]:
+            # recipe = r_collection.find()
+            for x in recipes:
                 for ingredient in x['ingredients']:
-                    # print(ingredient)
+                    print(ingredient)
 
-                    # Note -1 means the ingredient has no quantity restriction
+                #     # Note -1 means the ingredient has no quantity restriction
                     quantity = ingredient.get('quantity', '-1 ')
-                    # split into quantity and unit
-                    # I assume the format will be 'quantity unit'
+                #     # split into quantity and unit
+                #     # I assume the format will be 'quantity unit'
 
-                    t = quantity.split(' ')
-                    quantity, unit = (Fraction(t[0]), t[1]) if len(t) == 2 else (Fraction(t[0]), None)
-                    # only add the unit when the recipe provides
-                    q_str = '%s %s'%(str(quantity), unit) if unit else '%s'%(str(quantity))
+                #     t = quantity.split(' ')
+                #     quantity, unit = (Fraction(t[0]), t[1]) if len(t) == 2 else (Fraction(t[0]), None)
+                #     # only add the unit when the recipe provides
+                    unit = ''
+                    q_str = str(quantity)
 
                     type_ = ingredient['type']
                     name = ingredient['name']
 
-                    # now start to parse into return value
+                #     # now start to parse into return value
                     has_ = ret_json.get(name, None)
                     # if the ingredient already in the return update it
                     if has_:

@@ -18,7 +18,7 @@ class Header_bar extends PureComponent {
     // console.log(username)
     var headers = [
       (<Menu.Item key="0">
-          <Link to='/'><img width="30" src={home}></img></Link>
+          <Link to='/copilot'><img width="30" src={home}></img></Link>
         </Menu.Item>),
       (<Menu.Item key="1">
           <Link to='/recipe-list'>Recipe List</Link>
