@@ -5,7 +5,6 @@ import styles from './Welcome.less';
 import searchIllust from '../assets/images/search_illust.jpg'
 import mealPlanIllust from '../assets/images/meal_plan_illust.jpg'
 import pantryIllust from '../assets/images/pantry_illust.jpg'
-import {recipes} from '../../recipes/recipes.js';
 import Store from "./storage";
 import { LeftCircleFilled, RightCircleFilled } from '@ant-design/icons';
 import axios from 'axios';
@@ -27,7 +26,7 @@ class WelcomePage extends PureComponent {
       windowWidth: window.innerWidth,
       popoverPlacement: 'right',
     }
-    this.mealPlannerDescription = <div style={{maxWidth: '200px'}}>
+    this.mealPlannerDescription = <div style={{ maxWidth: '200px' }}>
       <div>
         <b>1. Adding items:</b> click 'Add item' on the top right of the meal planner. Search for your meal and save.
       </div>
@@ -35,15 +34,26 @@ class WelcomePage extends PureComponent {
         <b>2. Removing items:</b> click the 'x' on the top right of each meal card to remove it.
       </div>
       <div>
-        <b>3. Plan your week:</b> each week, your meal plan will refresh, so don't forget to fill it out for that week! 
+        <b>3. Plan your week:</b> each week, your meal plan will refresh, so don't forget to fill it out for every week! 
       </div>
     </div>
 
-    this.virtualPantryDescription = <div style={{maxWidth: '200px'}}>
-      todo
+    this.shoppingListDescription = <div style={{ maxWidth: '200px' }}>
+      <div>
+        <b>1. Buying items:</b> whenever you buy an ingredient, click the checkbox to move your item into your Ticked Items list.
+      </div>
+      <div>
+        <b>2. Misclick:</b> if you misclicked and your item is moved into your Ticked Items list, click the + button to add it back.
+      </div>
+      <div>
+        <b>3. Integration with meal planner:</b> this shopping list is integrated with meal planner, which means that every time you update your meal plan, the ingredients required will automatically be populated in your shopping list.
+      </div>
+      <div>
+        <b>4. Updating the meal planner:</b> watch out! Every time you update your meal planner, your shopping list will reset.
+      </div>
     </div>
 
-    this.searchDescription = <div style={{maxWidth: '200px'}}>
+    this.searchDescription = <div style={{ maxWidth: '200px' }}>
       todo
     </div>
   }
@@ -105,7 +115,7 @@ class WelcomePage extends PureComponent {
 
   onMouseEnterMealPlanner = () => this.carouselRef.current.goTo(1, true);
 
-  onMouseEnterVirtualPantry = () => this.carouselRef.current.goTo(2, true);
+  onMouseEnterShoppingList = () => this.carouselRef.current.goTo(2, true);
 
   slideLeft = () => this.featuredRecipeRef.current.prev();
 
@@ -153,11 +163,11 @@ class WelcomePage extends PureComponent {
                     />
                   </Card>
                 </Popover>
-                <Popover  placement={this.state.popoverPlacement} key='virtual-pantry' content={this.virtualPantryDescription} title="How to Use Virtual Pantry">
-                  <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterVirtualPantry}>
+                <Popover  placement={this.state.popoverPlacement} key='shopping-list' content={this.shoppingListDescription} title="How to Use Shopping List">
+                  <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterShoppingList}>
                     <Meta 
-                      title="Virtual Pantry"
-                      description="Let us know your inventory and we'll let you know what to cook."
+                      title="Shopping List"
+                      description="Keeps track of ingredients you need for your meal plan"
                     />
                   </Card>
                 </Popover>
