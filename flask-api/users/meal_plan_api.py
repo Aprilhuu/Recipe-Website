@@ -118,9 +118,10 @@ class Meal_Plan(Resource):
         # but remove the old nutrition first
         if len(new_plan) > 3: new_plan.pop()
 
+        # also cleanup the existing shopping list
         u = user_col.update(
             {'username': username},
-            { '$set':{'meal_plan': new_plan}}
+            { '$set':{'meal_plan': new_plan, 'shopping_list':{}}}
         )
         
         # also return the new plan with nutrition target

@@ -99,7 +99,7 @@ class MealPlanner extends PureComponent {
     if (meal_index != 'undefined' && day != 'undefined' && meal_index != '' && day != '') {
       meal_plan[meal_index][day] = {}
       // force table update
-      this.setState({ meal_plan: [...meal_plan] })
+      // this.setState({ meal_plan: [...meal_plan] })
     }
 
     this.save_my_plan()
@@ -279,7 +279,7 @@ class MealPlanner extends PureComponent {
           }
       }
   
-      this.setState({ meal_plan: new_plan });
+      // this.setState({ meal_plan: new_plan });
       this.save_my_plan()
     })
   }
