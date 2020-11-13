@@ -101,7 +101,7 @@ class UserLogin extends PureComponent {
       })
 
       // redirect to home
-      this.props.history.push("/");
+      this.props.history.push("/copilot");
       window.location.reload();
 
     }).catch(error => {
