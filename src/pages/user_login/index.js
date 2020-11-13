@@ -56,10 +56,10 @@ class UserLogin extends PureComponent {
     },{})
     // to use the arrow function let the this within the function scope
     .then(response => {
-      // console.log(response);
 
       // if success then set the username into the local storage
-      localStorage.setItem('username', username);
+      localStorage.setItem('username', response['data']['result']['username']);
+      localStorage.setItem('logined_user', username);
 
       // raise login flag
       this.setState({
@@ -238,7 +238,7 @@ class UserLogin extends PureComponent {
     ]
 
     // also use username to render it
-    const username = localStorage.getItem('username') || ' '
+    const username = localStorage.getItem('logined_user') || ' '
     const dropdown_menu = (
       <Menu>
         <Menu.Item>

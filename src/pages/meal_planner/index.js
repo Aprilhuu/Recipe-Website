@@ -186,7 +186,7 @@ class MealPlanner extends PureComponent {
   componentDidMount() {
     // get the user that logged in if they exist
     const username = localStorage.getItem('username')
-    // console.log(username)
+    console.log(username)
 
     axios.get(api_endpoint+'v1/users/meal_plan',{
       headers: {"Authorization":username}

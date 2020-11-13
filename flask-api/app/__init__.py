@@ -3,6 +3,7 @@ from flask_restx import Api
 from flask_cors import CORS
 import json
 from flask_jwt import JWT,  JWTError
+import jwt as pyjwt
 import pymongo
 
 from config import ConfigClass
@@ -60,11 +61,11 @@ def create_app(extra_config_settings={}):
     @jwt.jwt_decode_handler
     def decode_auth_token(token):
         print("###### decode_auth_token by syncope")
-        # try:
-        #     decoded = pyjwt.decode(token, verify=False)
-        #     return decoded
-        # except Exception as e:
-        #     raise JWTError(description='Error', error=e)
+        try:
+            decoded = pyjwt.decode(token, ConfigClass.SECRET_KEY, algorithms=['HS256'])
+            return decoded
+        except Exception as e:
+            raise JWTError(description='Error', error=e)
 
         # currently just username
         return token
@@ -73,16 +74,16 @@ def create_app(extra_config_settings={}):
     @jwt.identity_handler
     def identify(payload):
         print("###### identify")
-        print(payload)
+        print(payload['username'])
 
         # connect to user db see if user exist
         uc = db_connection['users']
-        u = uc.find_one({'username':payload})
+        u = uc.find_one({'username':payload['username']})
 
         if not u:
             return None
 
-        return {"username": payload}
+        return {"username": payload['username']}
 
     # hook the flask_restx api
     module_api.init_app(app)

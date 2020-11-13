@@ -3,7 +3,10 @@ from flask import request, make_response, jsonify, after_this_request
 from bson.objectid import ObjectId
 import hashlib
 from flask_jwt import jwt_required, current_identity
+import jwt
 import datetime
+
+from config import ConfigClass
 
 from app import db_connection
 
@@ -40,6 +43,13 @@ class User(Resource):
         except Exception as e:
             return {'result': str(e)}, 400
 
+        token = jwt.encode(
+            {'username': username},
+            ConfigClass.SECRET_KEY,
+            algorithm='HS256'
+        )
+        print(token)
+
         # @after_this_request
         # def after_request(response):
         #     # and set the httponly cookie so that frontend
@@ -47,7 +57,7 @@ class User(Resource):
         #     response.set_cookie('Authorization', username, httponly=True)
         #     return response
 
-        return {'result':{'username': username}}, 200
+        return {'result':{'username': token.decode("utf-8") }}, 200
 
 
 # this api instance is to handle with all the recipes
