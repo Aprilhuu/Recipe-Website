@@ -3,6 +3,7 @@ from flask import request, make_response, jsonify, after_this_request
 from bson.objectid import ObjectId
 import hashlib
 from flask_jwt import jwt_required, current_identity
+import datetime
 
 from app import db_connection
 
@@ -129,11 +130,19 @@ class UserRegister(Resource):
                      "sunday":{}
                   }
                ],
-               "shopping_list":[]
+               "shopping_list":[],
+               "last_meal_plan_time":datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'),
+               "nutrition_target":{
+                    "calories": 0,
+                    "carbon": 0,
+                    "fiber": 0,
+               }
             }
+            
             collection.insert(new_user)
 
         except Exception as e:
+            print(e)
             return {'result': str(e)}, 400
 
         return {'result': {'username': username}}, 200
