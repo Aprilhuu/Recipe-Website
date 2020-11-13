@@ -12,6 +12,6 @@ const proSettings = {
   title: 'Ant Design Pro',
   pwa: false,
   iconfontUrl: '',
-  api_endpoint: 'http://localhost:5000/'
+  api_endpoint: 'https://ece444apiservice.herokuapp.com/'
 };
 export default proSettings;
