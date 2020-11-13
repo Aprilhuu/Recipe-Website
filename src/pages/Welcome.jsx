@@ -167,7 +167,7 @@ class WelcomePage extends PureComponent {
                   <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterShoppingList}>
                     <Meta 
                       title="Shopping List"
-                      description="Keeps track of ingredients you need for your meal plan"
+                      description="Keeps track of ingredients you need for your meal plan."
                     />
                   </Card>
                 </Popover>
