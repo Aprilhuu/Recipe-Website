@@ -46,11 +46,11 @@ class Nutrition_Target(Resource):
                 temp = int(nutrition_target[x])
 
                 # also set limit
-                if x == 'calories' and not (temp<1000 and temp>0):
+                if x == 'calories' and not (temp<=1000 and temp>=0):
                     raise Exception("invalid range")
-                elif x == 'carbon' and not (temp<200 and temp>0):
+                elif x == 'carbon' and not (temp<=200 and temp>=0):
                     raise Exception("invalid range")
-                elif x == 'fiber' and not (temp<50 and temp>0):
+                elif x == 'fiber' and not (temp<=50 and temp>=0):
                     raise Exception("invalid range")
 
                 # check key is in the list
