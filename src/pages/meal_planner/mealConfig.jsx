@@ -1,13 +1,12 @@
+/* eslint-disable no-restricted-syntax */
 import React, { PureComponent } from 'react';
 import { Form, Button, Select, Checkbox, Row, Col, Modal, Alert } from 'antd';
 import axios from 'axios';
+import defaultSettings from '../../../config/defaultSettings';
 
 const { Option } = Select;
-
-import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
-{/* Formatting */}
 const layout = {
   labelCol: {
     span: 8,
@@ -16,6 +15,7 @@ const layout = {
     span: 16,
   },
 };
+
 const tailLayout = {
   wrapperCol: {
     offset: 8,
@@ -25,19 +25,6 @@ const tailLayout = {
 
 // https://quaranteam-group3.atlassian.net/browse/CCP-6
 class MealConfig extends PureComponent {
-  /* For Modal View */
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-
-  handleOk = (e) => {
-    console.log(e);
-    this.setState({
-      visible: false,
-    });
-  };
 
   constructor(props) {
     super(props);
@@ -63,8 +50,8 @@ class MealConfig extends PureComponent {
   }
 
   componentDidMount() {
-    // add modal days checkbox
-    let days = []
+    // add modal days checkboxes
+    const days = []
     for (const [key, value] of Object.entries(this.daysInfo)) {
       days.push(<Col span={8}>
         <Checkbox
@@ -76,46 +63,21 @@ class MealConfig extends PureComponent {
         <span style={{paddingLeft: '10px'}}>{key}</span>
       </Col>)
     }
-    this.setState({days: days})
+    this.setState({ days })
   }
 
-  handleSearch(value) {
-    // this api needs to return the recipes
-    axios.post(api_endpoint + 'v1/recipes/query/meal_plan', {'title': value},
-    {
-      "Access-Control-Allow-Origin": "*",
-      "withCredentials": true,
-    })
-    .then(response =>{
-      console.log(response['data']['result'])
-      this.setState({
-        recipes: response['data']['result'],
-      });
-      
-    }).catch(function (error) {
-      console.log(error);
-    });
-  }
-
-  closeForm(e){
-    console.log(e);
-    this.setState({
-      visible: false,
-    });
-  };
-
-
+  // save the added in the modal
   onFinish(values) {
     const { recipes } =  this.state
 
     // update the name of attribute later
-    var recipe_id = values['recipe'];
-    var rp = recipes[recipe_id]
+    const recipe_id = values.recipe;
+    const rp = recipes[recipe_id]
 
-    var meal = values['meal-time-picker'];
-    var days = values['checkbox-group'];
+    const meal = values['meal-time-picker'];
+    const days = values['checkbox-group'];
 
-    //close the modal
+    // close the modal
     this.setState({
       visible: false,
     });
@@ -124,11 +86,47 @@ class MealConfig extends PureComponent {
     newItemFunc(rp, meal, days);
   }
 
+  // shows the add meal modal
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  // closes the add meal modal
+  closeForm = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+
+  /**
+   * This function runs letters through the meal planner's query to look for recipes that begin with a certain letter.
+   *
+   * @param {String} value Letter or letters input into the search bar to search recipe by name.
+   *
+   */
+  handleSearch(value) {
+    // this api needs to return the recipes
+    axios.post(`${api_endpoint}v1/recipes/query/meal_plan`, {'title': value},
+    {
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
+    })
+    .then(response => {
+      this.setState({
+        recipes: response.data.result,
+      });
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
   render() {
     // start to prepare the drop down
     const { recipes } =  this.state
-    var recipeList = []
-    for (let i = 0; i < recipes.length; i++) {
+    const recipeList = []
+    for (let i = 0; i < recipes.length; i += 1) {
       recipeList.push(
         <Option key={i} value={i}>
           {recipes[i].title}
@@ -137,7 +135,6 @@ class MealConfig extends PureComponent {
     }
 
     return (
-      /* Modal view */
       <div>
         <Button style={{float: 'right', marginTop: '20px', marginRight: '20px'}} type="primary" onClick={this.showModal}>
           Add Meal
