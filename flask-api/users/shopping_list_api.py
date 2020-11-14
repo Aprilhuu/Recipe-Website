@@ -10,7 +10,7 @@ from app import db_connection
 # into shopping list
 class Meal_Plan_2_Shopping_List(Resource):
     
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         '''
         aggregate the recipe ingradients in meal planer
@@ -20,7 +20,7 @@ class Meal_Plan_2_Shopping_List(Resource):
         # example curl localhost:5000/v1/recipes/
         try:
             # for now tempory user is group3
-            username = 'group3'
+            username = current_identity.get('username')
 
             user_col = db_connection['users']
             # find the exist key for that user
@@ -40,7 +40,7 @@ class Meal_Plan_2_Shopping_List(Resource):
                             recipe_ids[recipe_per_day] += 1
                         else:
                             recipe_ids.update({recipe_per_day:1})
-            print(recipe_ids)
+            # print(recipe_ids)
 
             # then get the recipe by id
             # TODO add to util function <-----------------------------------------------------
@@ -51,7 +51,7 @@ class Meal_Plan_2_Shopping_List(Resource):
                 # print(recipe)
                 recipes.append(recipe)
 
-            print(recipes)
+            # print(recipes)
 
             ##############################################
             # temporary return all
@@ -102,7 +102,7 @@ class Meal_Plan_2_Shopping_List(Resource):
                                 ]
                             }
                         })
-                print()
+                # print()
 
             # now loop over again to parse the total quantity into string
             for x in ret_json:
