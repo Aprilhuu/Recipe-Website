@@ -97,7 +97,6 @@ class MealConfig extends PureComponent {
     });
   }
 
-
   closeForm(e){
     console.log(e);
     this.setState({

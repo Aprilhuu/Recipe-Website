@@ -1,6 +1,6 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
-import { Table, PageHeader, Card, Button, Typography, Row, Col } from 'antd';
+import { Table, PageHeader, Card, Typography, Modal, Button, Alert } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import MealConfig from './mealConfig.jsx'
 import NutritionTarget from './nutritionTarget.js'
@@ -19,8 +19,10 @@ class MealPlanner extends PureComponent {
 
     super(props);
 
+    this.closeForm = this.closeForm.bind(this);
     this.add_new_plan = this.add_new_plan.bind(this);
     this.save_my_plan = this.save_my_plan.bind(this);
+    this.openRemoveModal = this.openRemoveModal.bind(this);
     this.removeEntry = this.removeEntry.bind(this);
     this.render_column_func = this.render_column_func.bind(this);
     this.save_my_plan = this.save_my_plan.bind(this);
@@ -79,11 +81,18 @@ class MealPlanner extends PureComponent {
         }
       ],
       week: [],
-      nutrition_target:{'calories':0, 'carbon':0, 'fiber':0}
+      nutrition_target:{'calories':0, 'carbon':0, 'fiber':0},
+      modal_confirm_visible: false,
+      removal_meal_index: [],
+      removal_day: []
     };
   }
 
-  removeEntry(e) {
+  openRemoveModal(e) {
+    this.setState({
+      modal_confirm_visible: true
+    })
+
     let cardIdParsed = e.target.parentNode.parentNode.id.split('-');
     // if the target happens to be the wrapper of the button
     // happens if you tap the edge
@@ -93,17 +102,19 @@ class MealPlanner extends PureComponent {
 
     const meal_index = cardIdParsed[0]
     const day = cardIdParsed[1]
+    this.setState({ modal_confirm_visible: true, removal_meal_index: meal_index, removal_day: day});
+  }
 
-    let { meal_plan } = this.state
+  removeEntry() {
+    let { meal_plan, removal_meal_index, removal_day } = this.state
 
     // only removes the entry if the card's ID is correct
-    if (meal_index != 'undefined' && day != 'undefined' && meal_index != '' && day != '') {
-      meal_plan[meal_index][day] = {}
-      // force table update
-      // this.setState({ meal_plan: [...meal_plan] })
+    if (removal_meal_index != 'undefined' && removal_day != 'undefined' && removal_meal_index != '' && removal_day != '') {
+      meal_plan[removal_meal_index][removal_day] = {}
     }
 
     this.save_my_plan()
+    this.closeForm()
   }
 
   render_column_func(text, record) {
@@ -125,7 +136,7 @@ class MealPlanner extends PureComponent {
           }
           style={{ overflow:'hidden'}}
         >
-          <CloseSquareFilled id={cardId} onClick={this.removeEntry.bind(this)} style={{ zIndex: 99, position: 'absolute', top: '0', right: '0', backgroundColor: 'white'}}/>
+          <CloseSquareFilled id={cardId} onClick={this.openRemoveModal.bind(this)} style={{ zIndex: 99, position: 'absolute', top: '0', right: '0', backgroundColor: 'white'}}/>
           <Link to={url}>
             <Meta title={text.recipe_title} description={text.description} />
           </Link>
@@ -183,6 +194,12 @@ class MealPlanner extends PureComponent {
     return weekString;
   }
 
+  closeForm(){
+    this.setState({
+      modal_confirm_visible: false,
+    });
+  }
+
   // after the component is rendered
   componentDidMount() {
     // get the user that logged in if they exist
@@ -233,15 +250,11 @@ class MealPlanner extends PureComponent {
       headers: {"Authorization": username},
     })
     .then(response => {
-      // console.log(response['data']['result']);
-      // this.load_nutrition()
       this.setState({meal_plan: response['data']['result']});
     })
     .catch(function (error) {
       console.log(error);
     });
-
-    // this.load_nutrition()
   }
 
   add_new_plan(recipe, meal_time, days){
@@ -280,8 +293,7 @@ class MealPlanner extends PureComponent {
             'day': day
           }
       }
-  
-      // this.setState({ meal_plan: new_plan });
+
       this.save_my_plan()
     })
   }
@@ -291,12 +303,28 @@ class MealPlanner extends PureComponent {
   }
 
   render() {
-    const { meal_plan, columns, week, nutrition_target } = this.state;
-
-    // console.log(meal_plan)
+    const { meal_plan, columns, week } = this.state;
 
     return(
       <Card>
+        <Modal
+          title="Confirm Meal Removal"
+          visible={this.state.modal_confirm_visible}
+          width={600}
+          footer={null}
+          onCancel={this.closeForm}
+        >
+          <Alert
+            message="Removing any meals will reset your shopping list. Are you sure?"
+            description="All ticked items will become unticked."
+            type="warning"
+            showIcon
+          />
+          <div style={{ paddingTop: '20px', margin: 'auto', display: 'table' }}>
+            <Button style={{ marginRight: '20px' }} onClick={this.closeForm}>Cancel</Button>
+            <Button onClick={this.removeEntry}>Yes. Remove it.</Button>
+          </div>
+        </Modal>
         <PageHeader
             title="Meal Planner"
             onBack={() => window.history.back()}
