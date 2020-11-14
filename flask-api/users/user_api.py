@@ -48,15 +48,7 @@ class User(Resource):
             ConfigClass.SECRET_KEY,
             algorithm='HS256'
         )
-        print(token)
-
-        # @after_this_request
-        # def after_request(response):
-        #     # and set the httponly cookie so that frontend
-        #     # dont need to fetch it everytime
-        #     response.set_cookie('Authorization', username, httponly=True)
-        #     return response
-
+        
         return {'result':{'username': token.decode("utf-8") }}, 200
 
 
