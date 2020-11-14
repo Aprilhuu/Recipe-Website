@@ -21,6 +21,8 @@ class UserLogin extends PureComponent {
     this.close_login_modal = this.close_login_modal.bind(this)
     this.warning = this.warning.bind(this)
     this.switch_bw_login_register = this.switch_bw_login_register.bind(this)
+    this.user_register = this.user_register.bind(this)
+    this.user_login_register = this.user_login_register.bind(this)
 
     const username = localStorage.getItem('username')
     var login_flag = true
@@ -39,15 +41,23 @@ class UserLogin extends PureComponent {
     };
   }
 
+  user_login_register(values){
+    const { login_form } = this.state
+
+    if(login_form == false){
+      this.user_register(values)
+    }
+    else{
+      this.user_login(values)
+    }
+  }
+
   user_login(values){
     const { username, password } = values
     const { login_form } = this.state
     // add here is the register flag is on
     // endpoint become register
     var path = 'v1/users/login'
-    if(login_form == false){
-      path = 'v1/users/register'
-    }
 
     // send to backend
     axios.post(api_endpoint+path, {
@@ -73,9 +83,47 @@ class UserLogin extends PureComponent {
       // raise login flag
       // based on the flag
       var error_message = 'please input correct username and password!'
-      if(login_form == false){
-        error_message = 'user already exist! please try another one'
-      }
+
+      this.setState({
+        'help_str':error_message,
+      })
+    });
+  }
+
+  user_register(values){
+    const { username, password } = values
+    const { login_form } = this.state
+    // add here is the register flag is on
+    // endpoint become register
+    var path = 'v1/users/register'
+    
+    // send to backend
+    axios.post(api_endpoint+path, {
+      'username': username,
+      'password': password,
+    },{})
+    // to use the arrow function let the this within the function scope
+    .then(response => {
+
+      // then login
+      this.user_login(values)
+
+      // // if success then set the username into the local storage
+      // localStorage.setItem('username', response['data']['result']['username']);
+      // localStorage.setItem('logined_user', username);
+
+      // // raise login flag
+      // this.setState({
+      //   'login_flag':true,
+      //   'show':false,
+      // })
+      // // force to reload page
+      // window.location.reload();
+    }).catch(error => {
+      console.log(error.response)
+      // raise login flag
+      var error_message = 'user already exist! please try another one'
+      
       this.setState({
         'help_str':error_message,
       })
@@ -205,7 +253,7 @@ class UserLogin extends PureComponent {
                 <Form
                   name="basic"
                   initialValues={{ remember: true }}
-                  onFinish={this.user_login}
+                  onFinish={this.user_login_register}
                 >
                   <Form.Item
                     label="Username"
