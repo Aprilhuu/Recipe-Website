@@ -212,3 +212,108 @@ class RecipesRadom(Resource):
             return {'result': str(e)}, 400
 
         return {'result':recipes}, 200
+
+
+class RecipeFilter(Resource):
+
+  def post(self):
+    '''
+    Retrieve the recipe detail by ingredient attributes and/or recipe title
+    '''
+
+    # Example:
+
+    # curl -v -XPOST -H "Content-type: application/json" -d '{"title":"Fruit and Nut Oat Bowl",
+    # "ingredients": ["beef", "apple"]}' 'localhost:5000/v1/recipes/query'
+
+    def singular_plural_form(ingredient_name):
+      # We are considering both plural and singular form of ingredients here
+      if not ingredient.endswith('s'):
+        plural = p.plural_noun(ingredient_name)
+        singular = ingredient
+      else:
+        singular = p.singular_noun(ingredient_name)
+        plural = ingredient
+      return singular, plural
+
+    try:
+      # Step 1: Get user query input from the payload (i.e. ingredients or title)
+      post_data = request.get_json()
+      title = post_data.get('title', None)
+      ingredients = post_data.get('ingredients', None)
+      filters = post_data.get('filters', None)
+      if not title and not ingredients:
+        return {'result': 'Please input search title or search ingredients'}, 403
+
+      # Step 2: Prepare MongoDB query filter object based on user input
+      ingredient_filter_array = []
+      if ingredients:
+        p = inflect.engine()
+        for ingredient in ingredients:
+          singular_form, plural_form = singular_plural_form(ingredient)
+          # Using regex to perform contain as substring instead of exactly matching
+          ingredient_filter_array.append({'$or':
+                                            [{'ingredients.name': {'$regex': '.*' + singular_form + '.*'}},
+                                             {'ingredients.name': {'$regex': '.*' + plural_form + '.*'}}]})
+      if filters:
+        calorie_limit = filters.get("calorieLimit", None)
+        time_limit = filters.get("timeLimit", None)
+        exclude_items = filters.get("exclude", None)
+        if calorie_limit:
+          ingredient_filter_array.append({'nutritional info.nutrition facts.CALORIES.value':
+                                            {'$gt': str(calorie_limit)}})
+        if time_limit:
+          # TODO: Need a better way of specifying time limit in frontend
+          ingredient_filter_array.append({'total time': {'$lt': str(time_limit)}})
+
+        if exclude_items:
+          p = inflect.engine()
+          for ingredient in exclude_items:
+            singular_form, plural_form = singular_plural_form(ingredient)
+            # Using regex to perform contain as substring instead of exactly matching
+            ingredient_filter_array.append({'$and':
+                                              [{'ingredients.name': {'$not': {'$regex': '.*' + singular_form + '.*'}}},
+                                               {'ingredients.name': {'$not': {'$regex': '.*' + plural_form + '.*'}}}]})
+
+      # Step 3: Query the database collection based on preprocessed filter
+      collection = db_connection["group3_collection"]
+
+      if title and ingredients:
+        # Adding title as one filter as well to filter both by title and by ingredients
+        ingredient_filter_array.append({'title': title})
+        cursor = collection.find({'$and': ingredient_filter_array})
+      elif ingredients:
+        cursor = collection.find({'$and': ingredient_filter_array})
+      else:
+        # TODO: Right now only support search by exact title. Do we need to support more
+        #  flexible search later?
+        cursor = collection.find_one({'title': title})
+
+      # Step 4: Process results returned from database before returning. We are
+      # changing the id to string if we find it and remove unnecessary attributes.
+      recipes = []
+
+      if isinstance(cursor, dict):
+        cursor = [cursor]
+
+      for x in cursor:
+        # for displaying pick the first instruction
+        description = x['instructions'][0]['description'] if len(x['instructions']) > 0 else ''
+        # some of the instruction are over length so pick first 20 word if greater
+        description = description[:50] if len(description) > 50 else description
+
+        recipes.append({
+          'id': str(x['_id']),
+          'title': x['title'],
+          'description': description + ' ...',
+          'image': x.get('mediaURL').get('url',
+                                         "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306"
+                                         "&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"),
+          'difficulty': x['difficulty'],
+          'cooktime': x['total time']
+        })
+
+    except Exception as e:
+      return {'result': str(e)}, 400
+
+    return {'result': recipes}, 200

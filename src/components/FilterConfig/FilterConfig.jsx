@@ -76,7 +76,7 @@ class FilterConfig extends PureComponent {
     return (
       /* Modal view */
       <>
-        <Button type="primary" onClick={this.showModal}>
+        <Button type="primary" onClick={this.showModal} style={{marginBottom: '16px'}}>
           Add Filter
         </Button>
         <Modal

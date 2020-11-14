@@ -1,5 +1,5 @@
 from app import module_api
-from .recipe_api import Recipes, Recipe, RecipeQuery, RecipesRadom, RecipesTotal
+from .recipe_api import Recipes, Recipe, RecipeQuery, RecipesRadom, RecipesTotal, RecipeFilter
 
 
 # create the recipe namespace
@@ -11,4 +11,4 @@ recipe_ns.add_resource(Recipe, '/<rid>')
 recipe_ns.add_resource(RecipeQuery, '/query')
 recipe_ns.add_resource(RecipesRadom, '/query/random')
 recipe_ns.add_resource(RecipesTotal, '/count')
-
+recipe_ns.add_resource(RecipeFilter, '/filter')

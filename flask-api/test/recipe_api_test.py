@@ -49,6 +49,13 @@ def get_recipe_by_ingredients_and_title(client, ingredients, title):
         follow_redirects=True,
     )
 
+# made by ZIAN HU
+def get_recipe_by_ingredients_and_filter(client, ingredients, calorie, time, exluding):
+    return client.post(
+        "/v1/recipes/query",
+        json={'ingredients': ingredients, 'calorieLimit': calorie, 'timeLimit': time, 'exclude': exluding},
+        follow_redirects=True,
+    )
 
 ################################################ TEST FUnction ######################################
 # made by justin
@@ -153,3 +160,11 @@ def test_get_recipe_by_ingredients_and_title(client):
       'id': '5f8c67b8708d83b9867302b5', 'title': "Fruit and Nut Oat Bowl"}
     assert 'ingredients' not in recipe_res[0].keys() and "instructions" not in recipe_res[0].keys()
 
+
+# made by ZIAN HU
+def test_get_recipe_by_ingredients_and_filter(client):
+    # Test 1: Basic testing with two ingredients (singular form) and title
+    # check if we can find recipe containing brown sugar and apple
+    res = get_recipe_by_ingredients_and_filter(client, ["apple"], calorie=100, time="5 hours", exluding=["brown sugar"])
+    recipe_res = res.get_json()['result']
+    print(recipe_res)
