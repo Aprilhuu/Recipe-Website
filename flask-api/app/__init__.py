@@ -37,16 +37,12 @@ def create_app(extra_config_settings={}):
 
     @jwt.jwt_error_handler
     def error_handler(e):
-        print("###### Error Handler")
         # Either not Authorized or Expired
         return {'result': 'jwt ' + str(e)}, 401
 
     # load jwt token from request's header
     @jwt.request_handler
     def load_token():
-        print("###### Load Token")
-        # currently is just username
-        print(request.cookies)
 
         try:
             token = request.headers.get('Authorization', None)
@@ -60,7 +56,6 @@ def create_app(extra_config_settings={}):
     # function is to parse out the infomation in the JWT
     @jwt.jwt_decode_handler
     def decode_auth_token(token):
-        print("###### decode_auth_token by syncope")
         try:
             decoded = pyjwt.decode(token, ConfigClass.SECRET_KEY, algorithms=['HS256'])
             return decoded
