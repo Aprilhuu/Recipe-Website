@@ -1,15 +1,16 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, {PureComponent } from 'react';
 import { Card, Image, Carousel, Popover } from 'antd';
 import { Link } from 'umi';
+import { LeftCircleFilled, RightCircleFilled } from '@ant-design/icons';
+import axios from 'axios';
 import styles from './Welcome.less';
 import searchIllust from '../assets/images/search_illust.jpg'
 import mealPlanIllust from '../assets/images/meal_plan_illust.jpg'
 import pantryIllust from '../assets/images/pantry_illust.jpg'
 import Store from "./storage";
-import { LeftCircleFilled, RightCircleFilled } from '@ant-design/icons';
-import axios from 'axios';
-
 import defaultSettings from '../../config/defaultSettings';
+
 const { api_endpoint } = defaultSettings
 const { Meta } = Card;
 
@@ -23,7 +24,6 @@ class WelcomePage extends PureComponent {
     this.featuredRecipesDisplayed = 3;
     this.state = {
       recipeCardList: [],
-      windowWidth: window.innerWidth,
       popoverPlacement: 'right',
     }
     this.mealPlannerDescription = <div style={{ maxWidth: '200px' }}>
@@ -58,35 +58,26 @@ class WelcomePage extends PureComponent {
     </div>
   }
 
-  handleResize(e) {
-    console.log(window.innerWidth)
-
-    let { popoverPlacement } = this.state;
-
-    if (window.innerWidth > 1000) {
-      popoverPlacement = 'right';
-    } else {
-      popoverPlacement = 'bottomLeft';
-    }
-
-    this.setState({ windowWidth: window.innerWidth, popoverPlacement: popoverPlacement });
-   };
-
   componentDidMount() {
-    axios.get(api_endpoint +'/v1/recipes/query/random', {})
+    // add event listener for resize handler
+    window.addEventListener("resize", this.handleResize);
+
+    // query random recipe for featured recipes
+    axios.get(`${api_endpoint}/v1/recipes/query/random`, {})
     .then(response =>{
-      let recipeCardList = []
-      console.log(response)
-      console.log(response.data.result);
+      const recipeCardList = []
       const recipeArray = response.data.result;
-      for (let i = 0; i < recipeArray.length; i++ ) {
+
+      // adding featured recipes cards
+      for (let i = 0; i < recipeArray.length; i += 1) {
         recipeCardList.push(
-          <div key={i + '-featured-recipe'}>
-            <Link to={"/recipe/" + recipeArray[i].id}>
+          <div key={`${i}-featured-recipe`}>
+            <Link to={`/recipe/${recipeArray[i].id}`}>
               <Card
                 cover={
                   <div className={styles.imageWrapper} style={{ width:'100%', height: '30vh'}}>
                     <img
+                    alt='some featured recipe'
                     src={recipeArray[i].image}
                     className={styles.featuredImage}
                     />
@@ -101,24 +92,41 @@ class WelcomePage extends PureComponent {
             </Link>
           </div>)
       }
-      this.setState({ recipeCardList: recipeCardList})
+      this.setState({ recipeCardList })
+
+      // clear search results
       Store.clearResultList();
     })
   }
 
-  componentWillUnMount() {
-    window.addEventListener("resize", this.handleResize);
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
   }
-  
+
+  // when the user hovers over any of the three help blocks
   onMouseEnterSearch = () => this.carouselRef.current.goTo(0, true);
 
   onMouseEnterMealPlanner = () => this.carouselRef.current.goTo(1, true);
 
   onMouseEnterShoppingList = () => this.carouselRef.current.goTo(2, true);
 
+  // actions to slide feature recipes left and right
   slideLeft = () => this.featuredRecipeRef.current.prev();
 
   slideRight = () => this.featuredRecipeRef.current.next();
+
+  // handles the placement of popup with respect to window size
+  handleResize() {
+    let { popoverPlacement } = this.state;
+
+    if (window.innerWidth > 1000) {
+      popoverPlacement = 'right';
+    } else {
+      popoverPlacement = 'bottomLeft';
+    }
+
+    this.setState({ popoverPlacement });
+   };
 
   render() {
     return(
