@@ -12,7 +12,7 @@ class Nutrition_Target(Resource):
     @jwt_required()
     def get(self):
         '''
-        get saved meal plan schedule by user name
+        get meal plan for user
         '''
         user_col = db_connection['users']
         
@@ -27,7 +27,7 @@ class Nutrition_Target(Resource):
     @jwt_required()
     def post(self):
         '''
-        update the meal plan by user name
+        update the nutrition traget by username
         '''
 
         post_data = request.get_json()
@@ -64,10 +64,10 @@ class Nutrition_Target(Resource):
         # get the logined username
         username = current_identity.get('username')
 
+        # set the nutrition with new value to user
         u = user_col.update(
             {'username': username},
             { '$set':{'nutrition_target': nutrition_target}}
         )
-
 
         return {'result': nutrition_target}, 200

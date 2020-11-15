@@ -43,7 +43,6 @@ def create_app(extra_config_settings={}):
     # load jwt token from request's header
     @jwt.request_handler
     def load_token():
-
         try:
             token = request.headers.get('Authorization', None)
             if not token:
@@ -57,6 +56,7 @@ def create_app(extra_config_settings={}):
     @jwt.jwt_decode_handler
     def decode_auth_token(token):
         try:
+            # decode the token by the secrete key
             decoded = pyjwt.decode(token, ConfigClass.SECRET_KEY, algorithms=['HS256'])
             return decoded
         except Exception as e:
@@ -68,13 +68,13 @@ def create_app(extra_config_settings={}):
     # finally we pass the infomation to here to identify the user
     @jwt.identity_handler
     def identify(payload):
-        print("###### identify")
-        print(payload['username'])
 
         # connect to user db see if user exist
         uc = db_connection['users']
         u = uc.find_one({'username':payload['username']})
 
+        # if user not exist then return None
+        # and jwt will also raise the 401 error
         if not u:
             return None
 
@@ -83,6 +83,7 @@ def create_app(extra_config_settings={}):
     # hook the flask_restx api
     module_api.init_app(app)
 
+    # set the default root for deployment
     @app.route('/')
     @app.route('/copilot')
     @app.route('/meal-planner')
@@ -91,6 +92,7 @@ def create_app(extra_config_settings={}):
     def no_arg_route():
         return render_template('./index.html'), 200
 
+    # this is the special route for recipe detail page
     @app.route('/recipe/<recipe_id>')
     def recipe_arg_route(recipe_id):
         return render_template('./index.html'), 200
