@@ -1,16 +1,12 @@
+/* eslint-disable no-restricted-syntax */
 import React, { PureComponent } from 'react';
-import { Form, Button, Select, DatePicker, Switch, Checkbox, Row, Col, Modal } from 'antd';
+import { Form, Button, Select, Checkbox, Row, Col, Modal, Alert } from 'antd';
 import axios from 'axios';
+import defaultSettings from '../../../config/defaultSettings';
 
 const { Option } = Select;
-const { RangePicker } = DatePicker;
-
-import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
-{
-  /* Formatting */
-}
 const layout = {
   labelCol: {
     span: 8,
@@ -19,6 +15,7 @@ const layout = {
     span: 16,
   },
 };
+
 const tailLayout = {
   wrapperCol: {
     offset: 8,
@@ -26,98 +23,61 @@ const tailLayout = {
   },
 };
 
-const rangeConfig = {
-  rules: [
-    {
-      type: 'array',
-      required: true,
-      message: 'Please select time',
-    },
-  ],
-};
-
 // https://quaranteam-group3.atlassian.net/browse/CCP-6
 class MealConfig extends PureComponent {
-  /* For Modal View */
-
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-
-  /* Need to add ability to hit ok, but with save config*/
-  handleOk = (e) => {
-    console.log(e);
-    this.setState({
-      visible: false,
-    });
-  };
 
   constructor(props) {
     super(props);
-
-    const { newItemFunc } = this.props;
 
     this.onFinish = this.onFinish.bind(this);
     this.closeForm = this.closeForm.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
 
-    // console.log(newItemFunc)
     this.state = { 
       'visible': false ,
       'recipes': [],
+      'days': []
     };
+
+    this.daysInfo = {
+      'Sunday': 'sunday',
+      'Monday': 'monday', 
+      'Tuesday': 'tuesday',
+      'Wednesday': 'wednesday',
+      'Thursday': 'thursday',
+      'Friday': 'friday', 
+      'Saturday': 'saturday'}
   }
 
-  // after the component is rendered
-  componentDidMount(){
-
+  componentDidMount() {
+    // add modal days checkboxes
+    const days = []
+    for (const [key, value] of Object.entries(this.daysInfo)) {
+      days.push(<Col span={8}>
+        <Checkbox
+          value={value}
+          style={{
+            lineHeight: '32px',
+          }}
+        />
+        <span style={{paddingLeft: '10px'}}>{key}</span>
+      </Col>)
+    }
+    this.setState({ days })
   }
 
-  handleSearch(value) {
-    // this api needs to return the recipe de
-    axios.post(api_endpoint+'v1/recipes/query/meal_plan',{'title': value},
-    {
-      "Access-Control-Allow-Origin": "*",
-      "withCredentials": true,
-    })
-    .then(response =>{
-      console.log(response['data']['result'])
-      this.setState({
-        recipes: response['data']['result'],
-      });
-      
-    }).catch(function (error) {
-      console.log(error);
-    });
-  }
-
-
-  closeForm(e){
-    console.log(e);
-    this.setState({
-      visible: false,
-    });
-  };
-
-
+  // save the added in the modal
   onFinish(values) {
-    // console.log('Success:', values);
-    const {recipes} =  this.state
-    // console.log( recipes )
-    // console.log(' get here')
+    const { recipes } =  this.state
 
     // update the name of attribute later
-    var recipe_id = values['recipe'];
-    var rp = recipes[recipe_id]
-    // console.log(rp)
+    const recipe_id = values.recipe;
+    const rp = recipes[recipe_id]
 
-    var meal = values['meal-time-picker'];
-    // const days_to_int = {"monday":1,"tuesday":2,"wednesday":3,"thursday":4,"friday":5,"saturday":6,"sunday":7}
-    var days = values['checkbox-group'];
+    const meal = values['meal-time-picker'];
+    const days = values['checkbox-group'];
 
-    //close the modal
+    // close the modal
     this.setState({
       visible: false,
     });
@@ -126,11 +86,47 @@ class MealConfig extends PureComponent {
     newItemFunc(rp, meal, days);
   }
 
+  // shows the add meal modal
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  // closes the add meal modal
+  closeForm = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+
+  /**
+   * This function runs letters through the meal planner's query to look for recipes that begin with a certain letter.
+   *
+   * @param {String} value Letter or letters input into the search bar to search recipe by name.
+   *
+   */
+  handleSearch(value) {
+    // this api needs to return the recipes
+    axios.post(`${api_endpoint}v1/recipes/query/meal_plan`, {'title': value},
+    {
+      "Access-Control-Allow-Origin": "*",
+      "withCredentials": true,
+    })
+    .then(response => {
+      this.setState({
+        recipes: response.data.result,
+      });
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
   render() {
     // start to prepare the drop down
     const { recipes } =  this.state
-    var recipeList = []
-    for (let i = 0; i < recipes.length; i++) {
+    const recipeList = []
+    for (let i = 0; i < recipes.length; i += 1) {
       recipeList.push(
         <Option key={i} value={i}>
           {recipes[i].title}
@@ -139,21 +135,25 @@ class MealConfig extends PureComponent {
     }
 
     return (
-      /* Modal view */
       <div>
-        <Button style={{float: 'right', marginTop: '20px'}} type="primary" onClick={this.showModal}>
+        <Button style={{float: 'right', marginTop: '20px', marginRight: '20px'}} type="primary" onClick={this.showModal}>
           Add Meal
         </Button>
         <Modal
           title="Meal Configuration"
           visible={this.state.visible}
-          // onOk={this.handleOk}
           width={600}
           footer={null}
           onCancel={this.closeForm}
         >
-
+          <Alert
+            message="Adding any new meals will reset your shopping list."
+            description="All ticked items will become unticked."
+            type="warning"
+            showIcon
+          />
           <Form
+            style={{ paddingTop: '20px'}}
             {...layout}
             name="basic"
             initialValues={{
@@ -198,76 +198,7 @@ class MealConfig extends PureComponent {
             >
               <Checkbox.Group style={{ width: '100%' }}> 
                 <Row >
-                  <Col span={8}>
-                    <Checkbox
-                      value="sunday"
-                      style={{
-                        lineHeight: '32px',
-                      }}
-                    >
-                      Sunday
-                    </Checkbox>
-                  </Col>
-                  <Col span={8}>
-                    <Checkbox
-                      value="monday"
-                      style={{
-                        lineHeight: '32px',
-                      }}
-                    >
-                      Monday
-                    </Checkbox>
-                  </Col>
-                  <Col span={8}>
-                    <Checkbox
-                      value="tuesday"
-                      style={{
-                        lineHeight: '32px',
-                      }}
-                    >
-                      Tuesday
-                    </Checkbox>
-                  </Col>
-                  <Col span={8}>
-                    <Checkbox
-                      value="wednesday"
-                      style={{
-                        lineHeight: '32px',
-                      }}
-                    >
-                      Wednesday
-                    </Checkbox>
-                  </Col>
-                  <Col span={8}>
-                    <Checkbox
-                      value="thursday"
-                      style={{
-                        lineHeight: '32px',
-                      }}
-                    >
-                      Thursday
-                    </Checkbox>
-                  </Col>
-                  <Col span={8}>
-                    <Checkbox
-                      value="friday"
-                      style={{
-                        lineHeight: '32px',
-                      }}
-                    >
-                      Friday
-                    </Checkbox>
-                  </Col>
-                  <Col span={8}>
-                    <Checkbox
-                      value="saturday"
-                      style={{
-                        lineHeight: '32px',
-                      }}
-                    >
-                      Saturday
-                    </Checkbox>
-                  </Col>
+                  {this.state.days}
                 </Row>
               </Checkbox.Group>
             </Form.Item>
@@ -292,7 +223,7 @@ class MealConfig extends PureComponent {
 
             {/* Save button */}
             <Form.Item {...tailLayout}>
-              <Button type="primary" htmlType="submit">
+              <Button style={{marginTop: '20px'}} type="primary" htmlType="submit">
                 Save
               </Button>
             </Form.Item>
