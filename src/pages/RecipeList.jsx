@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Spin} from 'antd';
+import {Spin, Card, PageHeader} from 'antd';
 import axios from "axios";
 import defaultSettings from '../../config/defaultSettings';
 import RecipeListing from "../components/RecipeListing/RecipeListing";
@@ -66,7 +66,14 @@ class RecipeList extends PureComponent {
       );
     } else {
       return(
-        <SearchResults handleChange={this.onChange} recipeList={this.state.recipeList} totalPage={totalPage} />
+        <Card>
+          <PageHeader
+            title="Recipe List"
+            onBack={() => window.history.back()}
+            subTitle={<span>This is a list of all recipes. Skip the wait and just start browsing!</span>}
+          />
+          <SearchResults handleChange={this.onChange} recipeList={this.state.recipeList} totalPage={totalPage} title={null} />
+        </Card>
       )
     }
   }

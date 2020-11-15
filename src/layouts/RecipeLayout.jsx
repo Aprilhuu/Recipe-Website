@@ -25,11 +25,25 @@ const tagColor = {'vegetable': 'green', 'spice': 'red', 'seafood': 'blue', 'oil'
  */
 const recipeSummary = (rating, difficulty, prepTime) => {
   let ratingNum;
+
   if (!rating){
     ratingNum = '-'
   } else{
     ratingNum = Math.round(rating * 10) / 10
   }
+
+  if (prepTime <= 10){
+    difficulty = 1;
+  } else if (prepTime <= 30){
+    difficulty = 2;
+  } else if (prepTime <= 60){
+    difficulty = 3;
+  } else if (prepTime <= 120){
+    difficulty = 4;
+  } else{
+    difficulty = 5;
+  }
+
   return(
     <Row className={ styles.rowContent } align="bottom">
       {/* Col1: Rating */}
@@ -43,8 +57,8 @@ const recipeSummary = (rating, difficulty, prepTime) => {
       {/* Col2: difficulty */}
       <Col span={6}>
           <span>
-            <Rate character={ <RocketOutlined /> } disabled defaultValue={ difficulty/2 } allowHalf={true} />
-            <span className={ styles.labelText }>{"Difficulty: " + difficulty/2 + "/5"}</span>
+            <Rate character={ <RocketOutlined /> } disabled defaultValue={ difficulty } allowHalf={true} />
+            <span className={ styles.labelText }>{"Difficulty: " + difficulty + "/5"}</span>
           </span>
       </Col>
 
@@ -52,7 +66,7 @@ const recipeSummary = (rating, difficulty, prepTime) => {
       <Col span={12}>
           <span className={ styles.labelText } >
             <FieldTimeOutlined />
-            <span className={ styles.labelText }>{ "Prep Time: " + prepTime }</span>
+            <span className={ styles.labelText }>{ "Prep Time: " + prepTime + " min" }</span>
           </span>
       </Col>
     </Row>
