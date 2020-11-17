@@ -53,16 +53,16 @@ def update_like_by_recipe_id(client, recipe_id, comment_index, like_num):
 
 ################################################ TEST FUnction ######################################
 def test_get_review_by_recipe_id(client):
-    res = get_review_by_recipe_id(client, '5f8c67b7708d83b9867302af')
+    res = get_review_by_recipe_id(client, '5f8c67b8708d83b9867302b1')
     recipe_res = res.get_json()['result']
     recipe_title_id = {
         'id': recipe_res['_id'], 'recipe_id': recipe_res['recipe_id']}
     assert recipe_title_id == {
-        'id': '5fa57d1bc870e434a4d8458a', 'recipe_id': "5f8c67b7708d83b9867302af"}
+        'id': '5fb42202d5a234d56217e6a2', 'recipe_id': "5f8c67b8708d83b9867302b1"}
 
 
 # def test_update_rating_by_recipe_id(client):
-#     res = update_rating_by_recipe_id(client, '5f8c67b7708d83b9867302af', 3)
+#     res = update_rating_by_recipe_id(client, '5f8c67b8708d83b9867302b1', 3)
 #     recipe_res = res.get_json()['result']
 #     assert recipe_res == "successful"
 #
@@ -77,18 +77,18 @@ def test_get_review_by_recipe_id(client):
 #      "like": 3,
 #      "dislike": 0}
 #
-#     res = update_comment_by_recipe_id(client, '5f8c67b7708d83b9867302af', new_comment)
+#     res = update_comment_by_recipe_id(client, '5f8c67b8708d83b9867302b1', new_comment)
 #     recipe_res = res.get_json()['result']
 #     assert recipe_res == "successful"
 #
 #
 # def test_update_dislike_by_recipe_id(client):
-#     res = update_dislike_by_recipe_id(client, recipe_id='5f8c67b7708d83b9867302af', comment_index=0, dislike_num=5)
+#     res = update_dislike_by_recipe_id(client, recipe_id='5f8c67b8708d83b9867302b1', comment_index=0, dislike_num=5)
 #     recipe_res = res.get_json()['result']
 #     assert recipe_res == "successful"
 #
 #
 # def test_update_like_by_recipe_id(client):
-#     res = update_like_by_recipe_id(client, recipe_id='5f8c67b7708d83b9867302af', comment_index=2, like_num=3)
+#     res = update_like_by_recipe_id(client, recipe_id='5f8c67b8708d83b9867302b1', comment_index=2, like_num=3)
 #     recipe_res = res.get_json()['result']
 #     assert recipe_res == "successful"
