@@ -40,15 +40,16 @@ class Meal_Plan_2_Shopping_List(Resource):
                             recipe_ids[recipe_per_day] += 1
                         else:
                             recipe_ids.update({recipe_per_day:1})
-            # print(recipe_ids)
 
             # then get the recipe by id
             recipes = []
             r_collection = db_connection['recipe']
             for rid in recipe_ids:
                 recipe = r_collection.find_one({'_id':ObjectId(rid)})
-                # print(recipe)
-                recipes.append(recipe)
+
+                # also loop over the duplicate
+                for _ in range(recipe_ids[rid]):
+                    recipes.append(recipe)
 
             # loop over each ingredients to get the quantity and name
             ret_json = {}
