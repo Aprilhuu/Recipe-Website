@@ -1,6 +1,7 @@
 import { PureComponent } from 'react';
 import { Layout, Menu, Breadcrumb, Anchor, Button, Row, Col } from 'antd';
 import { Link } from 'umi';
+import { useLocation } from 'react-router-dom'
 import UserLogin from '../pages/user_login/index.js'
 import home from '../assets/images/home.png'
 
@@ -11,6 +12,8 @@ const { Header, Content, Footer } = Layout;
 class HeaderBar extends PureComponent {
   constructor(props){
     super(props);
+
+    console.log(props)
   }
 
   render(){
@@ -46,7 +49,7 @@ class HeaderBar extends PureComponent {
             <div className="logo" />
           </Col>
           <Col span={21}>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys="0">
+            <Menu theme="dark" mode="horizontal" selectedKeys={[]}>
               {headers}
             </Menu>
           </Col>
@@ -64,7 +67,7 @@ const BasicLayout = ({ children }) => (
 
 
   <Layout className="layout">
-    <HeaderBar />
+    <HeaderBar current_path={useLocation()}/>
     <Content style={{ padding: '0 50px' }}>
       <br></br>
       <br></br>

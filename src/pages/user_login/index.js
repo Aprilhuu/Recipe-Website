@@ -311,7 +311,7 @@ class UserLogin extends PureComponent {
       </Menu>
     );
     const login_component = [
-      <Dropdown overlay={dropdown_menu} placement="bottomCenter">
+      <Dropdown overlay={dropdown_menu} key='user_drop_down' placement="bottomCenter">
         <Button key='user_icon' type="primary" shape="circle">
           {username[0]}
         </Button>

@@ -53,7 +53,7 @@ class MealConfig extends PureComponent {
     // add modal days checkboxes
     const days = []
     for (const [key, value] of Object.entries(this.daysInfo)) {
-      days.push(<Col span={8}>
+      days.push(<Col key={key+'_'+value} span={8}>
         <Checkbox
           value={value}
           style={{
