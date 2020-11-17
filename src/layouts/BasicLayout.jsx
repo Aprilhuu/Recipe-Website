@@ -1,7 +1,6 @@
 import { PureComponent } from 'react';
 import { Layout, Menu, Breadcrumb, Anchor, Button, Row, Col } from 'antd';
 import { Link } from 'umi';
-import { useLocation } from 'react-router-dom'
 import UserLogin from '../pages/user_login/index.js'
 import home from '../assets/images/home.png'
 
@@ -12,8 +11,6 @@ const { Header, Content, Footer } = Layout;
 class HeaderBar extends PureComponent {
   constructor(props){
     super(props);
-
-    console.log(props)
   }
 
   render(){
@@ -67,7 +64,7 @@ const BasicLayout = ({ children }) => (
 
 
   <Layout className="layout">
-    <HeaderBar current_path={useLocation()}/>
+    <HeaderBar/>
     <Content style={{ padding: '0 50px' }}>
       <br></br>
       <br></br>
