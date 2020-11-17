@@ -1,6 +1,10 @@
 import React, {PureComponent} from 'react';
 import {Button, Form, InputNumber, Modal, Typography,} from 'antd';
 import IngredientTag from './IngredientTag';
+import axios from "axios";
+import defaultSettings from "../../../config/defaultSettings";
+
+const { api_endpoint } = defaultSettings;
 
 const { Title } = Typography;
 
@@ -21,6 +25,7 @@ class FilterConfig extends PureComponent {
     ingredientsTagsList: [],
     calorieLimit: -1,
     timeLimit: -1,
+    searchCriteria: []
   };
 
   constructor(props) {
@@ -28,6 +33,8 @@ class FilterConfig extends PureComponent {
     this.onSubmit = this.onSubmit.bind(this);
     this.closeForm = this.closeForm.bind(this);
     this.updateTags = this.updateTags.bind(this);
+    this.searchCriteria = props.searchCriteria;
+    this.handleFilter = props.handleFilter;
   }
 
   /* For Modal View */
@@ -56,13 +63,38 @@ class FilterConfig extends PureComponent {
   }
 
   onSubmit = () => {
+
+    const filter = {};
+    if (this.state.ingredientsTagsList){
+
+      filter["exclude"] = this.state.ingredientsTagsList;
+    }
+    if (this.state.calorieLimit !== -1){
+      filter["calorieLimit"] = this.state.calorieLimit;
+    }
+    if (this.state.timeLimit !== -1){
+      filter["timeLimit"] = this.state.timeLimit;
+    }
+
+    let searchJSON;
+
+    if (typeof this.searchCriteria === "object"){
+      searchJSON = {"ingredients": this.searchCriteria, "filters": filter};
+    }
+    else if (typeof this.searchCriteria === "string"){
+      searchJSON = {"title": this.searchCriteria, "filters": filter};
+    }
+
+    axios.post(api_endpoint +'/v1/recipes/query', searchJSON )
+      .then(response =>{
+        this.handleFilter(response['data']['result']);
+      })
+
     //close the modal
     this.setState({
       visible: false,
     });
 
-    console.log(this.state.calorieLimit)
-    console.log(this.state.timeLimit)
   }
 
   updateTags(inputTags) {

@@ -63,6 +63,15 @@ class SearchPage extends PureComponent {
     }
   }
 
+  handleFilter = (searchResults) => {
+    this.setState({ recipeList: searchResults });
+    if (!searchResults.length){
+      this.setState({noResult: true})
+    } else{
+      this.setState({noResult: false})
+    }
+  }
+
   // actions to slide feature recipes left and right
   slideLeft = () => this.featuredRecipeRef.current.prev();
 
@@ -132,7 +141,7 @@ class SearchPage extends PureComponent {
             subTitle={<span>This is a list of all recipes. Skip the wait and just start browsing!</span>}
           />
           <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
-          <FilterConfig />
+          <FilterConfig searchCriteria={this.state.searchCriteria} handleFilter={this.handleFilter}/>
           <SearchResults recipeList={this.state.recipeList} handleChange={()=>{}}
                          totalPage={this.state.recipeList.length} title={"Search Results"} />
         </Card>
