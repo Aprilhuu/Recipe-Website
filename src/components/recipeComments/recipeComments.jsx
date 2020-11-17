@@ -133,7 +133,6 @@ const Editor = ({ onChange, onChangeName, onSubmit, submitting, value, name, for
     <Form.Item
       name={['user', 'name']}
       label="Name"
-      allowClear
       rules={[{required: true}]}
     >
       <Input onChange={onChangeName} value={name}/>
@@ -141,7 +140,6 @@ const Editor = ({ onChange, onChangeName, onSubmit, submitting, value, name, for
     <Form.Item
       name={['user', 'comment']}
       label="Comment"
-      allowClear
       rules={[{required: true}]}>
       <TextArea rows={4} onChange={onChange} value={value}/>
     </Form.Item>
