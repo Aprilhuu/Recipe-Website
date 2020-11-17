@@ -10,11 +10,16 @@ import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
 
-
+/**********************************************
+ * the compoennet is to handle the user login *
+ * and the user regiter logic in the frontend *
+ * perspective                                *
+ **********************************************/
 class UserLogin extends PureComponent {
   constructor(props) {
     super(props);
 
+    // hook the function with class state
     this.user_login = this.user_login.bind(this)
     this.logout = this.logout.bind(this)
     this.show_login_modal = this.show_login_modal.bind(this)
@@ -24,6 +29,7 @@ class UserLogin extends PureComponent {
     this.user_register = this.user_register.bind(this)
     this.user_login_register = this.user_login_register.bind(this)
 
+    // check if the previous user had login infomation
     const username = localStorage.getItem('username')
     var login_flag = true
     if(username == undefined){
@@ -32,15 +38,20 @@ class UserLogin extends PureComponent {
 
     this.state = {
       'show':false,
-      // 'username': username,
-      // 'password': undefined,
       'login_flag': login_flag,
       'login_form': true,
-
+      // error messge for the modal
       'help_str': undefined,
     };
   }
 
+
+  /**
+   * function dispatch the logic to login function
+   * or the register fucntion based on the login_stateus
+   *
+   * @param values is the dictionary from the submitted form
+   */
   user_login_register(values){
     const { login_form } = this.state
 
@@ -52,11 +63,16 @@ class UserLogin extends PureComponent {
     }
   }
 
+  /**
+   * function will handle the user login and pop the 
+   * error message if user input is wrong
+   * 
+   * @param values is the dictionary from the submitted form
+   */
   user_login(values){
     const { username, password } = values
     const { login_form } = this.state
-    // add here is the register flag is on
-    // endpoint become register
+    // login path
     var path = 'v1/users/login'
 
     // send to backend
@@ -80,20 +96,25 @@ class UserLogin extends PureComponent {
       window.location.reload();
     }).catch(error => {
       console.log(error.response)
-      // raise login flag
-      // based on the flag
+      // show the login error message
       var error_message = 'please input correct username and password!'
-
       this.setState({
         'help_str':error_message,
       })
     });
   }
 
+
+  /**
+   * function will handle the user register to tell backend
+   * to insert a new user record. if the username is duplicate
+   * pop the error
+   * 
+   * @param values is the dictionary from the submitted form
+   */
   user_register(values){
     const { username, password } = values
     const { login_form } = this.state
-    // add here is the register flag is on
     // endpoint become register
     var path = 'v1/users/register'
     
@@ -107,30 +128,21 @@ class UserLogin extends PureComponent {
 
       // then login
       this.user_login(values)
-
-      // // if success then set the username into the local storage
-      // localStorage.setItem('username', response['data']['result']['username']);
-      // localStorage.setItem('logined_user', username);
-
-      // // raise login flag
-      // this.setState({
-      //   'login_flag':true,
-      //   'show':false,
-      // })
-      // // force to reload page
-      // window.location.reload();
     }).catch(error => {
       console.log(error.response)
-      // raise login flag
+      // pop up the register error
       var error_message = 'user already exist! please try another one'
-      
       this.setState({
         'help_str':error_message,
       })
     });
   }
 
-  // remove the username in local storage
+
+  /**
+   * function will remove the username in local storage
+   * and redirect to the home page
+   */
   logout(){
     // get the username
     const username = localStorage.getItem('username')
@@ -157,6 +169,7 @@ class UserLogin extends PureComponent {
     });
   }
 
+  // switch the flag when user hit register now button
   switch_bw_login_register(){
     const { login_form } = this.state
     this.setState({
@@ -229,6 +242,8 @@ class UserLogin extends PureComponent {
       )
     }
 
+    // this is the compoennt when user not login
+    // he will see the login button and form
     const not_login_component = [
       <div key="user_login">
         <Button onClick={this.show_login_modal}> Login </Button>
@@ -285,6 +300,7 @@ class UserLogin extends PureComponent {
       </div>
     ]
 
+    // if user logined then he will see logout and user icon
     // also use username to render it
     const username = localStorage.getItem('logined_user') || ' '
     const dropdown_menu = (
@@ -304,6 +320,7 @@ class UserLogin extends PureComponent {
 
     // get the username from local storage
     // if username is undefine then give login button
+    // else show the logout and user icon
     var component_on_render = login_component
     if(login_flag == false){
       component_on_render = not_login_component

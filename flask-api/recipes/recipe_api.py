@@ -25,9 +25,7 @@ class Recipes(Resource):
             description_len = int(description_len)
 
             collection = db_connection["recipe"]
-            # for now just return the 8 recipe in total
-            # to keep minimun only return the id and title of list
-
+            # use pagination to find value for each page
             cursor = collection.find().skip(page_size*page).limit(page_size)
 
             recipes = []
@@ -37,6 +35,7 @@ class Recipes(Resource):
                 # some of the instruction are over length so pick first 20 word if greater
                 description = description[:description_len] if len(description) > 50 else description
 
+                # return partially for only card display
                 recipes.append({
                     'id': str(x['_id']),
                     'title': x['title'],
@@ -60,11 +59,9 @@ class RecipesTotal(Resource):
         '''
         Retrieve number of page for the pagination
         '''
-        # example curl localhost:5000/v1/recipes/
         try:
             collection = db_connection["recipe"]
-            # for now just return the 8 recipe in total
-            # to keep minimun only return the id and title of list
+            # return the count for the page number
             cursor = collection.count()
 
         except Exception as e:
@@ -84,11 +81,9 @@ class Recipe(Resource):
         '''
 
         # example curl localhost:5000/v1/recipes/5f8c67b8708d83b9867302b6
-
         try:
             collection = db_connection["recipe"]
-            # for now just return the 8 recipe in total
-            # to keep minimum only return the id and title of list
+            #find the all detailed information for the single recipe
             recipe = collection.find_one(ObjectId(rid))
 
             # change the id to string
@@ -163,6 +158,7 @@ class RecipeQuery(Resource):
                 # some of the instruction are over length so pick first 20 word if greater
                 description = description[:50] if len(description) > 50 else description
 
+                # same partially return for card display
                 recipes.append({
                     'id': str(x['_id']),
                     'title': x['title'],
@@ -199,7 +195,7 @@ class RecipeMealPlanQuery(Resource):
             title = title.title()
 
             collection = db_connection["recipe"]
-            # find start with
+            # since the meal plan only has the dropdown so search by start with
             recipe = collection.find({"title": {'$regex':'^%s'%title}}).limit(10)
 
             # change the id to string if we find it

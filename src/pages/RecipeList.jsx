@@ -18,11 +18,13 @@ class RecipeList extends PureComponent {
 
   constructor(props) {
     super(props);
-
+    // hook the function to the class
     this.onChange = this.onChange.bind(this)
 
   }
 
+  // after component rendered call the api to get 
+  // all the recipe and total page
   componentDidMount() {
     this.setState({isFetching: true});
     Store.clearResultList()
@@ -42,6 +44,12 @@ class RecipeList extends PureComponent {
     });
   }
 
+/**
+ * This function is the page value to get recipe range in that number
+ * eg page=1 mean skip(1*9).limit(9) in NoSQL operation
+ *
+ * @param page integer to indicate the current page
+ */
   onChange(page){
     console.log(page);
 
@@ -64,6 +72,7 @@ class RecipeList extends PureComponent {
           <Spin size="large" />
         </div>
       );
+    // else return all the list with result
     } else {
       return(
         <Card>
