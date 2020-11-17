@@ -159,16 +159,7 @@ class RecipeQuery(Resource):
                                                   [{'ingredients.name': {'$not': {'$regex': '.*' + singular_form + '.*'}}},
                                                    {'ingredients.name': {'$not': {'$regex': '.*' + plural_form + '.*'}}}]})
 
-          # Step 3: Query the database collection based on preprocessed filter
-          collection = db_connection["recipe"]
-
-          if title and ingredients:
-            # Adding title as one filter as well to filter both by title and by ingredients
-            ingredient_filter_array.append({'title': title})
-            cursor = collection.find({'$and': ingredient_filter_array})
-          elif ingredients:
-            cursor = collection.find({'$and': ingredient_filter_array})
-          else:
+          if title:
             # Reformat the input string into compatible form with database items
             formatted_title = title.lower()
             formatted_title = formatted_title.title()
@@ -176,7 +167,11 @@ class RecipeQuery(Resource):
             to_search = ".*"
             for word in word_list:
               to_search += word + ".*"
-            cursor = collection.find({'title': {'$regex': to_search}})
+            ingredient_filter_array.append({'title': {'$regex': to_search}})
+
+          # Step 3: Query the database collection based on preprocessed filter
+          collection = db_connection["recipe"]
+          cursor = collection.find({'$and': ingredient_filter_array})
 
           # Step 4: Process results returned from database before returning. We are
           # changing the id to string if we find it and remove unnecessary attributes.
