@@ -96,6 +96,8 @@ class Meal_Plan(Resource):
                     nutritions[day]['Calories'] += float(r_nutrition['CALORIES']['value'])
                     nutritions[day]['Carbon'] += float(r_nutrition['CARB']['value'])
                     nutritions[day]['Fiber'] += float(r_nutrition['FIBER']['value'])
+        # add the header for the rendering
+        nutritions.update({"meals":"Nutrition Target"})
 
         # also return the new plan with nutrition target
         mp.append(nutritions)
@@ -150,6 +152,8 @@ class Meal_Plan(Resource):
                     nutritions[day]['Calories'] += float(r_nutrition['CALORIES']['value'])
                     nutritions[day]['Carbon'] += float(r_nutrition['CARB']['value'])
                     nutritions[day]['Fiber'] += float(r_nutrition['FIBER']['value'])
+        # add the header for the rendering
+        nutritions.update({"meals":"Nutrition Target"})
 
         # also return the new plan with nutrition target
         new_plan.append(nutritions)
