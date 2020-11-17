@@ -24,8 +24,7 @@ class FilterConfig extends PureComponent {
     visible: false,
     ingredientsTagsList: [],
     calorieLimit: -1,
-    timeLimit: -1,
-    searchCriteria: []
+    timeLimit: -1
   };
 
   constructor(props) {
@@ -66,27 +65,28 @@ class FilterConfig extends PureComponent {
 
     const filter = {};
     if (this.state.ingredientsTagsList){
-
       filter["exclude"] = this.state.ingredientsTagsList;
     }
     if (this.state.calorieLimit !== -1){
       filter["calorieLimit"] = this.state.calorieLimit;
     }
     if (this.state.timeLimit !== -1){
-      filter["timeLimit"] = this.state.timeLimit;
+      filter["timeLimit"] = this.state.timeLimit * 60;
     }
 
     let searchJSON;
-
-    if (typeof this.searchCriteria === "object"){
-      searchJSON = {"ingredients": this.searchCriteria, "filters": filter};
+    const currentCriteria = this.searchCriteria();
+    if (typeof currentCriteria === "object"){
+      searchJSON = {"ingredients": currentCriteria, "filters": filter};
     }
-    else if (typeof this.searchCriteria === "string"){
-      searchJSON = {"title": this.searchCriteria, "filters": filter};
+    else if (typeof currentCriteria === "string"){
+      searchJSON = {"title": currentCriteria, "filters": filter};
     }
 
+    console.log(searchJSON);
     axios.post(api_endpoint +'/v1/recipes/query', searchJSON )
       .then(response =>{
+        console.log(response['data']['result']);
         this.handleFilter(response['data']['result']);
       })
 
@@ -127,7 +127,7 @@ class FilterConfig extends PureComponent {
           >
             {/* Ingredient Exclude input tags */}
             <Form.Item>
-              <Title level={5}>Enter ingredients to EXCLUDE: </Title>
+              <Title level={5}>EXCLUDE ingredients: </Title>
               <IngredientTag updateIngredientsTagsList={this.updateTags} />
             </Form.Item>
 
@@ -136,14 +136,16 @@ class FilterConfig extends PureComponent {
             <Form.Item>
               <Form.Item name="calorieLimit" noStyle>
                 <InputNumber min={0} onChange={this.onChangeCalorie}/>
+                <span style={{marginLeft: '8px'}}>kcal</span>
               </Form.Item>
             </Form.Item>
 
             {/* Time limit */}
-            <Title level={5}>Enter a meal preparation time limit (mins): </Title>
+            <Title level={5}>Enter a meal preparation time limit: </Title>
             <Form.Item>
               <Form.Item name="timeLimit" noStyle>
                 <InputNumber min={0} onChange={this.onChangeTime}/>
+                <span style={{marginLeft: '8px'}}>hour(s)</span>
               </Form.Item>
             </Form.Item>
           </Form>
