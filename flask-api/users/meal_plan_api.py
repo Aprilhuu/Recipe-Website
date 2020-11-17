@@ -126,7 +126,13 @@ class Meal_Plan(Resource):
         # also cleanup the existing shopping list
         u = user_col.update(
             {'username': username},
-            { '$set':{'meal_plan': new_plan, 'shopping_list':{}}}
+            { '$set':
+                {
+                    'meal_plan': new_plan, 
+                    'shopping_list':{},
+                    'last_meal_plan_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+            }
         )
 
         # else loop over each recipe to find nutrition
