@@ -71,8 +71,9 @@ def test_get_recipe_by_id(client):
 
 # made by ZIAN HU
 def test_get_recipe_by_title(client):
-    # check if we can find recipe "Tofu Breakfast Burrito"
-    res = get_recipe_by_title(client, "Slow Cooker Beef Stew")
+    # check if we can find recipe "Slow Cooker Beef Stew". Search should be
+    # case insensitive
+    res = get_recipe_by_title(client, "slow cooker Beef Stew")
     recipe_res = res.get_json()['result']
     recipe_title_id = {
         'id': str(recipe_res[0]['id']), 'title': recipe_res[0]['title']}
@@ -81,7 +82,7 @@ def test_get_recipe_by_title(client):
     assert 'instructions' not in recipe_res[0].keys()
 
     # check if we can find recipe "Creamy Sweet Chili Shrimp"
-    res = get_recipe_by_title(client, "Creamy Sweet Chili Shrimp")
+    res = get_recipe_by_title(client, "Creamy Shrimp")
     recipe_res = res.get_json()['result']
     assert len(recipe_res) >= 1
     recipe_title_id = {

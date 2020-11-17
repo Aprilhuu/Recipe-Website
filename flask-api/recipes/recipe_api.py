@@ -169,9 +169,14 @@ class RecipeQuery(Resource):
           elif ingredients:
             cursor = collection.find({'$and': ingredient_filter_array})
           else:
-            # TODO: Right now only support search by exact title. Do we need to support more
-            #  flexible search later?
-            cursor = collection.find_one({'title': title})
+            # Reformat the input string into compatible form with database items
+            formatted_title = title.lower()
+            formatted_title = formatted_title.title()
+            word_list = formatted_title.split()
+            to_search = ".*"
+            for word in word_list:
+              to_search += word + ".*"
+            cursor = collection.find({'title': {'$regex': to_search}})
 
           # Step 4: Process results returned from database before returning. We are
           # changing the id to string if we find it and remove unnecessary attributes.
