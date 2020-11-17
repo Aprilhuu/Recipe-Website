@@ -8,7 +8,7 @@ const { Header, Content, Footer } = Layout;
 
 
 
-class Header_bar extends PureComponent {
+class HeaderBar extends PureComponent {
   constructor(props){
     super(props);
   }
@@ -64,7 +64,7 @@ const BasicLayout = ({ children }) => (
 
 
   <Layout className="layout">
-    <Header_bar />
+    <HeaderBar />
     <Content style={{ padding: '0 50px' }}>
       <br></br>
       <br></br>

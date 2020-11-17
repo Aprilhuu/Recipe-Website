@@ -378,7 +378,8 @@ class MealPlanner extends PureComponent {
         <PageHeader
           title="Meal Planner"
           onBack={() => window.history.back()}
-          subTitle={<span>Plan your next meal. The ingredients you have to shop for will be in your <a href='shopping-list'>shopping list</a>!</span>}
+          subTitle={<span>Plan your next meal. The ingredients you have to shop for will be in your 
+            <Link to='/shopping-list'>shopping list</Link>!</span>}
         />
 
         <Card style={{ marginTop: '50px'}}>
