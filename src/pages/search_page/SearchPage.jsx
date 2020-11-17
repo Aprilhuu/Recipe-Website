@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import SearchBar from "../../components/SearchBar/SearchBar";
 import SearchResults from "../../components/SearchResults/SearchResults";
-import {Carousel, Card} from "antd";
+import {Carousel, Card, PageHeader} from "antd";
 import axios from 'axios';
 import styles from './SearchPage.less';
 import Store from "../storage";
@@ -11,6 +11,8 @@ const { api_endpoint } = defaultSettings
 
 import { Link } from 'react-router-dom';
 import FilterConfig from "../../components/FilterConfig/FilterConfig";
+import {LeftCircleFilled, RightCircleFilled} from "@ant-design/icons";
+
 
 class SearchPage extends PureComponent {
   state = {
@@ -24,6 +26,7 @@ class SearchPage extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.featuredRecipeRef = React.createRef();
   }
 
   componentDidMount() {
@@ -60,6 +63,11 @@ class SearchPage extends PureComponent {
     }
   }
 
+  // actions to slide feature recipes left and right
+  slideLeft = () => this.featuredRecipeRef.current.prev();
+
+  slideRight = () => this.featuredRecipeRef.current.next();
+
   render() {
     if (!this.state.recipeList.length && !this.state.noResult){
       let recipeCardList = []
@@ -94,26 +102,40 @@ class SearchPage extends PureComponent {
           </div>)
       }
       return(
-        <div>
+        <Card style={{ minWidth: '420px', width: '50%', margin: 'auto' }}>
+          <PageHeader
+            title="Search Page"
+            onBack={() => window.history.back()}
+            subTitle={<span>Already have something in mind? Type in keywords and search!</span>}
+          />
           <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
           <div style={{textAlign: '-webkit-center'}}>
             <h1> No idea yet? Checkout these recipes! </h1>
-            <Carousel autoplay style={{width: '25%'}} dotPosition="top">
+            <Carousel autoplay style={{width: '50%'}} dots={false} ref={this.featuredRecipeRef}>
               {recipeCardList}
             </Carousel>
+            <div style={{ margin: 'auto', display: 'table' }}>
+              <LeftCircleFilled onClick={this.slideLeft} className={styles.arrows}/>
+              <RightCircleFilled onClick={this.slideRight} className={styles.arrows}/>
+            </div>
           </div>
-        </div>
+        </Card>
       );
     }
     else{
       console.log(this.state.searchCriteria)
       return(
-        <div>
+        <Card>
+          <PageHeader
+            title="Search Page"
+            onBack={() => window.history.back()}
+            subTitle={<span>This is a list of all recipes. Skip the wait and just start browsing!</span>}
+          />
           <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
           <FilterConfig />
           <SearchResults recipeList={this.state.recipeList} handleChange={()=>{}}
-                         totalPage={this.state.recipeList.length} />
-        </div>
+                         totalPage={this.state.recipeList.length} title={"Search Results"} />
+        </Card>
       )
     }
   }

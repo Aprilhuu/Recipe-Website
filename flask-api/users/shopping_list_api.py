@@ -62,16 +62,15 @@ class Meal_Plan_2_Shopping_List(Resource):
                 for ingredient in x['ingredients']:
                     print(ingredient)
 
-                #     # Note -1 means the ingredient has no quantity restriction
+                    # Note -1 means the ingredient has no quantity restriction
                     quantity = ingredient.get('quantity', '-1 ')
-                #     # split into quantity and unit
-                #     # I assume the format will be 'quantity unit'
+                    # split into quantity and unit
+                    # I assume the format will be 'quantity unit'
 
-                #     t = quantity.split(' ')
-                #     quantity, unit = (Fraction(t[0]), t[1]) if len(t) == 2 else (Fraction(t[0]), None)
-                #     # only add the unit when the recipe provides
-                    unit = ''
-                    q_str = str(quantity)
+                    t = quantity.split(' ')
+                    quantity, unit = (Fraction(t[0]), t[1]) if len(t) == 2 else (Fraction(t[0]), None)
+                    # only add the unit when the recipe provides
+                    q_str = '%s %s'%(str(quantity), unit) if unit else '%s'%(str(quantity))
 
                     type_ = ingredient['type']
                     name = ingredient['name']

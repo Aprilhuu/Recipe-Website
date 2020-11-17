@@ -5,6 +5,17 @@ import { RocketOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
 const recipeSummary = (difficulty, prepTime) => {
+  if (prepTime <= 10){
+    difficulty = 1;
+  } else if (prepTime <= 30){
+    difficulty = 2;
+  } else if (prepTime <= 60){
+    difficulty = 3;
+  } else if (prepTime <= 120){
+    difficulty = 4;
+  } else{
+    difficulty = 5;
+  }
   return (
     <div>
       {/* Col1: difficulty */}
@@ -16,7 +27,7 @@ const recipeSummary = (difficulty, prepTime) => {
             defaultValue={difficulty}
             allowHalf={true}
           />
-          <span className={styles.labelText}>{'Difficulty: ' + difficulty/2 + '/5'}</span>
+          <span className={styles.labelText}>{'Difficulty: ' + difficulty + '/5'}</span>
         </span>
       </Row>
 
@@ -24,7 +35,7 @@ const recipeSummary = (difficulty, prepTime) => {
       <Row span={12} className={styles.summaryRow}>
         <span className={styles.labelText}>
           <FieldTimeOutlined />
-          <span className={styles.labelText}>{'Prep Time: ' + prepTime}</span>
+          <span className={styles.labelText}>{'Prep Time: ' + prepTime + " min"}</span>
         </span>
       </Row>
     </div>
@@ -35,7 +46,13 @@ const recipeSummary = (difficulty, prepTime) => {
  * This function is used to construct a nutrition label widget. Code is refactored from
  * reference design here: https://codepen.io/chriscoyier/pen/egHEK
  */
-export default ({handleChange, recipeList, totalPage}) => {
+export default ({handleChange, recipeList, totalPage, title}) => {
+  let header;
+  if (title){
+    header=<h1 style={{'margin':'20px'}}>{title}</h1>;
+  } else{
+    header=null;
+  }
   return (
     <Card>
       <List
@@ -49,19 +66,19 @@ export default ({handleChange, recipeList, totalPage}) => {
           xxl: 3,
         }}
         size="large"
-        header={<h1 style={{'margin':'20px'}}>Search Results</h1>}
+        header={header}
         pagination={{
           onChange: handleChange,
           pageSize: 9,
           total: totalPage,
-          pageSizeOptions: [10],
+          pageSizeOptions: [9],
         }}
         bordered={true}
         dataSource={recipeList}
         renderItem={item => {
           let img_url = item.image
           if(img_url == null){
-            img_url = "https://ww4.publix.com/-/media/aprons/default/no-image-recipe_600x440.jpg?as=1&w=417&h=306&hash=CA8F7C3BF0B0E87C217D95BF8798D74FA193959C"
+            img_url = item.mediaURL.url
           }
 
           let titleClassName;
