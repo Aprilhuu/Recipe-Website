@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card, List, Popover, Checkbox, PageHeader, notification } from 'antd';
 import axios from 'axios';
 import { CheckOutlined, PlusOutlined, SmileOutlined } from '@ant-design/icons';
+import { Link } from 'umi';
 
 import defaultSettings from '../../config/defaultSettings';
 const { api_endpoint } = defaultSettings
@@ -93,7 +94,7 @@ class ShoppingList extends Component {
                 // popup that shows after hovering each shopping list item
                 popoverItem.push(
                     <div key={i}>
-                        <a href={"/recipe/" + value.recipe_id}>{value.recipe_title}</a> needs {value.quantity} of this ingredient
+                        <Link to={"/recipe/" + value.recipe_id}>{value.recipe_title}</Link> needs {value.quantity} of this ingredient
                     </div>
                 )
             i++;

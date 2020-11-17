@@ -8,18 +8,6 @@ const { RangePicker } = DatePicker;
 import defaultSettings from '../../../config/defaultSettings';
 const {api_endpoint} = defaultSettings
 
-// {
-//   /* Setup for recipe select list */
-// }
-// const recipeList = [];
-// for (let i = 0; i < Object.keys(recipes).length; i++) {
-//   recipeList.push(
-//     <Option key={i} value={i}>
-//       {recipes[i].title}
-//     </Option>,
-//   );
-// }
-
 {
   /* Formatting */
 }
@@ -73,6 +61,7 @@ class MealConfig extends PureComponent {
 
     this.onFinish = this.onFinish.bind(this);
     this.closeForm = this.closeForm.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
 
     // console.log(newItemFunc)
     this.state = { 
@@ -84,13 +73,17 @@ class MealConfig extends PureComponent {
   // after the component is rendered
   componentDidMount(){
 
+  }
+
+  handleSearch(value) {
     // this api needs to return the recipe de
-    axios.get(api_endpoint+'v1/recipes/',{
+    axios.post(api_endpoint+'v1/recipes/query/meal_plan',{'title': value},
+    {
       "Access-Control-Allow-Origin": "*",
       "withCredentials": true,
     })
     .then(response =>{
-      // console.log(response['data']['result'])
+      console.log(response['data']['result'])
       this.setState({
         recipes: response['data']['result'],
       });
@@ -98,10 +91,6 @@ class MealConfig extends PureComponent {
     }).catch(function (error) {
       console.log(error);
     });
-  }
-
-  onChange(value) {
-    console.log(`selected ${value}`);
   }
 
 
@@ -114,15 +103,15 @@ class MealConfig extends PureComponent {
 
 
   onFinish(values) {
-    console.log('Success:', values);
+    // console.log('Success:', values);
     const {recipes} =  this.state
-    console.log( recipes )
-    console.log(' get here')
+    // console.log( recipes )
+    // console.log(' get here')
 
     // update the name of attribute later
     var recipe_id = values['recipe'];
     var rp = recipes[recipe_id]
-    console.log(rp)
+    // console.log(rp)
 
     var meal = values['meal-time-picker'];
     // const days_to_int = {"monday":1,"tuesday":2,"wednesday":3,"thursday":4,"friday":5,"saturday":6,"sunday":7}
@@ -174,7 +163,7 @@ class MealConfig extends PureComponent {
             preserve={false}
           >
             <Form.Item
-              label="Select Recipe"
+              label="Search Recipe"
               name="recipe"
               rules={[
                 {
@@ -183,7 +172,15 @@ class MealConfig extends PureComponent {
                 },
               ]}
             >
-              <Select onChange={this.onChange} style={{ width: '100%' }} placeholder="e.g. Tomato Soup">
+              <Select
+                showSearch
+                defaultActiveFirstOption={false}
+                placeholder="eg. Chicken"
+                showArrow={false}
+                filterOption={false}
+                onSearch={this.handleSearch}
+                notFoundContent={null}
+              >
                 {recipeList}
               </Select>
             </Form.Item>

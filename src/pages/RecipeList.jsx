@@ -29,18 +29,22 @@ class RecipeList extends PureComponent {
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
-      })
+    }).catch(function (error) {
+      console.log(error);
+    });
 
-    axios.get(api_endpoint +'/v1/recipes/count', {})
+    axios.get(api_endpoint +'v1/recipes/count', {})
       .then(response =>{
         this.setState({ totalPage: response['data']['result'], isFetching: false });
-      })
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
   onChange(page){
     console.log(page);
 
-    axios.get(api_endpoint +'/v1/recipes/?page='+page+'&page_size=10', {})
+    axios.get(api_endpoint +'/v1/recipes/?page='+(page-1)+'&page_size=5', {})
       .then(response =>{
         // console.log(response);
         this.setState({ recipeList: response['data']['result'], isFetching: false });
