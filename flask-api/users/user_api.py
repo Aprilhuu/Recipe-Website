@@ -21,6 +21,7 @@ class User(Resource):
             post_data = request.get_json()
             username = post_data.get('username', None)
             password = post_data.get('password', None)
+            # username and password is mandetory
             if not username or not password:
                 return {'result':'Please enter your username and password'}, 401
 
@@ -31,11 +32,11 @@ class User(Resource):
                 return {'result':'Invalide Credentials'}, 401
             pd_stored = user_stored['password']
 
-
             # we compute the md5 with user password
             md5_obj = hashlib.md5()
             md5_obj.update(password.encode('utf-8'))
             pd_md5 = md5_obj.hexdigest()
+
             # return unauthorizaed if password not matched
             if pd_stored != pd_md5:
                 return {'result':'Invalide Credentials'}, 401
@@ -43,27 +44,20 @@ class User(Resource):
         except Exception as e:
             return {'result': str(e)}, 400
 
+        # then generate the token for next operation
         token = jwt.encode(
             {'username': username},
             ConfigClass.SECRET_KEY,
             algorithm='HS256'
         )
-        print(token)
-
-        # @after_this_request
-        # def after_request(response):
-        #     # and set the httponly cookie so that frontend
-        #     # dont need to fetch it everytime
-        #     response.set_cookie('Authorization', username, httponly=True)
-        #     return response
-
+        
         return {'result':{'username': token.decode("utf-8") }}, 200
 
 
 # this api instance is to handle with all the recipes
 class UserLogout(Resource):
     
-    @jwt_required()
+    # @jwt_required()
     def post(self):
         '''
         user logout function
@@ -83,9 +77,14 @@ class UserLogout(Resource):
 class UserRegister(Resource):
 
     def post(self):
+        '''
+        allow user to register the new account
+        '''
+
         post_data = request.get_json()
         username = post_data.get('username', None)
         password = post_data.get('password', None)
+        # user name and password is menderoy
         if not username or not password:
             return {'result':'Please enter your username and password'}, 401
 

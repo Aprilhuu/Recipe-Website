@@ -5,5 +5,5 @@ class ConfigClass(object):
     # allow the double exception to propegate
     PROPAGATE_EXCEPTIONS = True
 
-    # encrypt key
+    # encrypt key for now left as test
     SECRET_KEY = 'test'

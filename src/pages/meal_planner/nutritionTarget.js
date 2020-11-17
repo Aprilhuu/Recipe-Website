@@ -23,26 +23,29 @@ const tailLayout = {
   },
 };
 
-// https://quaranteam-group3.atlassian.net/browse/CCP-6
+/**********************************************************
+ * https://quaranteam-group3.atlassian.net/browse/CCP-6   *
+ * the component is to display or update the carilious,   *
+ * carbon and fiber in the nutrition for signle user      *
+ **********************************************************/
 class NutritionTarget extends PureComponent {
 
   constructor(props) {
     super(props);
-
-    // const { update_nutrition } = this.props;
-
+    // hook the function with the class
     this.onFinish = this.onFinish.bind(this);
     this.closeForm = this.closeForm.bind(this);
-    // this.handleSearch = this.handleSearch.bind(this);
 
-    // console.log(newItemFunc)
+    // setup the initial value for the state
     this.state = { 
+      // hide the modal at begining
       'visible': false ,
       'nutrition_target': {'calories':0, 'carbon':0, 'fiber':0},  
     };
   }
 
   // after the component is rendered
+  // make the api call to get the nurition target for login user
   componentDidMount(){
     const username = localStorage.getItem('username')
     // get the nutrition target
@@ -63,7 +66,7 @@ class NutritionTarget extends PureComponent {
     });
   };
 
-  /* Need to add ability to hit ok, but with save config*/
+  // Need to add ability to hit ok, but with save config
   handleOk = (e) => {
     console.log(e);
     this.setState({
@@ -78,7 +81,8 @@ class NutritionTarget extends PureComponent {
     });
   };
 
-
+  // when use hit save this function will be called
+  // to save the nutrition target
   onFinish(values) {
     const {nutrition_target} = this.state
 
@@ -94,7 +98,6 @@ class NutritionTarget extends PureComponent {
     }
 
     // save to backend
-    console.log(values)
     const username = localStorage.getItem('username')
     // get the nutrition target
     axios.post(api_endpoint+'v1/users/nutrition_target', {
@@ -113,6 +116,7 @@ class NutritionTarget extends PureComponent {
       visible: false,
     });
 
+    // also update the nutrition target in UI page
     const { update_nutrition } = this.props;
     update_nutrition(values);
   }
