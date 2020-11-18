@@ -40,63 +40,66 @@ class Meal_Plan_2_Shopping_List(Resource):
                             recipe_ids[recipe_per_day] += 1
                         else:
                             recipe_ids.update({recipe_per_day:1})
-            # print(recipe_ids)
 
             # then get the recipe by id
             recipes = []
             r_collection = db_connection['recipe']
             for rid in recipe_ids:
                 recipe = r_collection.find_one({'_id':ObjectId(rid)})
-                # print(recipe)
-                recipes.append(recipe)
+
+                # also loop over the duplicate
+                for _ in range(recipe_ids[rid]):
+                    recipes.append(recipe)
 
             # loop over each ingredients to get the quantity and name
             ret_json = {}
             for x in recipes:
                 for ingredient in x['ingredients']:
-                    print(ingredient)
+                    
+                    try:
+                        # Note -1 means the ingredient has no quantity restriction
+                        quantity = ingredient.get('quantity', '-1 ')
+                        # split into quantity and unit
+                        # I assume the format will be 'quantity unit'
 
-                    # Note -1 means the ingredient has no quantity restriction
-                    quantity = ingredient.get('quantity', '-1 ')
-                    # split into quantity and unit
-                    # I assume the format will be 'quantity unit'
+                        t = quantity.split(' ')
+                        quantity, unit = (Fraction(t[0]), t[1]) if len(t) == 2 else (Fraction(t[0]), None)
+                        # only add the unit when the recipe provides
+                        q_str = '%s %s'%(str(quantity), unit) if unit else '%s'%(str(quantity))
 
-                    t = quantity.split(' ')
-                    quantity, unit = (Fraction(t[0]), t[1]) if len(t) == 2 else (Fraction(t[0]), None)
-                    # only add the unit when the recipe provides
-                    q_str = '%s %s'%(str(quantity), unit) if unit else '%s'%(str(quantity))
+                        type_ = ingredient['type']
+                        name = ingredient['name']
 
-                    type_ = ingredient['type']
-                    name = ingredient['name']
+                        # now start to parse into return value
+                        has_ = ret_json.get(name, None)
+                        # if the ingredient already in the return update it
+                        if has_:
+                            ret_json[name]['detail'].append({
+                                'recipe_id': str(x['_id']),
+                                'recipe_title': x['title'],
+                                'quantity': q_str
+                            })
 
-                    # now start to parse into return value
-                    has_ = ret_json.get(name, None)
-                    # if the ingredient already in the return update it
-                    if has_:
-                        ret_json[name]['detail'].append({
-                            'recipe_id': str(x['_id']),
-                            'recipe_title': x['title'],
-                            'quantity': q_str
-                        })
-
-                        # add up the quantity is not -1
-                        ret_json[name]['total_q'] += quantity
-                    # else we create a new one
-                    else:
-                        ret_json.update({
-                            name:{
-                                'type':type_,
-                                'total_q': quantity,
-                                'unit': unit,
-                                'detail':[
-                                    {
-                                        'recipe_id': str(x['_id']),
-                                        'recipe_title': x['title'],
-                                        'quantity': q_str
-                                    }
-                                ]
-                            }
-                        })
+                            # add up the quantity is not -1
+                            ret_json[name]['total_q'] += quantity
+                        # else we create a new one
+                        else:
+                            ret_json.update({
+                                name:{
+                                    'type':type_,
+                                    'total_q': quantity,
+                                    'unit': unit,
+                                    'detail':[
+                                        {
+                                            'recipe_id': str(x['_id']),
+                                            'recipe_title': x['title'],
+                                            'quantity': q_str
+                                        }
+                                    ]
+                                }
+                            })
+                    except:
+                        print(ingredient)
 
             # now loop over again to parse the total quantity into string
             for x in ret_json:

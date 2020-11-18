@@ -342,7 +342,7 @@ class MealPlanner extends PureComponent {
         <Card>
           Calories: {text.Calories} / {nutrition_target.calories}  {temp_func(text.Calories, nutrition_target.calories)}
           <br />
-          Carbon: {text.Carbon} / {nutrition_target.carbon}  {temp_func(text.Carbon, nutrition_target.carbon)}
+          Carbs: {text.Carbon} / {nutrition_target.carbon}  {temp_func(text.Carbon, nutrition_target.carbon)}
           <br />
           Fiber: {text.Fiber} / {nutrition_target.fiber}  {temp_func(text.Fiber, nutrition_target.fiber)}
         </Card>
@@ -378,7 +378,8 @@ class MealPlanner extends PureComponent {
         <PageHeader
           title="Meal Planner"
           onBack={() => window.history.back()}
-          subTitle={<span>Plan your next meal. The ingredients you have to shop for will be in your <a href='shopping-list'>shopping list</a>!</span>}
+          subTitle={<span>Plan your next meal. The ingredients you have to shop for will be in your 
+            <Link to='/shopping-list'> shopping list</Link>!</span>}
         />
 
         <Card>

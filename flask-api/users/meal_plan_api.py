@@ -96,6 +96,8 @@ class Meal_Plan(Resource):
                     nutritions[day]['Calories'] += float(r_nutrition['CALORIES']['value'])
                     nutritions[day]['Carbon'] += float(r_nutrition['CARB']['value'])
                     nutritions[day]['Fiber'] += float(r_nutrition['FIBER']['value'])
+        # add the header for the rendering
+        nutritions.update({"meals":"Nutrition Target"})
 
         # also return the new plan with nutrition target
         mp.append(nutritions)
@@ -124,7 +126,13 @@ class Meal_Plan(Resource):
         # also cleanup the existing shopping list
         u = user_col.update(
             {'username': username},
-            { '$set':{'meal_plan': new_plan, 'shopping_list':{}}}
+            { '$set':
+                {
+                    'meal_plan': new_plan, 
+                    'shopping_list':{},
+                    'last_meal_plan_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+            }
         )
 
         # else loop over each recipe to find nutrition
@@ -150,6 +158,8 @@ class Meal_Plan(Resource):
                     nutritions[day]['Calories'] += float(r_nutrition['CALORIES']['value'])
                     nutritions[day]['Carbon'] += float(r_nutrition['CARB']['value'])
                     nutritions[day]['Fiber'] += float(r_nutrition['FIBER']['value'])
+        # add the header for the rendering
+        nutritions.update({"meals":"Nutrition Target"})
 
         # also return the new plan with nutrition target
         new_plan.append(nutritions)

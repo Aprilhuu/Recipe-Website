@@ -8,7 +8,7 @@ const { Header, Content, Footer } = Layout;
 
 
 
-class Header_bar extends PureComponent {
+class HeaderBar extends PureComponent {
   constructor(props){
     super(props);
   }
@@ -46,7 +46,7 @@ class Header_bar extends PureComponent {
             <div className="logo" />
           </Col>
           <Col span={21}>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys="0">
+            <Menu theme="dark" mode="horizontal" selectedKeys={[]}>
               {headers}
             </Menu>
           </Col>
@@ -64,7 +64,7 @@ const BasicLayout = ({ children }) => (
 
 
   <Layout className="layout">
-    <Header_bar />
+    <HeaderBar/>
     <Content style={{ padding: '0 50px' }}>
       <br/>
       <br/>

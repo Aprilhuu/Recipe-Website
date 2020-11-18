@@ -7,6 +7,11 @@ import Store from "./storage";
 
 const {api_endpoint} = defaultSettings
 
+
+/**********************************************
+ * the compoennet will use the page number to *
+ * do the pagination on the recipe list       *
+ **********************************************/
 class RecipeList extends PureComponent {
   state = {
     hasErrors: false,

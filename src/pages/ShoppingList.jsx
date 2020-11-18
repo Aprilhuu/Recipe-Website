@@ -33,7 +33,9 @@ class ShoppingList extends Component {
         })
         .then(response => {
             if (Object.keys(response.data.result).length === 0 && response.data.result.constructor === Object) {
-                axios.get(`${api_endpoint}/v1/users/meal_plan/shopping_list`, {}).then(
+                axios.get(`${api_endpoint}/v1/users/meal_plan/shopping_list`, {
+                    headers: {"Authorization":username}
+                }).then(
                     meal_plan_response => {
                         this.updateList(meal_plan_response.data.result, false);
                     })
@@ -218,7 +220,8 @@ class ShoppingList extends Component {
                 <PageHeader
                     title="Shopping List"
                     onBack={() => window.history.back()}
-                    subTitle={<span>This list is automatically populated with ingredients from your <a href='meal-planner'>Meal Planner</a>!</span>}
+                    subTitle={<span>This list is automatically populated with ingredients from your 
+                        <Link to='/meal-planner'> Meal Planner</Link>!</span>}
                 />
 
                 <div style={{ margin: 'auto' }}>
