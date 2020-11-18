@@ -98,13 +98,14 @@ class RecipeQuery(Resource):
 
     def post(self):
         '''
-        Retrieve the recipe detail by ingredient attributes and/or recipe title
+        Retrieve the recipe detail by ingredient attributes, recipe title and filters
         '''
 
-        # Example:
-
-        # curl -v -XPOST -H "Content-type: application/json" -d '{"title":"Fruit and Nut Oat Bowl",
+        # Example 1: curl -v -XPOST -H "Content-type: application/json" -d '{"title":"Fruit and Nut Oat Bowl",
         # "ingredients": ["beef", "apple"]}' 'localhost:5000/v1/recipes/query'
+
+        # Example 2: curl -v -XPOST -H "Content-type: application/json" -d '{"title":"apple tart",
+        # "filters": {"calorieLimit": '500', "timeLimit": 20, "exclude": ["berry"]}}}' 'localhost:5000/v1/recipes/query'
 
         def singular_plural_form(ingredient_name):
           # We are considering both plural and singular form of ingredients here
@@ -127,6 +128,7 @@ class RecipeQuery(Resource):
 
           # Step 2: Prepare MongoDB query filter object based on user input
           ingredient_filter_array = []
+          # If user specified ingredients
           if ingredients:
             p = inflect.engine()
             for ingredient in ingredients:
@@ -136,6 +138,8 @@ class RecipeQuery(Resource):
               ingredient_filter_array.append({'$or':
                                                 [{'ingredients.name': {'$regex': '.*' + singular_form + '.*'}},
                                                  {'ingredients.name': {'$regex': '.*' + plural_form + '.*'}}]})
+
+          # If user specified filters
           if filters:
             calorie_limit = filters.get("calorieLimit", None)
             time_limit = filters.get("timeLimit", None)
@@ -150,11 +154,12 @@ class RecipeQuery(Resource):
               p = inflect.engine()
               for ingredient in exclude_items:
                 singular_form, plural_form = singular_plural_form(ingredient)
-                # Using regex to perform contain as substring instead of exactly matching
+                # Using regex to perform not contain as substring instead of exactly matching
                 ingredient_filter_array.append({'$and':
                                                   [{'ingredients.name': {'$not': {'$regex': '.*' + singular_form + '.*'}}},
                                                    {'ingredients.name': {'$not': {'$regex': '.*' + plural_form + '.*'}}}]})
 
+          # If user specified title keywords
           if title:
             # Reformat the input string into compatible form with database items
             formatted_title = title.lower()
