@@ -157,7 +157,7 @@ class NutritionTarget extends PureComponent {
                 step={100}
               />
             </Form.Item>
-            <Form.Item name="carbon" label="Carbon(0~200g): " >
+            <Form.Item name="carbon" label="Carbs(0~200g): " >
               <InputNumber 
                 min={0} 
                 max={100} 

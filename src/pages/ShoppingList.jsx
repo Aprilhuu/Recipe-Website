@@ -221,7 +221,7 @@ class ShoppingList extends Component {
                     title="Shopping List"
                     onBack={() => window.history.back()}
                     subTitle={<span>This list is automatically populated with ingredients from your 
-                        <Link to='/meal-planner'>Meal Planner</Link>!</span>}
+                        <Link to='/meal-planner'> Meal Planner</Link>!</span>}
                 />
 
                 <div style={{ margin: 'auto' }}>
