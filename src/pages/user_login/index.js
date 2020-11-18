@@ -205,6 +205,7 @@ class UserLogin extends PureComponent {
   close_login_modal(){
     this.setState({
       'show':false,
+      'login_form': true,
       'help_str': undefined,
     })
   }
