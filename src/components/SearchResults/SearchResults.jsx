@@ -56,7 +56,7 @@ export default ({handleChange, recipeList, totalPage, title, defaultCurrent}) =>
         grid={{
           gutter: 16,
           xs: 1,
-          sm: 2,
+          sm: 1,
           md: 2,
           lg: 2,
           xl: 3,
