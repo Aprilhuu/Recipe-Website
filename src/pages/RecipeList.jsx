@@ -2,7 +2,6 @@ import React, {PureComponent} from 'react';
 import {Spin, Card, PageHeader} from 'antd';
 import axios from "axios";
 import defaultSettings from '../../config/defaultSettings';
-import RecipeListing from "../components/RecipeListing/RecipeListing";
 import SearchResults from "../components/SearchResults/SearchResults";
 import Store from "./storage";
 

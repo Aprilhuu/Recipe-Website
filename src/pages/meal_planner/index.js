@@ -19,7 +19,7 @@ const { api_endpoint } = defaultSettings;
  * @param {Date} d The current date.
  *
  * @return The date for the current week.
- * 
+ *
  */
 const getMonday = (d) => {
   const new_d = new Date(d);
@@ -34,7 +34,7 @@ const getMonday = (d) => {
  * @param {Date} date Any date.
  *
  * @return A string in usable form. For example: Monday, Nov 09 2020.
- * 
+ *
  */
 const getDateString = (date) => {
   const dateData = date.toString().split(' ');
@@ -48,7 +48,7 @@ const getDateString = (date) => {
  *
  * @return A date range given the current date from your computer. For example, it if is Friday, Nov 13 2020 today,
  * then it will return Monday, Nov 09 2020 - Sunday, Nov 15 2020.
- * 
+ *
  */
 const getWeekString = () => {
   const daysOfPlan = 7
@@ -243,7 +243,7 @@ class MealPlanner extends PureComponent {
    * @param {Object} recipe Includes all recipe information required to display on the meal planner: id, title, description.
    * @param {String} meal_time Either Breakfast, Lunch or Dinner. Time that the user wants to make the meal.
    * @param {Array} days Array of all the days in the week.
-   * 
+   *
    */
   add_new_plan(recipe, meal_time, days) {
     const { meal_plan } = this.state
@@ -296,7 +296,7 @@ class MealPlanner extends PureComponent {
    *
    * @param {Object} text Includes textual information for each recipe or nutrition target. For recipe, includes: recipe_title, meal_index, day, description, image.
    * For nutrition target, includes: Calories, Carbon, Fibre.
-   * 
+   *
    */
   render_column_func(text) {
 
@@ -381,7 +381,7 @@ class MealPlanner extends PureComponent {
           subTitle={<span>Plan your next meal. The ingredients you have to shop for will be in your <a href='shopping-list'>shopping list</a>!</span>}
         />
 
-        <Card style={{ marginTop: '50px'}}>
+        <Card>
           <Title level={2} style={{float: 'left', paddingTop: '10px', paddingLeft: '10px'}}>
             {week}
           </Title>

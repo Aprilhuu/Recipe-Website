@@ -138,7 +138,7 @@ class SearchPage extends PureComponent {
             onBack={() => window.history.back()}
             subTitle={<span>Already have something in mind? Type in keywords and search!</span>}
           />
-          <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
+          <SearchBar style={{ marginTop: '20px'}} redirect={false} redirectCallback={this.handleRedirect} />
           <div style={{textAlign: '-webkit-center'}}>
             <h1> No idea yet? Check out these recipes! </h1>
             <Carousel autoplay style={{width: '50%'}} dots={false} ref={this.featuredRecipeRef}>

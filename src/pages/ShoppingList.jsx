@@ -38,12 +38,12 @@ class ShoppingList extends Component {
                         this.updateList(meal_plan_response.data.result, false);
                     })
             } else {
-                this.setState({ 
+                this.setState({
                     listInfo: response.data.result.listInfo,
                     tickedListInfo: response.data.result.tickedListInfo,
                     curId: response.data.result.curId
                 })
-                
+
                 this.updateList(response.data.result.listInfo, false)
                 this.updateList(response.data.result.tickedListInfo, true)
             }
@@ -58,7 +58,7 @@ class ShoppingList extends Component {
      * to the Ticked Items list. If it detects a + box, the ingredient will be moved back to the Shopping List.
      *
      * @param {Event} e This is the event. We will use this to extract the id of the recipe that is checked.
-     * 
+     *
      */
     onChange(e) {
         // get the id
@@ -67,7 +67,7 @@ class ShoppingList extends Component {
         const checkboxType = parsed_id[1]
 
         const { tickedListInfo, listInfo } = this.state;
-        
+
         if (checkboxType === 'tickbox') {
             this.openNotification('1 item ticked', 'If this was a misclick, click the \'+\' button in your Ticked Items list below to add the item back.')
 
@@ -111,7 +111,7 @@ class ShoppingList extends Component {
      *
      * @param {string} title Main title of the notification.
      * @param {string} description Main description of the notification.
-     * 
+     *
      */
     openNotification = (title, description) => {
         notification.open({
@@ -127,7 +127,7 @@ class ShoppingList extends Component {
      *
      * @param {string} list The shopping list or ticked items list
      * @param {bool} tickedItems If true, the passed in list is the ticked items list. Else, it is the original shopping list.
-     * 
+     *
      */
     updateList(list, tickedItems) {
         const items = [];
@@ -225,7 +225,7 @@ class ShoppingList extends Component {
                     <List
                         bordered
                         header={<div style={{fontSize: '2em'}}>Your Shopping List</div>}
-                        style={{marginTop: '50px', backgroundColor: 'white'}}
+                        style={{backgroundColor: 'white'}}
                     >
                         {this.state.listItem}
                     </List>
