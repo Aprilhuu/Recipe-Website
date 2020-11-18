@@ -3,6 +3,7 @@ import styles from './SearchResults.less';
 import { List, Card, Row, Rate } from 'antd';
 import { RocketOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import convertTime from "../../helper_functions/convertTime";
 
 const recipeSummary = (difficulty, prepTime) => {
   if (prepTime <= 10){
@@ -35,18 +36,14 @@ const recipeSummary = (difficulty, prepTime) => {
       <Row span={12} className={styles.summaryRow}>
         <span className={styles.labelText}>
           <FieldTimeOutlined />
-          <span className={styles.labelText}>{'Prep Time: ' + prepTime + " min"}</span>
+          <span className={styles.labelText}>{'Prep Time: ' + convertTime(prepTime) }</span>
         </span>
       </Row>
     </div>
   );
 };
 
-/**
- * This function is used to construct a nutrition label widget. Code is refactored from
- * reference design here: https://codepen.io/chriscoyier/pen/egHEK
- */
-export default ({handleChange, recipeList, totalPage, title}) => {
+export default ({handleChange, recipeList, totalPage, title, defaultCurrent}) => {
   let header;
   if (title){
     header=<h1 style={{'margin':'20px'}}>{title}</h1>;
@@ -71,6 +68,7 @@ export default ({handleChange, recipeList, totalPage, title}) => {
           onChange: handleChange,
           pageSize: 9,
           total: totalPage,
+          defaultCurrent: defaultCurrent,
           pageSizeOptions: [9],
         }}
         bordered={true}
