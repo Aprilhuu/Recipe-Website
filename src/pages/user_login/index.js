@@ -187,6 +187,7 @@ class UserLogin extends PureComponent {
       'show':true,
       // reset to login state every time
       'login_form': true,
+      'help_str': undefined,
     })
   }
 
@@ -196,6 +197,7 @@ class UserLogin extends PureComponent {
       'show':true,
       // reset to login state every time
       'login_form': false,
+      'help_str': undefined,
     })
   }
 
@@ -203,6 +205,7 @@ class UserLogin extends PureComponent {
   close_login_modal(){
     this.setState({
       'show':false,
+      'help_str': undefined,
     })
   }
 
@@ -315,6 +318,12 @@ class UserLogin extends PureComponent {
       ]
     }
     else{
+      // special logic here
+      let homepage_error = error
+      if(show) homepage_error = 'success'
+      let homepage_help_str = help_str
+      if(show) homepage_help_str = ''
+
       not_login_component = [
         <div className={styles.user_login_homepage} key="user_login_2">
           <h1 style={{fontWeight: "bold"}}> Sign in to explore full features of Chef Co-Pilot!</h1>
@@ -336,8 +345,8 @@ class UserLogin extends PureComponent {
             <Form.Item
               label="Password"
               name="password"
-              validateStatus={error}
-              help={help_str}
+              validateStatus={homepage_error}
+              help={homepage_help_str}
               rules={[{ required: true, message: 'Please input your password!' }]}
             >
               <Input.Password />
