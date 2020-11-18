@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, {PureComponent } from 'react';
-import { Card, Image, Carousel, Popover } from 'antd';
+import {Card, Image, Carousel, Popover, Col, Row} from 'antd';
 import { Link } from 'umi';
 import { LeftCircleFilled, RightCircleFilled } from '@ant-design/icons';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import mealPlanIllust from '../assets/images/meal_plan_illust.jpg'
 import pantryIllust from '../assets/images/pantry_illust.jpg'
 import Store from "./storage";
 import defaultSettings from '../../config/defaultSettings';
+import UserLogin from "./user_login";
 
 const { api_endpoint } = defaultSettings
 const { Meta } = Card;
@@ -34,7 +35,7 @@ class WelcomePage extends PureComponent {
         <b>2. Removing items:</b> click the 'x' on the top right of each meal card to remove it.
       </div>
       <div>
-        <b>3. Plan your week:</b> each week, your meal plan will refresh, so don't forget to fill it out for every week! 
+        <b>3. Plan your week:</b> each week, your meal plan will refresh, so don't forget to fill it out for every week!
       </div>
     </div>
 
@@ -81,7 +82,7 @@ class WelcomePage extends PureComponent {
                     src={recipeArray[i].image}
                     className={styles.featuredImage}
                     />
-                  </div>    
+                  </div>
                 }
               >
                 <Meta
@@ -129,12 +130,38 @@ class WelcomePage extends PureComponent {
    };
 
   render() {
+    const username = localStorage.getItem('username');
+    let firstCard;
+    if (username === null){
+      firstCard = (
+        <Card bordered={false} style={{width: "100%", overflow: "auto" , maxHeight: "100%"}} className={[styles.blackTitleBox, styles.whiteText]}>
+          <Row>
+            <Col span={12}>
+              <div className = {styles.titleText}>Chef Co-Pilot</div>
+              <div className = {styles.subText}>Chef CoPilot is a recipe hub that you can use to plan recipes for your future meals. Let's cook together!</div>
+            </Col>
+            <Col span={12} style={{textAlign: "-webkit-center", marginTop: '40px'}}>
+              <div style={{backgroundColor: "white", width: "70%"}}>
+                <UserLogin homepage={true}/>
+              </div>
+            </Col>
+          </Row>
+        </Card>
+      )
+    } else {
+      firstCard = (
+        <Card bordered={false} className={[styles.blackTitleBox, styles.whiteText]}>
+          <div className={styles.titleText}>Chef Co-Pilot</div>
+          <div className={styles.subText}>
+            Chef CoPilot is a recipe hub that you can use to plan recipes for your future meals.
+            Let's cook together!
+          </div>
+        </Card>
+      )
+    }
     return(
       <Card className = {styles.blackBackground} >
-        <Card bordered={false} className={[styles.blackTitleBox, styles.whiteText]}>
-          <div className = {styles.titleText}>Chef Co-Pilot</div>
-          <div className = {styles.subText}>Chef CoPilot is a recipe hub that you can use to plan recipes for your future meals. Let's cook together!</div>
-        </Card>
+        {firstCard}
         <Card bordered={false} className={styles.whiteSubBox}>
           <div className={styles.helpBoxWrapper} style={{ width: '50%' }}>
             <div className={styles.whiteSubBoxTitle}>Hover over each box for help and tips regarding our functions.</div>
@@ -154,9 +181,9 @@ class WelcomePage extends PureComponent {
                 </div>
               </Carousel>
               <div className={styles.helpBox}>
-                <Popover placement={this.state.popoverPlacement} key='search-popover' content={this.searchDescription} title="How to Use Search">    
+                <Popover placement={this.state.popoverPlacement} key='search-popover' content={this.searchDescription} title="How to Use Search">
                   <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterSearch}>
-                    <Meta 
+                    <Meta
                       title="Search"
                       description="Search by ingredients or recipe name, we have you covered."
                     />
@@ -164,7 +191,7 @@ class WelcomePage extends PureComponent {
                 </Popover>
                 <Popover placement={this.state.popoverPlacement} key='meal-planner-popover' content={this.mealPlannerDescription} title="How to Use Meal Planner">
                   <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterMealPlanner}>
-                    <Meta 
+                    <Meta
                       title="Meal Planner"
                       description="Plan your meals week by week. We'll sort out your shopping list."
                     />
@@ -172,7 +199,7 @@ class WelcomePage extends PureComponent {
                 </Popover>
                 <Popover  placement={this.state.popoverPlacement} key='shopping-list' content={this.shoppingListDescription} title="How to Use Shopping List">
                   <Card style={{margin:"10px"}} onMouseEnter={this.onMouseEnterShoppingList}>
-                    <Meta 
+                    <Meta
                       title="Shopping List"
                       description="Keeps track of ingredients you need for your meal plan."
                     />

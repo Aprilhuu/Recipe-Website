@@ -1,5 +1,5 @@
 import { PureComponent } from 'react';
-import { Layout, Menu, Breadcrumb, Anchor, Button, Row, Col } from 'antd';
+import { Layout, Menu, Row, Col } from 'antd';
 import { Link } from 'umi';
 import UserLogin from '../pages/user_login/index.js'
 import home from '../assets/images/home.png'
@@ -18,7 +18,7 @@ class Header_bar extends PureComponent {
     // console.log(username)
     var headers = [
       (<Menu.Item key="0">
-          <Link to='/copilot'><img width="30" src={home}></img></Link>
+          <Link to='/copilot'><img width="30" src={home}/></Link>
         </Menu.Item>),
       (<Menu.Item key="1">
           <Link to='/recipe-list'>Recipe List</Link>
@@ -51,7 +51,7 @@ class Header_bar extends PureComponent {
             </Menu>
           </Col>
           <Col span={2}>
-            <UserLogin/>
+            <UserLogin homepage={false}/>
           </Col>
         </Row>
       </Header>
@@ -66,8 +66,8 @@ const BasicLayout = ({ children }) => (
   <Layout className="layout">
     <Header_bar />
     <Content style={{ padding: '0 50px' }}>
-      <br></br>
-      <br></br>
+      <br/>
+      <br/>
       <div className="site-layout-content">{children}</div>
     </Content>
     <Footer style={{ textAlign: 'center' }}>Chef Co-Pilot ©2020 by Quaranteam</Footer>
