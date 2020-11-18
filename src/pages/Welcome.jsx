@@ -177,7 +177,7 @@ class WelcomePage extends PureComponent {
       )
     } else {
       firstCard = (
-        <Card bordered={false} className={[styles.blackTitleBox, styles.whiteText]}>
+        <Card bordered={false} className={styles.blackTitleBox}>
           <div className={styles.titleText}>Chef Co-Pilot</div>
           <div className={styles.subText}>
             Chef CoPilot is a recipe hub that you can use to plan recipes for your future meals.
@@ -257,7 +257,7 @@ class WelcomePage extends PureComponent {
             </div>
           </div>
         </Card>
-        <Card bordered={false} className={[styles.blackSubBox, styles.whiteText]}>
+        <Card bordered={false} className={styles.blackSubBox}>
           <div
             className={styles.helpBoxWrapper}
             style={{ maxWidth: '300px', width: 'calc(1500px -  50vw)', height: '50vh' }}
