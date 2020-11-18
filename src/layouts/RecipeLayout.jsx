@@ -1,6 +1,6 @@
-import {Layout, Rate, Typography, Divider, Row, Col, Switch, Tag, Table, Image, List, Avatar} from 'antd';
+import {Avatar, Col, Divider, Image, Layout, List, Rate, Row, Switch, Table, Tag, Typography} from 'antd';
 import React from "react";
-import {CloseOutlined, CheckOutlined, RocketOutlined, FieldTimeOutlined, FireOutlined} from '@ant-design/icons';
+import {CheckOutlined, CloseOutlined, FieldTimeOutlined, FireOutlined, RocketOutlined} from '@ant-design/icons';
 import styles from './RecipeLayout.less'
 import NutritionLabel from "../components/NutritionLabel/NutritionLabel";
 import constructTag from '../helper_functions/constructTag.jsx';
@@ -9,6 +9,8 @@ import convertTime from "../helper_functions/convertTime";
 
 const { Content } = Layout;
 const { Title } = Typography;
+
+// Dictionary item used to store color tag mapping or known ingredient tags
 const tagColor = {'vegetable': 'green', 'spice': 'red', 'seafood': 'blue', 'oil': 'yellowgreen',
 'meat': 'darksalmon', 'condiment': 'orange', 'flour': 'sandybrown',
   'nut': 'brown', 'baking': 'pink','dairy': 'darkorange','pasta': 'gold',
@@ -20,19 +22,21 @@ const tagColor = {'vegetable': 'green', 'spice': 'red', 'seafood': 'blue', 'oil'
  *
  * @param {number} rating rating of the recipe
  * @param {number} difficulty difficulty level of a recipe
- * @param {string} prepTime
+ * @param {number} prepTime Preparation time of the recipe in minutes
  *
  * @return react components for recipe summary part in one row
  */
 const recipeSummary = (rating, difficulty, prepTime) => {
   let ratingNum;
 
+  // If no rating is available, just use dash
   if (!rating){
     ratingNum = '-'
   } else{
     ratingNum = Math.round(rating * 10) / 10
   }
 
+  // Calculate difficulty based on prep time
   if (prepTime <= 10){
     difficulty = 1;
   } else if (prepTime <= 30){
