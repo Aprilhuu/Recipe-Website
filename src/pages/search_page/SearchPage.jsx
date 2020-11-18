@@ -13,16 +13,20 @@ import { Link } from 'react-router-dom';
 import FilterConfig from "../../components/FilterConfig/FilterConfig";
 import {LeftCircleFilled, RightCircleFilled} from "@ant-design/icons";
 
-
+/**
+ * This class represents the entire search page. It includes a search bar.
+ * Recipe recommendation component on first load and search result list after user
+ * clicking search.
+ */
 class SearchPage extends PureComponent {
   state = {
-    hasErrors: false,
-    isFetching: true,
-    recipeList: [],
-    sampleRecipes: [],
-    searchCriteria: [],
-    noResult: false,
-    pageNumber: 1
+    hasErrors: false, // Boolean to indicate if anything went wrong when working with backend
+    isFetching: true, // Boolean to indicate if component is fetching data from backend
+    recipeList: [], // List of recipes to display in search result
+    sampleRecipes: [], // List of recipes to display for recommendation
+    searchCriteria: [], // Search criteria entered in search bar
+    noResult: false, // Boolean to indicate if any data return from searching
+    pageNumber: 1 // Integer indicating which page the user is on before clicking into a recipe
   };
 
   constructor(props) {
@@ -31,6 +35,7 @@ class SearchPage extends PureComponent {
   }
 
   componentDidMount() {
+    // If loaded from page redirect
     if (this.props.location.state){
       this.setState({ recipeList: this.props.location.state.recipes,
         searchCriteria: this.props.location.state.searchCriteria, isFetching: false });
@@ -39,11 +44,16 @@ class SearchPage extends PureComponent {
       }else{
         this.setState({noResult: false})
       }
-    } else{
+    }
+    // If loaded from back from a recipe detail page
+    else{
       const state = Store.getResultList("search");
       this.setState(state)
     }
-    if (!this.state.recipeList.length){
+
+    // If not recipe to show on first load, fetch some random recipes to display as
+    // recommendation
+    if (!this.state.recipeList.length && !this.state.noResult){
       axios.get(api_endpoint +'/v1/recipes/query/random', {})
         .then(response =>{
           this.setState({ sampleRecipes: response.data.result })
@@ -53,9 +63,13 @@ class SearchPage extends PureComponent {
   }
 
   componentWillUnmount() {
+    // Saving current search result page data (e.g. current page number,
+    // current recipe list) before leaving the page
     Store.saveResultList(this.state, "search");
   }
 
+  // Callback used to handle redirect after user click search button and
+  // results haven been returned from backend
   handleRedirect = (searchResults, searchCriteria) => {
     this.setState({ recipeList: searchResults, searchCriteria: searchCriteria});
     if (!searchResults.length){
@@ -65,6 +79,8 @@ class SearchPage extends PureComponent {
     }
   }
 
+  // Callback used to handle state update after user applies filter and
+  // results haven been returned from backend
   handleFilter = (searchResults) => {
     this.setState({ recipeList: searchResults });
     if (!searchResults.length){
@@ -74,10 +90,12 @@ class SearchPage extends PureComponent {
     }
   }
 
+  // Function used to get current search criteria from other components
   searchCriteria = () => {
     return this.state.searchCriteria;
   }
 
+  // Callback function called when user click on Clear Filter button
   clearFilter = () => {
     let searchJSON;
     const currentCriteria = this.state.searchCriteria;
@@ -87,27 +105,28 @@ class SearchPage extends PureComponent {
     else if (typeof currentCriteria === "string"){
       searchJSON = {"title": currentCriteria};
     }
-
+    // Query the database again with filters removed
     axios.post(api_endpoint +'/v1/recipes/query', searchJSON )
       .then(response =>{
         this.handleFilter(response['data']['result']);
       })
-
   }
 
   // actions to slide feature recipes left and right
   slideLeft = () => this.featuredRecipeRef.current.prev();
-
   slideRight = () => this.featuredRecipeRef.current.next();
 
+  // Callback function used to update stored page number after going to a new page
   onPageChange = (pageNumber) => {
     this.setState({pageNumber: pageNumber})
   }
 
   render() {
+    // Case #1: Just loaded, no search result, display recommendation
     if (!this.state.recipeList.length && !this.state.noResult){
       let recipeCardList = []
       const recipeArray = this.state.sampleRecipes
+      // First, prepare cards to display based on sample recipes queried
       for (let i = 0; i < recipeArray.length; i++ ) {
         const item = recipeArray[i]
         let img_url = item.image
@@ -158,6 +177,7 @@ class SearchPage extends PureComponent {
         </Card>
       );
     }
+    // Case #2: Have recipe search results (can be empty), display search result
     else{
       return(
         <Card>
