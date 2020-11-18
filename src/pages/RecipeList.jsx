@@ -2,7 +2,6 @@ import React, {PureComponent} from 'react';
 import {Spin, Card, PageHeader} from 'antd';
 import axios from "axios";
 import defaultSettings from '../../config/defaultSettings';
-import RecipeListing from "../components/RecipeListing/RecipeListing";
 import SearchResults from "../components/SearchResults/SearchResults";
 import Store from "./storage";
 
@@ -13,7 +12,8 @@ class RecipeList extends PureComponent {
     hasErrors: false,
     isFetching: true,
     recipeList: [],
-    fastReadingMode: false
+    fastReadingMode: false,
+    pageNumber: 1
   };
 
   constructor(props) {
@@ -27,14 +27,23 @@ class RecipeList extends PureComponent {
   // all the recipe and total page
   componentDidMount() {
     this.setState({isFetching: true});
-    Store.clearResultList()
-    axios.get(api_endpoint +'/v1/recipes/', {})
-      .then(response =>{
-        // console.log(response);
-        this.setState({ recipeList: response['data']['result'], isFetching: false });
-    }).catch(function (error) {
-      console.log(error);
-    });
+    Store.clearResultList("search")
+    const defaultPage = Store.getResultList("list");
+    if (defaultPage != null){
+      this.setState({ pageNumber: defaultPage });
+      axios.get(api_endpoint +'/v1/recipes/?page='+(defaultPage-1)+'&page_size=9', {})
+        .then(response =>{
+          // console.log(response);
+          this.setState({ recipeList: response['data']['result'], isFetching: false });})
+    } else {
+      axios.get(api_endpoint +'/v1/recipes/', {})
+        .then(response =>{
+          // console.log(response);
+          this.setState({ recipeList: response['data']['result'], isFetching: false });
+        }).catch(function (error) {
+        console.log(error);
+      });
+    }
 
     axios.get(api_endpoint +'v1/recipes/count', {})
       .then(response =>{
@@ -43,6 +52,11 @@ class RecipeList extends PureComponent {
       console.log(error);
     });
   }
+
+  componentWillUnmount() {
+    Store.saveResultList(this.state.pageNumber, "list");
+  }
+
 
 /**
  * This function is the page value to get recipe range in that number
@@ -60,6 +74,7 @@ class RecipeList extends PureComponent {
         document.body.scrollTop = 0; // For Safari
         document.documentElement.scrollTop = 0;
       })
+    this.setState({pageNumber: page})
   }
 
   render() {
@@ -81,7 +96,10 @@ class RecipeList extends PureComponent {
             onBack={() => window.history.back()}
             subTitle={<span>This is a list of all recipes. Skip the wait and just start browsing!</span>}
           />
-          <SearchResults handleChange={this.onChange} recipeList={this.state.recipeList} totalPage={totalPage} title={null} />
+          <SearchResults handleChange={this.onChange}
+                         recipeList={this.state.recipeList}
+                         totalPage={totalPage} title={null}
+                         defaultCurrent={this.state.pageNumber}/>
         </Card>
       )
     }

@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import SearchBar from "../../components/SearchBar/SearchBar";
 import SearchResults from "../../components/SearchResults/SearchResults";
-import {Carousel, Card, PageHeader} from "antd";
+import {Carousel, Card, PageHeader, Button} from "antd";
 import axios from 'axios';
 import styles from './SearchPage.less';
 import Store from "../storage";
@@ -10,14 +10,19 @@ import defaultSettings from '../../../config/defaultSettings';
 const { api_endpoint } = defaultSettings
 
 import { Link } from 'react-router-dom';
+import FilterConfig from "../../components/FilterConfig/FilterConfig";
 import {LeftCircleFilled, RightCircleFilled} from "@ant-design/icons";
+
 
 class SearchPage extends PureComponent {
   state = {
     hasErrors: false,
     isFetching: true,
     recipeList: [],
-    sampleRecipes: []
+    sampleRecipes: [],
+    searchCriteria: [],
+    noResult: false,
+    pageNumber: 1
   };
 
   constructor(props) {
@@ -26,10 +31,16 @@ class SearchPage extends PureComponent {
   }
 
   componentDidMount() {
-    if (this.props.location.state && this.props.location.state.recipes){
-      this.setState({ recipeList: this.props.location.state.recipes, isFetching: false });
+    if (this.props.location.state){
+      this.setState({ recipeList: this.props.location.state.recipes,
+        searchCriteria: this.props.location.state.searchCriteria, isFetching: false });
+      if (!this.props.location.state.recipes.length){
+        this.setState({noResult: true})
+      }else{
+        this.setState({noResult: false})
+      }
     } else{
-      const state = Store.getResultList();
+      const state = Store.getResultList("search");
       this.setState(state)
     }
     if (!this.state.recipeList.length){
@@ -38,14 +49,50 @@ class SearchPage extends PureComponent {
           this.setState({ sampleRecipes: response.data.result })
         })
     }
+    Store.clearResultList("list")
   }
 
   componentWillUnmount() {
-    Store.saveResultList(this.state);
+    Store.saveResultList(this.state, "search");
   }
 
-  handleRedirect = (searchResults) => {
-    this.setState({ recipeList: searchResults});
+  handleRedirect = (searchResults, searchCriteria) => {
+    this.setState({ recipeList: searchResults, searchCriteria: searchCriteria});
+    if (!searchResults.length){
+      this.setState({noResult: true})
+    } else{
+      this.setState({noResult: false})
+    }
+  }
+
+  handleFilter = (searchResults) => {
+    this.setState({ recipeList: searchResults });
+    if (!searchResults.length){
+      this.setState({noResult: true})
+    } else{
+      this.setState({noResult: false})
+    }
+  }
+
+  searchCriteria = () => {
+    return this.state.searchCriteria;
+  }
+
+  clearFilter = () => {
+    let searchJSON;
+    const currentCriteria = this.state.searchCriteria;
+    if (typeof currentCriteria === "object"){
+      searchJSON = {"ingredients": currentCriteria};
+    }
+    else if (typeof currentCriteria === "string"){
+      searchJSON = {"title": currentCriteria};
+    }
+
+    axios.post(api_endpoint +'/v1/recipes/query', searchJSON )
+      .then(response =>{
+        this.handleFilter(response['data']['result']);
+      })
+
   }
 
   // actions to slide feature recipes left and right
@@ -53,8 +100,12 @@ class SearchPage extends PureComponent {
 
   slideRight = () => this.featuredRecipeRef.current.next();
 
+  onPageChange = (pageNumber) => {
+    this.setState({pageNumber: pageNumber})
+  }
+
   render() {
-    if (!this.state.recipeList.length){
+    if (!this.state.recipeList.length && !this.state.noResult){
       let recipeCardList = []
       const recipeArray = this.state.sampleRecipes
       for (let i = 0; i < recipeArray.length; i++ ) {
@@ -93,9 +144,9 @@ class SearchPage extends PureComponent {
             onBack={() => window.history.back()}
             subTitle={<span>Already have something in mind? Type in keywords and search!</span>}
           />
-          <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
+          <SearchBar style={{ marginTop: '20px'}} redirect={false} redirectCallback={this.handleRedirect} />
           <div style={{textAlign: '-webkit-center'}}>
-            <h1> No idea yet? Checkout these recipes! </h1>
+            <h1> No idea yet? Check out these recipes! </h1>
             <Carousel autoplay style={{width: '50%'}} dots={false} ref={this.featuredRecipeRef}>
               {recipeCardList}
             </Carousel>
@@ -113,11 +164,16 @@ class SearchPage extends PureComponent {
           <PageHeader
             title="Search Page"
             onBack={() => window.history.back()}
-            subTitle={<span>This is a list of all recipes. Skip the wait and just start browsing!</span>}
+            subTitle={<span>Already have something in mind? Type in keywords and search!</span>}
           />
           <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
-          <SearchResults recipeList={this.state.recipeList} handleChange={()=>{}}
-                         totalPage={this.state.recipeList.length} title={"Search Results"} />
+          <FilterConfig searchCriteria={this.searchCriteria} handleFilter={this.handleFilter}/>
+          <Button type="primary" onClick={this.clearFilter} style={{marginBottom: '16px', marginLeft: '16px'}}>
+            Clear Filter
+          </Button>
+          <SearchResults recipeList={this.state.recipeList} handleChange={this.onPageChange}
+                         totalPage={this.state.recipeList.length} title={"Search Results"}
+                         defaultCurrent={this.state.pageNumber}/>
         </Card>
       )
     }

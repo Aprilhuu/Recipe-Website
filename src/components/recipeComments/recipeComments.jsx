@@ -124,11 +124,12 @@ const CommentList = ( { commentData, recipeID } ) => (
  * @param {boolean} submitting Boolean indicating if in the process of form submission
  * @param {string} value current value in comment submission box
  * @param {string} name current nickname in name submission box
+ * @param formRef
  *
  * @return Ant design Form element for entering comments
  */
-const Editor = ({ onChange, onChangeName, onSubmit, submitting, value, name }) => (
-  <Form size="large" labelAlign="left" layout="vertical">
+const Editor = ({ onChange, onChangeName, onSubmit, submitting, value, name, formRef }) => (
+  <Form size="large" labelAlign="left" layout="vertical" ref={formRef}>
     <Form.Item
       name={['user', 'name']}
       label="Name"
@@ -168,6 +169,7 @@ class CommentSection extends PureComponent {
     super(props);
     this.state.comments = props.commentData;
     this.state.recipeID = props.recipeID;
+    this.formRef = React.createRef();
   }
 
   handleSubmit = () => {
@@ -196,6 +198,8 @@ class CommentSection extends PureComponent {
       .then(response =>{
         console.log(response)
       })
+
+    this.formRef.current.resetFields();
 
     this.setState({
       submitting: false,
@@ -253,6 +257,7 @@ class CommentSection extends PureComponent {
                        submitting={submitting}
                        value={value}
                        name={name}
+                       formRef={this.formRef}
                      />
                    }/>
         </Row>

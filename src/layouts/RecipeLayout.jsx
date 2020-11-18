@@ -5,6 +5,7 @@ import styles from './RecipeLayout.less'
 import NutritionLabel from "../components/NutritionLabel/NutritionLabel";
 import constructTag from '../helper_functions/constructTag.jsx';
 import CommentSection from "../components/recipeComments/recipeComments";
+import convertTime from "../helper_functions/convertTime";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -66,7 +67,7 @@ const recipeSummary = (rating, difficulty, prepTime) => {
       <Col span={12}>
           <span className={ styles.labelText } >
             <FieldTimeOutlined />
-            <span className={ styles.labelText }>{ "Prep Time: " + prepTime + " min" }</span>
+            <span className={ styles.labelText }>{ "Prep Time: " + convertTime(prepTime) }</span>
           </span>
       </Col>
     </Row>

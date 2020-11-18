@@ -1,8 +1,7 @@
 import React, {PureComponent } from 'react';
 import axios from 'axios';
-import { Modal, Button, Input, Space, Row, 
+import { Modal, Button, Input, Row,
         Col, Divider, Form, Menu, Dropdown } from 'antd';
-import { Link } from 'umi';
 import styles from './login.less'
 import { withRouter } from "react-router-dom";
 
@@ -23,11 +22,14 @@ class UserLogin extends PureComponent {
     this.user_login = this.user_login.bind(this)
     this.logout = this.logout.bind(this)
     this.show_login_modal = this.show_login_modal.bind(this)
+    this.show_login_modal_homepage = this.show_login_modal_homepage.bind(this)
     this.close_login_modal = this.close_login_modal.bind(this)
     this.warning = this.warning.bind(this)
     this.switch_bw_login_register = this.switch_bw_login_register.bind(this)
     this.user_register = this.user_register.bind(this)
     this.user_login_register = this.user_login_register.bind(this)
+
+    this.homepage = props.homepage;
 
     // check if the previous user had login infomation
     const username = localStorage.getItem('username')
@@ -117,7 +119,7 @@ class UserLogin extends PureComponent {
     const { login_form } = this.state
     // endpoint become register
     var path = 'v1/users/register'
-    
+
     // send to backend
     axios.post(api_endpoint+path, {
       'username': username,
@@ -132,6 +134,7 @@ class UserLogin extends PureComponent {
       console.log(error.response)
       // pop up the register error
       var error_message = 'user already exist! please try another one'
+
       this.setState({
         'help_str':error_message,
       })
@@ -187,6 +190,15 @@ class UserLogin extends PureComponent {
     })
   }
 
+  // opent the login modal from homepage
+  show_login_modal_homepage(){
+    this.setState({
+      'show':true,
+      // reset to login state every time
+      'login_form': false,
+    })
+  }
+
   // close login modal
   close_login_modal(){
     this.setState({
@@ -202,15 +214,15 @@ class UserLogin extends PureComponent {
       onOk: this.logout,
     });
   }
-  
+
 
   render() {
     const { show, login_flag, help_str, login_form } = this.state
 
-    //this logic is to render the input box message 
+    //this logic is to render the input box message
     // base on whether user username/password is correct
     var error = "success"
-    if(help_str != undefined){
+    if(help_str !== undefined){
       error = "error"
     }
 
@@ -222,12 +234,12 @@ class UserLogin extends PureComponent {
     )
     // also the register button will switch to the login
     var reg_log_switch_button = (
-      <Button 
+      <Button
         className={styles.register_button}
         onClick={this.switch_bw_login_register}
       >Register Now!</Button>
     )
-    if(login_form == false){
+    if(login_form === false){
       sign_or_register = (
         <Button className={styles.login_button} type="primary" htmlType="submit">
           Register
@@ -235,70 +247,114 @@ class UserLogin extends PureComponent {
       )
 
       reg_log_switch_button = (
-        <Button 
+        <Button
           className={styles.register_button}
           onClick={this.switch_bw_login_register}
         >Already has account?</Button>
       )
     }
 
-    // this is the compoennt when user not login
-    // he will see the login button and form
-    const not_login_component = [
-      <div key="user_login">
-        <Button onClick={this.show_login_modal}> Login </Button>
-        <Modal
-          visible={show}
-          onCancel={this.close_login_modal}
-          width={1000}
-          footer={null}
-        >
-          <div className={styles.modal}>
-            <Row>
-              <Col span={12}>
-                <div className={styles.left_text_display}>
-                  <h2> Join the Chef Copilot </h2>
-                  <h3> Plan Your Healthy Day! </h3>
-                  <Divider />
-                  {reg_log_switch_button}
-                </div>
-              </Col>
+    let loginModal = (
+      <Modal
+        visible={show}
+        onCancel={this.close_login_modal}
+        width={1000}
+        footer={null}
+      >
+        <div className={styles.modal}>
+          <Row>
+            <Col span={12}>
+              <div className={styles.left_text_display}>
+                <h2> Join the Chef Copilot </h2>
+                <h3> Plan Your Healthy Day! </h3>
+                <Divider />
+                {reg_log_switch_button}
+              </div>
+            </Col>
 
-              <Col span={12}>
-                <Form
-                  name="basic"
-                  initialValues={{ remember: true }}
-                  onFinish={this.user_login_register}
+            <Col span={12}>
+              <Form
+                name="basic"
+                initialValues={{ remember: true }}
+                onFinish={this.user_login_register}
+              >
+                <Form.Item
+                  label="Username"
+                  name="username"
+                  rules={[{ required: true, message: 'Please input your username!' }]}
                 >
-                  <Form.Item
-                    label="Username"
-                    name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
+                  <Input />
+                </Form.Item>
 
-                  <Form.Item
-                    label="Password"
-                    name="password"
-                    validateStatus={error}
-                    help={help_str}
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                  >
-                    <Input.Password />
-                  </Form.Item>
+                <Form.Item
+                  label="Password"
+                  name="password"
+                  validateStatus={error}
+                  help={help_str}
+                  rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                {sign_or_register}
+                <Form.Item>
+                </Form.Item>
+              </Form>
+            </Col>
+          </Row>
+        </div>
+      </Modal>
+    )
 
-                  <Form.Item>
-                    {sign_or_register}
-                  </Form.Item>
-                </Form>
+    let not_login_component;
+    if (!this.homepage){
+      not_login_component = [
+        <div key="user_login">
+          <Button onClick={this.show_login_modal}> Login </Button>
+          {loginModal}
+        </div>
+      ]
+    }
+    else{
+      not_login_component = [
+        <div className={styles.user_login_homepage} key="user_login_2">
+          <h1 style={{fontWeight: "bold"}}> Sign in to explore full features of Chef Co-Pilot!</h1>
+          <h3 style={{color: "GrayText", marginBottom: "25px"}}> This gives you access to amazing features like meal planner and shopping list 🔥 </h3>
+          {loginModal}
+          <Form
+            name="basic"
+            initialValues={{ remember: true }}
+            onFinish={this.user_login_register}
+          >
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[{ required: true, message: 'Please input your username!' }]}
+            >
+              <Input />
+            </Form.Item>
 
-              </Col>
-            </Row>
-          </div>
-        </Modal>
-      </div>
-    ]
+            <Form.Item
+              label="Password"
+              name="password"
+              validateStatus={error}
+              help={help_str}
+              rules={[{ required: true, message: 'Please input your password!' }]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+            <Form.Item>
+              <Button className={styles.login_button} type="primary" htmlType="submit">
+                Sign In
+              </Button>
+            </Form.Item>
+            <Divider />
+            <h4> Not a user? <Button type="link" onClick={this.show_login_modal_homepage} >Sign up now!</Button> </h4>
+          </Form>
+        </div>
+      ]
+    }
+
 
     // if user logined then he will see logout and user icon
     // also use username to render it
@@ -310,13 +366,19 @@ class UserLogin extends PureComponent {
         </Menu.Item>
       </Menu>
     );
-    const login_component = [
-      <Dropdown overlay={dropdown_menu} placement="bottomCenter">
-        <Button key='user_icon' type="primary" shape="circle">
-          {username[0]}
-        </Button>
-      </Dropdown>
-    ]
+
+    let login_component;
+    if (!this.homepage){
+      login_component = [
+        <Dropdown overlay={dropdown_menu} placement="bottomCenter">
+          <Button key='user_icon' type="primary" shape="circle">
+            {username[0]}
+          </Button>
+        </Dropdown>
+      ]
+    } else{
+      login_component = []
+    }
 
     // get the username from local storage
     // if username is undefine then give login button
