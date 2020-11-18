@@ -1,8 +1,8 @@
-import React, {PureComponent} from 'react';
-import {Button, Form, InputNumber, Modal, Typography,} from 'antd';
+import React, { PureComponent } from 'react';
+import { Button, Form, InputNumber, Modal, Typography } from 'antd';
 import IngredientTag from './IngredientTag';
-import axios from "axios";
-import defaultSettings from "../../../config/defaultSettings";
+import axios from 'axios';
+import defaultSettings from '../../../config/defaultSettings';
 
 const { api_endpoint } = defaultSettings;
 
@@ -24,7 +24,7 @@ class FilterConfig extends PureComponent {
     visible: false,
     ingredientsTagsList: [],
     calorieLimit: -1,
-    timeLimit: -1
+    timeLimit: -1,
   };
 
   constructor(props) {
@@ -45,15 +45,15 @@ class FilterConfig extends PureComponent {
 
   onChangeCalorie = (value) => {
     this.setState({
-      calorieLimit: value
-    })
-  }
+      calorieLimit: value,
+    });
+  };
 
   onChangeTime = (value) => {
     this.setState({
-      timeLimit: value
-    })
-  }
+      timeLimit: value,
+    });
+  };
 
   closeForm() {
     this.setState({
@@ -61,40 +61,40 @@ class FilterConfig extends PureComponent {
     });
   }
 
+  /**
+   * This function is used to update the filter configuration
+   *
+   */
   onSubmit = () => {
-
     const filter = {};
-    if (this.state.ingredientsTagsList){
-      filter["exclude"] = this.state.ingredientsTagsList;
+    if (this.state.ingredientsTagsList) {
+      filter['exclude'] = this.state.ingredientsTagsList;
     }
-    if (this.state.calorieLimit !== -1){
-      filter["calorieLimit"] = this.state.calorieLimit;
+    if (this.state.calorieLimit !== -1) {
+      filter['calorieLimit'] = this.state.calorieLimit;
     }
-    if (this.state.timeLimit !== -1){
-      filter["timeLimit"] = this.state.timeLimit * 60;
+    if (this.state.timeLimit !== -1) {
+      filter['timeLimit'] = this.state.timeLimit * 60;
     }
 
     let searchJSON;
     const currentCriteria = this.searchCriteria();
-    if (typeof currentCriteria === "object"){
-      searchJSON = {"ingredients": currentCriteria, "filters": filter};
-    }
-    else if (typeof currentCriteria === "string"){
-      searchJSON = {"title": currentCriteria, "filters": filter};
+    if (typeof currentCriteria === 'object') {
+      searchJSON = { ingredients: currentCriteria, filters: filter };
+    } else if (typeof currentCriteria === 'string') {
+      searchJSON = { title: currentCriteria, filters: filter };
     }
 
-    axios.post(api_endpoint +'/v1/recipes/query', searchJSON )
-      .then(response =>{
-        this.handleFilter(response['data']['result']);
-      })
+    axios.post(api_endpoint + '/v1/recipes/query', searchJSON).then((response) => {
+      this.handleFilter(response['data']['result']);
+    });
 
     //close the modal
     this.setState({
       visible: false,
     });
-
-  }
-
+  };
+  // update ingredients tag
   updateTags(inputTags) {
     let ingredientsTagsList = inputTags;
     this.setState({
@@ -106,7 +106,7 @@ class FilterConfig extends PureComponent {
     return (
       /* Modal view */
       <>
-        <Button type="primary" onClick={this.showModal} style={{marginBottom: '16px'}}>
+        <Button type="primary" onClick={this.showModal} style={{ marginBottom: '16px' }}>
           Add Filter
         </Button>
         <Modal
@@ -133,8 +133,8 @@ class FilterConfig extends PureComponent {
             <Title level={5}>Enter a calorie limit per serving: </Title>
             <Form.Item>
               <Form.Item name="calorieLimit" noStyle>
-                <InputNumber min={0} onChange={this.onChangeCalorie}/>
-                <span style={{marginLeft: '8px'}}>kcal</span>
+                <InputNumber min={0} onChange={this.onChangeCalorie} />
+                <span style={{ marginLeft: '8px' }}>kcal</span>
               </Form.Item>
             </Form.Item>
 
@@ -142,8 +142,8 @@ class FilterConfig extends PureComponent {
             <Title level={5}>Enter a meal preparation time limit: </Title>
             <Form.Item>
               <Form.Item name="timeLimit" noStyle>
-                <InputNumber min={0} onChange={this.onChangeTime}/>
-                <span style={{marginLeft: '8px'}}>hour(s)</span>
+                <InputNumber min={0} onChange={this.onChangeTime} />
+                <span style={{ marginLeft: '8px' }}>hour(s)</span>
               </Form.Item>
             </Form.Item>
           </Form>
