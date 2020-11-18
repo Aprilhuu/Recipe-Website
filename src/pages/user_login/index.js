@@ -328,7 +328,7 @@ class UserLogin extends PureComponent {
       not_login_component = [
         <div className={styles.user_login_homepage} key="user_login_2">
           <h1 style={{fontWeight: "bold"}}> Sign in to explore full features of Chef Co-Pilot!</h1>
-          <h3 style={{color: "GrayText", marginBottom: "25px"}}> This gives you access to amazing features like meal planner and shopping list 🔥 </h3>
+          <h3 style={{color: "GrayText", marginBottom: "25px"}}> This will give you access to amazing features like meal planner and shopping list 🔥 </h3>
           {loginModal}
           <Form
             name="basic"

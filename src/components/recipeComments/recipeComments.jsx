@@ -1,5 +1,5 @@
 import React, {createElement, PureComponent, useEffect, useState} from 'react';
-import {Comment, Tooltip, Row, List, Typography, Form, Button, Input} from 'antd';
+import {Comment, Tooltip, Row, List, Typography, Form, Button, Input, Modal} from 'antd';
 import moment from 'moment';
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from '@ant-design/icons';
 import styles from './recipeComments.less';
@@ -133,14 +133,13 @@ const Editor = ({ onChange, onChangeName, onSubmit, submitting, value, name, for
     <Form.Item
       name={['user', 'name']}
       label="Name"
-      rules={[{required: true}]}
     >
       <Input onChange={onChangeName} value={name}/>
     </Form.Item>
     <Form.Item
       name={['user', 'comment']}
       label="Comment"
-      rules={[{required: true}]}>
+    >
       <TextArea rows={4} onChange={onChange} value={value}/>
     </Form.Item>
     <Form.Item>
@@ -173,7 +172,21 @@ class CommentSection extends PureComponent {
   }
 
   handleSubmit = () => {
-    if (!this.state.value || !this.state.name) {
+    if (!this.state.name) {
+      Modal.warning({
+        title: 'Required field Name is empty',
+        content: 'Please enter your name before submitting!',
+        centered: true
+      });
+      return;
+    }
+
+    if (!this.state.value) {
+      Modal.warning({
+        title: 'Required field Comment is empty',
+        content: 'Please enter your comment message before submitting!',
+        centered: true
+      });
       return;
     }
 
