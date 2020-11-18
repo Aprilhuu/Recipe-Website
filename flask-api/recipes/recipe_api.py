@@ -135,6 +135,7 @@ class RecipeQuery(Resource):
           if ingredients:
             p = inflect.engine()
             for ingredient in ingredients:
+              ingredient = ingredient.lower()
               singular_form, plural_form = singular_plural_form(ingredient)
               # Using regex to perform contain as substring instead of exactly matching
               ingredient_filter_array.append({'$or':
