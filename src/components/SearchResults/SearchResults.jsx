@@ -43,11 +43,7 @@ const recipeSummary = (difficulty, prepTime) => {
   );
 };
 
-/**
- * This function is used to construct a nutrition label widget. Code is refactored from
- * reference design here: https://codepen.io/chriscoyier/pen/egHEK
- */
-export default ({handleChange, recipeList, totalPage, title}) => {
+export default ({handleChange, recipeList, totalPage, title, defaultCurrent}) => {
   let header;
   if (title){
     header=<h1 style={{'margin':'20px'}}>{title}</h1>;
@@ -72,6 +68,7 @@ export default ({handleChange, recipeList, totalPage, title}) => {
           onChange: handleChange,
           pageSize: 9,
           total: totalPage,
+          defaultCurrent: defaultCurrent,
           pageSizeOptions: [9],
         }}
         bordered={true}

@@ -1,14 +1,18 @@
 let searchResults = {};
 
 const Store = {
-  saveResultList: function (state) {
-    searchResults['results'] = state;
+  saveResultList: function (state, page) {
+    searchResults[page] = state;
   },
-  getResultList: function () {
-    return searchResults['results'];
+  getResultList: function (page) {
+    return searchResults[page];
   },
-  clearResultList: function () {
-    searchResults = {};
+  clearResultList: function (page) {
+    if (page != null){
+      delete searchResults[page];
+    } else {
+      searchResults = {};
+    }
   }
 };
 

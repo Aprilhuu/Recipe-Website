@@ -21,7 +21,8 @@ class SearchPage extends PureComponent {
     recipeList: [],
     sampleRecipes: [],
     searchCriteria: [],
-    noResult: false
+    noResult: false,
+    pageNumber: 1
   };
 
   constructor(props) {
@@ -39,7 +40,7 @@ class SearchPage extends PureComponent {
         this.setState({noResult: false})
       }
     } else{
-      const state = Store.getResultList();
+      const state = Store.getResultList("search");
       this.setState(state)
     }
     if (!this.state.recipeList.length){
@@ -48,10 +49,11 @@ class SearchPage extends PureComponent {
           this.setState({ sampleRecipes: response.data.result })
         })
     }
+    Store.clearResultList("list")
   }
 
   componentWillUnmount() {
-    Store.saveResultList(this.state);
+    Store.saveResultList(this.state, "search");
   }
 
   handleRedirect = (searchResults, searchCriteria) => {
@@ -97,6 +99,10 @@ class SearchPage extends PureComponent {
   slideLeft = () => this.featuredRecipeRef.current.prev();
 
   slideRight = () => this.featuredRecipeRef.current.next();
+
+  onPageChange = (pageNumber) => {
+    this.setState({pageNumber: pageNumber})
+  }
 
   render() {
     if (!this.state.recipeList.length && !this.state.noResult){
@@ -153,7 +159,6 @@ class SearchPage extends PureComponent {
       );
     }
     else{
-      console.log(this.state.searchCriteria)
       return(
         <Card>
           <PageHeader
@@ -166,8 +171,9 @@ class SearchPage extends PureComponent {
           <Button type="primary" onClick={this.clearFilter} style={{marginBottom: '16px', marginLeft: '16px'}}>
             Clear Filter
           </Button>
-          <SearchResults recipeList={this.state.recipeList} handleChange={()=>{}}
-                         totalPage={this.state.recipeList.length} title={"Search Results"} />
+          <SearchResults recipeList={this.state.recipeList} handleChange={this.onPageChange}
+                         totalPage={this.state.recipeList.length} title={"Search Results"}
+                         defaultCurrent={this.state.pageNumber}/>
         </Card>
       )
     }
