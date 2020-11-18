@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import SearchBar from "../../components/SearchBar/SearchBar";
 import SearchResults from "../../components/SearchResults/SearchResults";
-import {Carousel, Card, PageHeader} from "antd";
+import {Carousel, Card, PageHeader, Button} from "antd";
 import axios from 'axios';
 import styles from './SearchPage.less';
 import Store from "../storage";
@@ -76,6 +76,23 @@ class SearchPage extends PureComponent {
     return this.state.searchCriteria;
   }
 
+  clearFilter = () => {
+    let searchJSON;
+    const currentCriteria = this.state.searchCriteria;
+    if (typeof currentCriteria === "object"){
+      searchJSON = {"ingredients": currentCriteria};
+    }
+    else if (typeof currentCriteria === "string"){
+      searchJSON = {"title": currentCriteria};
+    }
+
+    axios.post(api_endpoint +'/v1/recipes/query', searchJSON )
+      .then(response =>{
+        this.handleFilter(response['data']['result']);
+      })
+
+  }
+
   // actions to slide feature recipes left and right
   slideLeft = () => this.featuredRecipeRef.current.prev();
 
@@ -123,7 +140,7 @@ class SearchPage extends PureComponent {
           />
           <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
           <div style={{textAlign: '-webkit-center'}}>
-            <h1> No idea yet? Checkout these recipes! </h1>
+            <h1> No idea yet? Check out these recipes! </h1>
             <Carousel autoplay style={{width: '50%'}} dots={false} ref={this.featuredRecipeRef}>
               {recipeCardList}
             </Carousel>
@@ -146,6 +163,9 @@ class SearchPage extends PureComponent {
           />
           <SearchBar redirect={false} redirectCallback={this.handleRedirect} />
           <FilterConfig searchCriteria={this.searchCriteria} handleFilter={this.handleFilter}/>
+          <Button type="primary" onClick={this.clearFilter} style={{marginBottom: '16px', marginLeft: '16px'}}>
+            Clear Filter
+          </Button>
           <SearchResults recipeList={this.state.recipeList} handleChange={()=>{}}
                          totalPage={this.state.recipeList.length} title={"Search Results"} />
         </Card>

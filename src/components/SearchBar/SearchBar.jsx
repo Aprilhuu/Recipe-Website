@@ -20,7 +20,7 @@ const selectBefore = (handleSelectChange) => (
           className="select-before"
           onSelect={handleSelectChange}>
     <Option value={searchType.BYINGREDIENTS}>By Ingredients</Option>
-    <Option value={searchType.BYTITLE}>By Recipe Title</Option>
+    <Option value={searchType.BYTITLE}>By Keywords</Option>
     {/*<Option value={searchType.BYPANTRY}>By Pantry Items</Option>*/}
   </Select>
 );

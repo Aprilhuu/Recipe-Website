@@ -83,10 +83,8 @@ class FilterConfig extends PureComponent {
       searchJSON = {"title": currentCriteria, "filters": filter};
     }
 
-    console.log(searchJSON);
     axios.post(api_endpoint +'/v1/recipes/query', searchJSON )
       .then(response =>{
-        console.log(response['data']['result']);
         this.handleFilter(response['data']['result']);
       })
 
