@@ -10,7 +10,7 @@ from app import db_connection
 # into shopping list
 class Meal_Plan_2_Shopping_List(Resource):
     
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         '''
         aggregate the recipe ingradients in meal planer
@@ -20,7 +20,7 @@ class Meal_Plan_2_Shopping_List(Resource):
         # example curl localhost:5000/v1/recipes/
         try:
             # for now tempory user is group3
-            username = 'group3'
+            username = current_identity.get('username')
 
             user_col = db_connection['users']
             # find the exist key for that user
@@ -40,10 +40,9 @@ class Meal_Plan_2_Shopping_List(Resource):
                             recipe_ids[recipe_per_day] += 1
                         else:
                             recipe_ids.update({recipe_per_day:1})
-            print(recipe_ids)
+            # print(recipe_ids)
 
             # then get the recipe by id
-            # TODO add to util function <-----------------------------------------------------
             recipes = []
             r_collection = db_connection['recipe']
             for rid in recipe_ids:
@@ -51,13 +50,8 @@ class Meal_Plan_2_Shopping_List(Resource):
                 # print(recipe)
                 recipes.append(recipe)
 
-            print(recipes)
-
-            ##############################################
-            # temporary return all
-            # r_collection = db_connection['group3_collection']
+            # loop over each ingredients to get the quantity and name
             ret_json = {}
-            # recipe = r_collection.find()
             for x in recipes:
                 for ingredient in x['ingredients']:
                     print(ingredient)
@@ -75,7 +69,7 @@ class Meal_Plan_2_Shopping_List(Resource):
                     type_ = ingredient['type']
                     name = ingredient['name']
 
-                #     # now start to parse into return value
+                    # now start to parse into return value
                     has_ = ret_json.get(name, None)
                     # if the ingredient already in the return update it
                     if has_:
@@ -87,6 +81,7 @@ class Meal_Plan_2_Shopping_List(Resource):
 
                         # add up the quantity is not -1
                         ret_json[name]['total_q'] += quantity
+                    # else we create a new one
                     else:
                         ret_json.update({
                             name:{
@@ -102,7 +97,6 @@ class Meal_Plan_2_Shopping_List(Resource):
                                 ]
                             }
                         })
-                print()
 
             # now loop over again to parse the total quantity into string
             for x in ret_json:
@@ -112,7 +106,7 @@ class Meal_Plan_2_Shopping_List(Resource):
                 ret_json[x].update({'quantity': q_str})
 
 
-            print(ret_json)
+            # print(ret_json)
 
         except Exception as e:
             return {'result': str(e)}, 400
@@ -124,13 +118,12 @@ class ShoppingList(Resource):
     @jwt_required()
     def post(self):
         '''
-        update the meal plan by user name
+        update the shopping list by username
         '''
 
         post_data = request.get_json()
-        print(post_data)
         new_plan = post_data.get('shopping_list', None)
-        print(new_plan)
+        # mandetory field for shopping list
         if not new_plan:
             return {'result': 'Error please enter shopping list'}, 403
 
@@ -142,8 +135,6 @@ class ShoppingList(Resource):
             {'username': username},
             { '$set':{'shopping_list': new_plan}}
         )
-        # get meal plan
-        # mp = u.get('meal_plan', {})
 
         return {'result': 'success'}, 200
 

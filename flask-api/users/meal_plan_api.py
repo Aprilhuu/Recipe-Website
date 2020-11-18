@@ -82,19 +82,22 @@ class Meal_Plan(Resource):
             "Carbon": 0,
             "Fiber": 0,
         } for x in days}
+
+        # then loop over the existing meal plan to calculate the nutritions
         for meal in mp:
             for day in days:
                 rid = meal[day].get('recipe_id', None)
                 if rid != None:
+                    # find each recipe detail
                     r = r_col.find_one(ObjectId(rid))
                     r_nutrition = r['nutritional info']['nutrition facts']
-                    # print(r_nutrition)
 
                     # add for the number
                     nutritions[day]['Calories'] += float(r_nutrition['CALORIES']['value'])
                     nutritions[day]['Carbon'] += float(r_nutrition['CARB']['value'])
                     nutritions[day]['Fiber'] += float(r_nutrition['FIBER']['value'])
 
+        # also return the new plan with nutrition target
         mp.append(nutritions)
 
 
@@ -123,8 +126,6 @@ class Meal_Plan(Resource):
             {'username': username},
             { '$set':{'meal_plan': new_plan, 'shopping_list':{}}}
         )
-        
-        # also return the new plan with nutrition target
 
         # else loop over each recipe to find nutrition
         r_col = db_connection['recipe']
@@ -134,6 +135,9 @@ class Meal_Plan(Resource):
             "Carbon": 0,
             "Fiber": 0,
         } for x in days}
+
+        # same here
+        # loop over the existing meal plan to calculate the nutritions
         for meal in new_plan:
             for day in days:
                 rid = meal[day].get('recipe_id', None)
@@ -147,6 +151,7 @@ class Meal_Plan(Resource):
                     nutritions[day]['Carbon'] += float(r_nutrition['CARB']['value'])
                     nutritions[day]['Fiber'] += float(r_nutrition['FIBER']['value'])
 
+        # also return the new plan with nutrition target
         new_plan.append(nutritions)
 
 

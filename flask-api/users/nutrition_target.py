@@ -12,7 +12,7 @@ class Nutrition_Target(Resource):
     @jwt_required()
     def get(self):
         '''
-        get saved meal plan schedule by user name
+        get meal plan for user
         '''
         user_col = db_connection['users']
         
@@ -27,7 +27,7 @@ class Nutrition_Target(Resource):
     @jwt_required()
     def post(self):
         '''
-        update the meal plan by user name
+        update the nutrition traget by username
         '''
 
         post_data = request.get_json()
@@ -46,11 +46,11 @@ class Nutrition_Target(Resource):
                 temp = int(nutrition_target[x])
 
                 # also set limit
-                if x == 'calories' and not (temp<1000 and temp>0):
+                if x == 'calories' and not (temp<=1000 and temp>=0):
                     raise Exception("invalid range")
-                elif x == 'carbon' and not (temp<200 and temp>0):
+                elif x == 'carbon' and not (temp<=200 and temp>=0):
                     raise Exception("invalid range")
-                elif x == 'fiber' and not (temp<50 and temp>0):
+                elif x == 'fiber' and not (temp<=50 and temp>=0):
                     raise Exception("invalid range")
 
                 # check key is in the list
@@ -64,10 +64,10 @@ class Nutrition_Target(Resource):
         # get the logined username
         username = current_identity.get('username')
 
+        # set the nutrition with new value to user
         u = user_col.update(
             {'username': username},
             { '$set':{'nutrition_target': nutrition_target}}
         )
-
 
         return {'result': nutrition_target}, 200
