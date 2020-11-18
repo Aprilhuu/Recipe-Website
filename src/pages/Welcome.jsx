@@ -136,12 +136,12 @@ class WelcomePage extends PureComponent {
       firstCard = (
         <Card bordered={false} style={{width: "100%", overflow: "auto" , maxHeight: "100%"}} className={[styles.blackTitleBox, styles.whiteText]}>
           <Row>
-            <Col span={12}>
+            <Col xs={24} sm={24} md={24} lg={11} xl={11}>
               <div className = {styles.titleText}>Chef Co-Pilot</div>
               <div className = {styles.subText}>Chef CoPilot is a recipe hub that you can use to plan recipes for your future meals. Let's cook together!</div>
             </Col>
-            <Col span={12} style={{textAlign: "-webkit-center", marginTop: '40px'}}>
-              <div style={{backgroundColor: "white", width: "70%"}}>
+            <Col xs={24} sm={24} md={24} lg={13} xl={13} style={{textAlign: "-webkit-center", marginTop: '40px'}}>
+              <div style={{backgroundColor: "white", width: "80%"}}>
                 <UserLogin homepage={true}/>
               </div>
             </Col>
