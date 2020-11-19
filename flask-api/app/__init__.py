@@ -89,6 +89,7 @@ def create_app(extra_config_settings={}):
     @app.route('/meal-planner')
     @app.route('/shopping-list')
     @app.route('/recipe-list')
+    @app.route('/search-page')
     def no_arg_route():
         return render_template('./index.html'), 200
 
