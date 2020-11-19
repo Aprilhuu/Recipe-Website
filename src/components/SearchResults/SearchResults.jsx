@@ -1,11 +1,21 @@
 import React from 'react';
 import styles from './SearchResults.less';
-import { List, Card, Row, Rate } from 'antd';
-import { RocketOutlined, FieldTimeOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import {Card, List, Rate, Row} from 'antd';
+import {FieldTimeOutlined, RocketOutlined} from '@ant-design/icons';
+import {Link} from 'react-router-dom';
 import convertTime from "../../helper_functions/convertTime";
 
+/**
+ * This function is used to construct a summary view of a recipe including its difficulty
+ * and prep time needed. This will be display under description in recipe cards.
+ *
+ * @param {number} difficulty difficulty level of a recipe
+ * @param {number} prepTime Preparation time of the recipe in minutes
+ *
+ * @return react components for recipe summary part in one div
+ */
 const recipeSummary = (difficulty, prepTime) => {
+  // Determine difficulty based on prep time instead for better criteria
   if (prepTime <= 10){
     difficulty = 1;
   } else if (prepTime <= 30){
@@ -17,9 +27,10 @@ const recipeSummary = (difficulty, prepTime) => {
   } else{
     difficulty = 5;
   }
+
   return (
     <div>
-      {/* Col1: difficulty */}
+      {/* Row 1: difficulty */}
       <Row span={6} className={styles.summaryRow}>
         <span>
           <Rate
@@ -32,7 +43,7 @@ const recipeSummary = (difficulty, prepTime) => {
         </span>
       </Row>
 
-      {/* Col2: Prep time */}
+      {/* Row 2: Prep time */}
       <Row span={12} className={styles.summaryRow}>
         <span className={styles.labelText}>
           <FieldTimeOutlined />
@@ -43,6 +54,19 @@ const recipeSummary = (difficulty, prepTime) => {
   );
 };
 
+
+/**
+ * This function is used to construct a summary view of a recipe including its difficulty
+ * and prep time needed. This will be display under description in recipe cards.
+ *
+ * @param {function} handleChange Callback function used to page change
+ * @param {[object]} recipeList A list of recipes data to render
+ * @param {number} totalPage Total number of pages
+ * @param {string} title Title to display as entire card name
+ * @param {number} defaultCurrent Default page to go on load
+ *
+ * @return react components for recipe summary part in one div
+ */
 export default ({handleChange, recipeList, totalPage, title, defaultCurrent}) => {
   let header;
   if (title){
@@ -78,7 +102,7 @@ export default ({handleChange, recipeList, totalPage, title, defaultCurrent}) =>
           if(img_url == null){
             img_url = item.mediaURL.url
           }
-
+          // Determine title size based on title length
           let titleClassName;
           if (item.title.length > 35){
             titleClassName = styles.recipeTitleSmall

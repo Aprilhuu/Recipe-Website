@@ -4,6 +4,11 @@ import styles from './NutritionLabel.less';
 /**
  * This function is used to construct a nutrition label widget. Code is refactored from
  * reference design here: https://codepen.io/chriscoyier/pen/egHEK
+ *
+ * @param {object} nutritionFact An object from database containing nutrition information
+ * @param {number} servingSize A number indicating serving size of the recipe. Directly available from database
+ *
+ * @return React component of a nutrition label with values fields calculated
  */
 export default ({nutritionFact, servingSize}) => (
   <section className={styles.performanceFacts}>

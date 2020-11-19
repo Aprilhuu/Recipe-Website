@@ -58,9 +58,9 @@ def test_get_review_by_recipe_id(client):
     recipe_title_id = {
         'id': recipe_res['_id'], 'recipe_id': recipe_res['recipe_id']}
     assert recipe_title_id == {
-        'id': '5fb42202d5a234d56217e6a2', 'recipe_id': "5f8c67b8708d83b9867302b1"}
+        'id': '5fb59868fc5ed52594d73442', 'recipe_id': "5f8c67b8708d83b9867302b1"}
 
-
+# Commenting out tests as they will update database constantly which we want to avoid
 # def test_update_rating_by_recipe_id(client):
 #     res = update_rating_by_recipe_id(client, '5f8c67b8708d83b9867302b1', 3)
 #     recipe_res = res.get_json()['result']

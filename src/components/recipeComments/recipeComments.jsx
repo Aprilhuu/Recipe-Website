@@ -1,7 +1,7 @@
 import React, {createElement, PureComponent, useEffect, useState} from 'react';
-import {Comment, Tooltip, Row, List, Typography, Form, Button, Input, Modal} from 'antd';
+import {Button, Comment, Form, Input, List, Modal, Row, Tooltip, Typography} from 'antd';
 import moment from 'moment';
-import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from '@ant-design/icons';
+import {DislikeFilled, DislikeOutlined, LikeFilled, LikeOutlined} from '@ant-design/icons';
 import styles from './recipeComments.less';
 import axios from "axios";
 import defaultSettings from "../../../config/defaultSettings";
@@ -30,6 +30,8 @@ const CommentItem = ( {comment, index, recipeID} ) => {
   useEffect(() => { setLikes(comment.like)}, [comment.like] )
   useEffect(() => { setDislikes(comment.dislike)}, [comment.dislike] )
 
+  // Callback handling like button clicked - will update the database
+  // Please note that users can only either dislike or like a comment. They cannot do both
   const like = () => {
     setLikes(comment.like + 1);
     setDislikes(comment.dislike);
@@ -47,6 +49,8 @@ const CommentItem = ( {comment, index, recipeID} ) => {
       })
   };
 
+  // Callback handling dislike button clicked - will update the database
+  // Please note that users can only either dislike or like a comment. They cannot do both
   const dislike = () => {
     setLikes(comment.like);
     setDislikes(comment.dislike + 1);
@@ -64,6 +68,7 @@ const CommentItem = ( {comment, index, recipeID} ) => {
       })
   };
 
+  // Actions for comments list, including like or dislike buttons
   const actions = [
     <Tooltip key="comment-basic-like" title="Like">
           <span onClick={like}>
@@ -124,7 +129,7 @@ const CommentList = ( { commentData, recipeID } ) => (
  * @param {boolean} submitting Boolean indicating if in the process of form submission
  * @param {string} value current value in comment submission box
  * @param {string} name current nickname in name submission box
- * @param formRef
+ * @param formRef Reference used to clear form fields after submitting
  *
  * @return Ant design Form element for entering comments
  */
@@ -157,11 +162,11 @@ const Editor = ({ onChange, onChangeName, onSubmit, submitting, value, name, for
  */
 class CommentSection extends PureComponent {
   state = {
-    comments: [],
+    comments: [], // A list of all comments on current recipe
     submitting: false,
-    value: '',
-    name: '',
-    recipeID: ''
+    value: '', // Value of comment message field
+    name: '', // Value of comment name field
+    recipeID: '' // ID of current recipe displayed
   };
 
   constructor(props) {
@@ -171,7 +176,9 @@ class CommentSection extends PureComponent {
     this.formRef = React.createRef();
   }
 
+  // Callback used to handle Add Comment button clicked
   handleSubmit = () => {
+    // User must enter name before submitting
     if (!this.state.name) {
       Modal.warning({
         title: 'Required field Name is empty',
@@ -181,6 +188,7 @@ class CommentSection extends PureComponent {
       return;
     }
 
+    // User must enter comment message before submitting
     if (!this.state.value) {
       Modal.warning({
         title: 'Required field Comment is empty',
@@ -190,15 +198,18 @@ class CommentSection extends PureComponent {
       return;
     }
 
+    // This marks the start of submitting process
     this.setState({
       submitting: true,
     });
 
+    // Step 1: Prepare current time to be stored along with user entered data for a comment
     const today = new Date();
     const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const dateTime = date+' '+time;
 
+    // Step 2: Prepare new comment object
     const newComment = {
       author: this.state.name,
       content: this.state.value,
@@ -207,11 +218,13 @@ class CommentSection extends PureComponent {
       dislike: 0
     }
 
+    // Step 3: Update database with the new comment object
     axios.post(api_endpoint +'/v1/reviews/'+ this.state.recipeID, {"comment": newComment})
       .then(response =>{
         console.log(response)
       })
 
+    // Step 4: Clear current form fields after submitting and reset states
     this.formRef.current.resetFields();
 
     this.setState({
@@ -226,12 +239,14 @@ class CommentSection extends PureComponent {
     });
   };
 
+  // Callback handling user enter values in comment message input field
   handleChange = e => {
     this.setState({
       value: e.target.value
     });
   };
 
+  // Callback handling user enter values in comment name input field
   handleChangeName = e => {
     this.setState({
       name: e.target.value
@@ -241,10 +256,10 @@ class CommentSection extends PureComponent {
   render() {
     const { comments, submitting, value, name } = this.state;
 
-    // If no comment data found for this recipe, customize displayed message
     let commentComponent;
+    // If no comment data found for this recipe, customize displayed message
     if (!comments.length){
-      commentComponent = <Title level={4} style={{width: '100%', textAlign: 'center'}}>
+      commentComponent = <Title level={4} className={styles.emptyComment}>
         No comments yet. Be the first one to leave a comment! </Title>
     }
     else{
@@ -260,7 +275,7 @@ class CommentSection extends PureComponent {
         </Row>
         {/* Row 2: Form for submitting new comments */}
         <Row className={ styles.rowContent } align="bottom">
-          <Title level={2} style={{width: '100%', marginBottom: '0px'}}> Leave a comment </Title>
+          <Title level={2} className={styles.commentTitle}> Leave a comment </Title>
           <Comment style={{width: '50%'}}
                    content={
                      <Editor
